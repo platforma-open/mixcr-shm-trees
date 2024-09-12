@@ -1,0 +1,90 @@
+self := import("@milaboratory/tengo-sdk:tpl")
+pConstants := import("@milaboratory/tengo-sdk:pframes.constants")
+ll := import("@milaboratory/tengo-sdk:ll")
+assets := import("@milaboratory/tengo-sdk:assets")
+exec := import("@milaboratory/tengo-sdk:exec")
+
+self.defineOutputs("allelesLog", "treesLog", "trees", "treeNodes")
+
+mixcrSw := assets.importSoftware("@milaboratory/mixcr:main")
+progressPrefix := "[==PROGRESS==]"
+
+self.body(func(inputs) {
+	inputData := inputs[pConstants.VALUE_FIELD_NAME]
+
+    allelesCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("findAlleles").
+        arg("--output-template").arg("alleles/{file_name}.clns")
+
+    toProcess := []
+    for sKey, inputFile in inputData.inputs() {
+        key := "123"
+        fileName := key + ".clns"
+        element := {
+            "fileName": fileName,
+            "input": inputFile
+        }
+        toProcess = append(toProcess, element)
+    }
+
+    for input in toProcess {
+        allelesCmdBuilder.addFile(input.fileName, input.input).
+            arg(input.fileName).
+            saveFile("alleles/" + input.fileName)
+    }
+
+    alleles := allelesCmdBuilder.run()  
+
+    shmTreesCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("findShmTrees").
+        // TODO support single cell trees
+        arg("--dont-combine-tree-by-cells")
+    
+    for input in toProcess {
+        shmTreesCmdBuilder.
+            addFile(input.fileName, alleles.getFile("alleles/" + input.fileName)).
+            arg(input.fileName)
+    }
+
+    shmTreesCmdBuilder.arg("output.shmt").saveFile("output.shmt")
+
+    shmTrees := shmTreesCmdBuilder.run()
+
+
+    shmTreeExports := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("exportShmTrees").
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        saveFile("output.tsv").
+        run()
+
+    shmTreeNodesExports := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("exportShmTreesWithNodes").
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        saveFile("output.tsv").
+        run()
+
+    return {
+        // TODO reports
+        // TODO tables
+        "allelesLog": alleles.getStdoutStream(),
+        "treesLog": shmTrees.getStdoutStream(),
+        "trees": shmTreeExports.getFile("output.tsv"),
+        "treeNodes": shmTreeNodesExports.getFile("output.tsv")
+    }
+})

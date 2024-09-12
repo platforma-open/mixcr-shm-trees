@@ -1,0 +1,90 @@
+wf := import("@milaboratory/tengo-sdk:workflow")
+llPFrames := import("@milaboratory/tengo-sdk:pframes.ll")
+ll := import("@milaboratory/tengo-sdk:ll")
+assets := import("@milaboratory/tengo-sdk:assets")
+xsv := import("@milaboratory/tengo-sdk:pframes.xsv")
+
+reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
+
+wf.body(func(args) {
+
+	// TODO proccess list, not the first
+	datasetRef := args.datasetColumns[0]
+
+	dataset := wf.resolve(datasetRef)
+
+	mixcrResults := llPFrames.aggregate(
+		dataset.getFutureInputField("data"), 
+		[1], 
+		reconstructShmTreesTpl,
+		[
+			{
+				"name": "allelesLog", 
+				"type": "Resource"
+			}, {
+				"name": "treesLog", 
+				"type": "Resource"
+			}, {
+				"name": "trees", 
+				"type": "Resource"
+			}, {
+				"name": "treeNodes", 
+				"type": "Resource"
+			}
+		],
+		false,
+		{
+			
+		}
+	)
+
+	pfconvParamsForTrees := {
+		"axes": [
+			{
+				"column": "treeId",
+				"spec": {
+					// TODO there is another name
+					"name": "pl7.app/trees/treeId",
+					"type": "Long",
+					"domain": { },
+					"annotations": {
+						"pl7.app/label": "Tree id"
+					}
+				}
+			}
+      	],
+		"columns": [
+			{
+				"column": "aaSeqCDR3OfMrca",
+				"id": "aa-seq-cdr3-mrca",
+				"allowNA": false,
+				"spec": {
+					"name": "pl7.app/vdj/sequence",
+					"valueType": "String",
+					"domain": {
+			            "pl7.app/vdj/feature": "CDR3",
+						"pl7.app/alphabet": "aminoacid"
+					},
+					"annotations": {
+						"pl7.app/type": "sequence",
+						"pl7.app/label": "CDR3 of MRCA aa"
+					}
+				}
+			}
+		],
+		"storageFormat": "Binary",
+		"partitionKeyLength": 0
+	}
+
+	trees := xsv.importFileMap(mixcrResults.output("trees"), "tsv", pfconvParamsForTrees, { dataOnly: true })
+
+
+	return {
+		outputs: {
+			"allelesLog": mixcrResults.output("allelesLog"),
+			"treesLog": mixcrResults.output("treesLog"),
+			"trees": trees
+		},
+		exports: {}
+	}
+})
