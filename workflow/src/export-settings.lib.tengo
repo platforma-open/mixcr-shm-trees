@@ -1,0 +1,215 @@
+ll := import("@milaboratory/tengo-sdk:ll")
+
+shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
+    // TODO add forChain if runWithSingleCell
+
+    axes := []
+    columns := []
+    cmdArgs := []
+
+    cmdArgs = append(cmdArgs, "-treeId")
+    axes = append(axes, {
+        "column": "treeId",
+        "spec": {
+            "name": "pl7.app/dendrogram/treeId",
+            "type": "Long",
+            "domain": { },
+            "annotations": {
+                "pl7.app/label": "Tree id"
+            }
+        }
+    })
+    
+    if runWithSingleCell && dataDescription["hasCellTags"] {
+        cmdArgs = append(cmdArgs, "-subtreeId")
+        axes = append(axes, {
+            "column": "subtreeId",
+            "spec": {
+                "name": "pl7.app/dendrogram/subtreeId",
+                "type": "Long",
+                "domain": { },
+                "annotations": {
+                    "pl7.app/label": "Subtree id"
+                }
+            }
+        })
+    }
+
+    if dataDescription["hasCellTags"] {
+        cmdArgs = append(cmdArgs, "-totalUniqueTagCountInTree", "Cell")
+        columns = append(columns, {
+            "column": "totalUniqueCellCountInTree",
+            "id": "uniq-cell-count",
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/uniqueCellCount",
+                "valueType": "Long",
+                "annotations": {
+                    "pl7.app/label": "Number of cells"
+                }
+            }
+        })
+    }
+
+    if dataDescription["hasUmiTags"] {
+        cmdArgs = append(cmdArgs, "-totalUniqueTagCountInTree", "Molecule")
+        columns = append(columns, {
+            "column": "totalUniqueMoleculeCountInTree",
+            "id": "uniq-umi-count",
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/uniqueMoleculeCount",
+                "valueType": "Long",
+                "annotations": {
+                    "pl7.app/label": "Number of molecules"
+                }
+            }
+        })
+    }
+
+    cmdArgs = append(cmdArgs, "-numberOfClonesInTree")
+    columns = append(columns, {
+        "column": "numberOfClonesInTree",
+        "id": "number-of-clones-in-tree",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/numberOfClonesInTree",
+            "valueType": "Long",
+            "annotations": {
+                "pl7.app/label": "Number of clones"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-numberOfNodesWithClones")
+    columns = append(columns, {
+        "column": "numberOfNodesWithClones",
+        "id": "number-of-nodes-with-clones",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/numberOfNodesWithClones",
+            "valueType": "Long",
+            "annotations": {
+                "pl7.app/label": "Number of clones"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-totalReadsCountInTree")
+    columns = append(columns, {
+        "column": "totalReadsCountInTree",
+        "id": "total-reads-count-in-tree",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/totalReadsCountInTree",
+            "valueType": "Long",
+            "annotations": {
+                "pl7.app/label": "Total reads count"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-vHit")
+    columns = append(columns, {
+        "column": "bestVHit",
+        "id": "v-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "VGene"
+            },
+            "annotations": {
+                "type": "V gene name",
+                "pl7.app/label": "V gene"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-jHit")
+    columns = append(columns, {
+        "column": "bestJHit",
+        "id": "j-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "JGene"
+            },
+            "annotations": {
+                "type": "J gene name",
+                "pl7.app/label": "J gene"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-chains")
+    columns = append(columns, {
+        "column": "chains",
+        "id": "chains",
+        "allowNA": false,
+        "spec": {
+            "valueType": "String",
+            "name": "pl7.app/vdj/chain",
+            "annotations": {
+                "pl7.app/label": "Chain"
+            }
+        }
+    })
+
+    for feature in dataDescription["coveredFeatures"] {
+        cmdArgs = append(cmdArgs, "-aaFeature", feature, "mrca")
+        columns = append(columns, {
+            "column": "aaSeq" + feature + "OfMrca",
+            "id": "aa-seq-" + feature + "-mrca",
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "aminoacid"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " of MRCA aa"
+                }
+            }
+        })
+
+        cmdArgs = append(cmdArgs, "-nFeature", feature, "mrca")
+        columns = append(columns, {
+            "column": "nSeq" + feature + "OfMrca",
+            "id": "n-seq-" + feature + "-mrca",
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "nucleotide"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " of MRCA nt"
+                }
+            }
+        })
+    }
+
+	return {
+        "pfconvParams": {
+            "axes": axes,
+            "columns": columns,
+            "storageFormat": "Binary",
+            "partitionKeyLength": 0
+        },
+        "cmdArgs": cmdArgs
+    }
+}
+
+export ll.toStrict({
+	shmTreeTableOptions: shmTreeTableOptions
+})

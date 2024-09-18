@@ -4,6 +4,7 @@ import {
   Ref,
   Option,
   InferOutputsType,
+  PlDataTableState,
   isPColumn,
   isPColumnSpec
 } from '@milaboratory/sdk-ui';
@@ -16,7 +17,11 @@ export type BlockArgs = {
   datasetColumns: (Ref | null)[];
 };
 
-export const platforma = BlockModel.create<BlockArgs>('Heavy')
+export type UiState = {
+  treeTableState?: PlDataTableState;
+};
+
+export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
   .initialArgs({
     datasetColumns: [null]
@@ -86,29 +91,31 @@ export const platforma = BlockModel.create<BlockArgs>('Heavy')
       );
   })
 
-  // .output('allColumnSpecs', (ctx) => {
-  //   return ctx.resultPool
-  //     .getSpecsFromResultPool()
-  //     .entries
-  //     .filter((v) => {
-  //       return isPColumnSpec(v.obj);
-  //     });
-  // })
+  .output('allColumnSpecs', (ctx) => {
+    return ctx.resultPool.getSpecsFromResultPool().entries.filter((v) => {
+      return isPColumnSpec(v.obj);
+    });
+  })
 
   .output('trees', (ctx) => {
-    const collection = ctx.outputs
-      ?.resolve({ field: 'trees', assertFieldType: 'Input' })
-      ?.parsePObjectCollection();
-    if (collection === undefined) return undefined;
-    // if (collection === undefined || !collection.isComplete) return undefined;
-    const pColumns = Object.entries(collection)
-      .map(([id, obj]) => obj)
-      .filter(isPColumn);
-    return ctx.createPFrame(pColumns);
+    const pCols = ctx.outputs?.resolve("trees")?.getPColumns();
+    if (pCols === undefined) return undefined;
+    return ctx.createPTable({
+      columns: pCols,
+      filters: ctx.uiState?.treeTableState?.pTableParams?.filters ?? [],
+      sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
+    });
   })
 
   .output('temp', (ctx) => {
-    return ctx.outputs?.resolve('trees')?.listInputFields();
+    return {
+      fields: ctx.outputs?.resolve('trees')?.listInputFields(),
+      columns: ctx.outputs?.resolve("trees")?.getPColumns()?.map((o) => ({
+          spec: o.spec,
+          resourseType: o.data.resourceType,
+          data: o.data.getDataAsJson()
+      }))
+    }
   })
 
   .output('allelesLog', (ctx) => {
@@ -119,7 +126,10 @@ export const platforma = BlockModel.create<BlockArgs>('Heavy')
     return ctx.outputs?.resolve('treesLog')?.listInputFields();
   })
 
-  .sections([{ type: 'link', href: '/', label: 'Settings' }])
+  .sections([
+    { type: 'link', href: '/', label: 'Settings' },
+    { type: 'link', href: '/trees', label: 'Trees Table' }
+  ])
 
   .done();
 

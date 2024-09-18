@@ -1,0 +1,85 @@
+self := import("@milaboratory/tengo-sdk:tpl")
+
+llPFrames := import("@milaboratory/tengo-sdk:pframes.ll")
+ll := import("@milaboratory/tengo-sdk:ll")
+assets := import("@milaboratory/tengo-sdk:assets")
+xsv := import("@milaboratory/tengo-sdk:pframes.xsv")
+text := import("text")
+exportSettings := import(":export-settings")
+pframes := import("@milaboratory/tengo-sdk:pframes")
+
+reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
+
+self.awaitState("datasets", { wildcard: "*" }, "ResourceReady")
+
+self.body(func(inputs) {
+    // TODO from real annotations
+	presetAnnotations := {
+      "mixcr.com/assemblingFeature": "VDJRegion",
+      "mixcr.com/cellTags": "",
+      "mixcr.com/coveredFeaturesOnExport": "FR1,CDR1,FR2,CDR2,FR3,CDR3,FR4",
+      "mixcr.com/umiTags": "UMI"
+    }
+
+	dataDescription := {
+		"hasUmiTags": false,
+		"hasCellTags": false,
+		"coveredFeatures": []
+	}
+
+	for _, dataset in inputs.datasets {
+		if presetAnnotations["mixcr.com/cellTags"] != "" {
+			dataDescription["hasCellTags"] = true
+		}
+		if presetAnnotations["mixcr.com/umiTags"] != "" {
+			dataDescription["hasUmiTags"] = true
+		}
+		dataDescription["coveredFeatures"] = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
+		// TODO chech assemblingFeature equality
+	}
+
+	// TODO proccess list, not the first
+	dataset := inputs.datasets["0"]
+
+	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
+
+	mixcrResults := llPFrames.aggregate(
+		dataset.get("data"), 
+		[1], 
+		reconstructShmTreesTpl,
+		[
+			{
+				"name": "allelesLog", 
+				"type": "Resource"
+			}, {
+				"name": "treesLog", 
+				"type": "Resource"
+			}, {
+				"name": "trees", 
+				"type": "Resource"
+			}, {
+				"name": "treeNodes", 
+				"type": "Resource"
+			}
+		],
+		false,
+		{
+			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"]
+		}
+	)
+
+	trees := xsv.importFileMap(
+        mixcrResults.output("trees"), 
+        "tsv", 
+        shmTreeTableOptions["pfconvParams"],
+        {
+            additionalAxesSpec: dataset.get("spec").getDataAsJson()["axesSpec"]
+        }
+    )
+
+    return {
+        "allelesLog": mixcrResults.output("allelesLog"),
+        "treesLog": mixcrResults.output("treesLog"),
+        "trees": pframes.exportFrame(trees)
+	}
+})

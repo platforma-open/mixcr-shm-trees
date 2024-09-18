@@ -57,31 +57,42 @@ self.body(func(inputs) {
     shmTrees := shmTreesCmdBuilder.run()
 
 
-    shmTreeExports := exec.builder().
+    shmTreeExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
-        arg("exportShmTrees").
-        arg("input.shmt").
-        arg("output.tsv").
-        addFile("input.shmt", shmTrees.getFile("output.shmt")).
-        saveFile("output.tsv").
-        run()
+        arg("exportShmTrees")
+    
+    for arg in inputs.shmTreeTableOptions {
+        shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.arg(arg)
+    }
 
-    shmTreeNodesExports := exec.builder().
-        printErrStreamToStdout().
-        env("MI_PROGRESS_PREFIX", progressPrefix).
-        software(mixcrSw).
-        arg("exportShmTreesWithNodes").
+    shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.
         arg("input.shmt").
         arg("output.tsv").
         addFile("input.shmt", shmTrees.getFile("output.shmt")).
-        saveFile("output.tsv").
-        run()
+        saveFile("output.tsv")
+
+    shmTreeExports := shmTreeExportsCmdBuilder.run()
+
+
+
+    shmTreeNodesExportsCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("exportShmTreesWithNodes")
+    
+    shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        saveFile("output.tsv")
+
+    shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
 
     return {
         // TODO reports
-        // TODO tables
         "allelesLog": alleles.getStdoutStream(),
         "treesLog": shmTrees.getStdoutStream(),
         "trees": shmTreeExports.getFile("output.tsv"),
