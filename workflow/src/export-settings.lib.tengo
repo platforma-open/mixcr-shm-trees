@@ -1,4 +1,5 @@
 ll := import("@milaboratory/tengo-sdk:ll")
+text := import("text")
 
 shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     // TODO add forChain if runWithSingleCell
@@ -210,6 +211,365 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     }
 }
 
+shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
+    // TODO add forChain if runWithSingleCell
+
+    axes := []
+    columns := []
+    cmdArgs := []
+
+    cmdArgs = append(cmdArgs, "-treeId")
+    axes = append(axes, {
+        "column": "treeId",
+        "spec": {
+            "name": "pl7.app/dendrogram/treeId",
+            "type": "Long",
+            "domain": { },
+            "annotations": {
+                "pl7.app/label": "Tree id"
+            }
+        }
+    })
+    
+    if runWithSingleCell && dataDescription["hasCellTags"] {
+        cmdArgs = append(cmdArgs, "-subtreeId")
+        axes = append(axes, {
+            "column": "subtreeId",
+            "spec": {
+                "name": "pl7.app/dendrogram/subtreeId",
+                "type": "Long",
+                "domain": { },
+                "annotations": {
+                    "pl7.app/label": "Subtree id"
+                }
+            }
+        })
+    }
+
+    cmdArgs = append(cmdArgs, "-nodeId")
+    axes = append(axes, {
+        "column": "nodeId",
+        "spec": {
+            "name": "pl7.app/dendrogram/nodeId",
+            "type": "Long",
+            "domain": { },
+            "annotations": {
+                "pl7.app/label": "Node id"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-isObserved")
+    columns = append(columns, {
+        "column": "isObserved",
+        "id": "is-node-obsered",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/dendrogram/isObserved",
+            // TODO change to Boolean when it will be supported
+            "valueType": "String",
+            "annotations": {
+                "pl7.app/label": "Is observed in data"
+            }
+        }
+    })
+    
+    cmdArgs = append(cmdArgs, "-parentId")
+    columns = append(columns, {
+        "column": "parentId",
+        "id": "parent-id",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/dendrogram/isTopology",
+            "valueType": "Long",
+            "annotations": {
+                "pl7.app/label": "Parent node id"
+            }
+        }
+    })
+    
+    cmdArgs = append(cmdArgs, "-distance", "germline")
+    columns = append(columns, {
+        "column": "DistanceFromGermline",
+        "id": "distance-from-germline",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/dendrogram/isDistance",
+            "valueType": "Double",
+            "annotations": {
+                "pl7.app/label": "Distanse from germline"
+            }
+        }
+    })
+    
+    if dataDescription["hasCellTags"] {
+        cmdArgs = append(cmdArgs, "-uniqueTagCount", "Cell")
+        columns = append(columns, {
+            "column": "uniqueCellCount",
+            "id": "uniq-cell-count-for-clone",
+            "allowNA": true,
+            "spec": {
+                "name": "pl7.app/vdj/uniqueCellCount",
+                "valueType": "Long",
+                "annotations": {
+                    "pl7.app/label": "Number of cells"
+                }
+            }
+        })
+    }
+
+    if dataDescription["hasUmiTags"] {
+        cmdArgs = append(cmdArgs, "-uniqueTagCount", "Molecule")
+        columns = append(columns, {
+            "column": "uniqueMoleculeCount",
+            "id": "uniq-umi-count-for-clone",
+            "allowNA": true,
+            "spec": {
+                "name": "pl7.app/vdj/uniqueMoleculeCount",
+                "valueType": "Long",
+                "annotations": {
+                    "pl7.app/label": "Number of molecules"
+                }
+            }
+        })
+    }
+
+    cmdArgs = append(cmdArgs, "-nMutationsRate")
+    columns = append(columns, {
+        "column": "nMutationsRate",
+        "id": "n-mutations-rate",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/mutationsRate",
+            "valueType": "Double",
+            "domain": {
+                "pl7.app/vdj/features": text.join(dataDescription["coveredFeatures"], ","),
+                "pl7.app/alphabet": "nucleotide"
+            },
+            "annotations": {
+                "pl7.app/label": "Mutations rate nt"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-cloneId")
+    columns = append(columns, {
+        "column": "cloneId",
+        "id": "clone-id",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/vdj/cloneId",
+            "valueType": "Long",
+            // TODO domain with blockId
+            "annotations": {
+                "pl7.app/label": "Clone id"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-readCount")
+    columns = append(columns, {
+        "column": "readCount",
+        "id": "read-count",
+        "allowNA": true,
+        "spec": {
+          "name": "pl7.app/vdj/readCount",
+          "valueType": "Long",
+          "annotations": {
+            "pl7.app/label": "Number Of Reads"
+          }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-readFraction")
+    columns = append(columns, {
+        "column": "readFraction",
+        "id": "read-fraction",
+        "allowNA": true,
+        "spec": {
+          "name": "pl7.app/vdj/readFraction",
+          "valueType": "Double",
+          "annotations": {
+            "pl7.app/label": "Fraction of reads"
+          }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-targetSequences")
+    columns = append(columns, {
+        "column": "targetSequences",
+        "id": "n-seq-clonal-sequences",
+        "allowNA": true,
+        "spec": {
+          "name": "pl7.app/vdj/sequence",
+          "valueType": "String",
+          "domain": {
+            "pl7.app/vdj/sequence": "clonalSequence",
+            "pl7.app/alphabet": "nucleotide"
+          },
+          "annotations": {
+            "pl7.app/type": "sequence",
+            "pl7.app/label": "Clonal sequences"
+          }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-targetQualities")
+    columns = append(columns, {
+        "column": "targetQualities",
+        "id": "clonal-qualities",
+        "allowNA": true,
+        "spec": {
+          "name": "pl7.app/vdj/sequenceQuality",
+          "valueType": "String",
+          "domain": {
+            "pl7.app/vdj/quality": "clonalQuality"
+          },
+          "annotations": {
+            "type": "quality string",
+            "pl7.app/label": "Clonal qualities"
+          }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-vHit")
+    columns = append(columns, {
+        "column": "bestVHit",
+        "id": "v-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "VGene"
+            },
+            "annotations": {
+                "type": "V gene name",
+                "pl7.app/label": "V gene"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-dHit")
+    columns = append(columns, {
+        "column": "bestDHit",
+        "id": "d-gene",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "DGene"
+            },
+            "annotations": {
+                "type": "D gene name",
+                "pl7.app/label": "Best D hit"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-jHit")
+    columns = append(columns, {
+        "column": "bestJHit",
+        "id": "j-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "JGene"
+            },
+            "annotations": {
+                "type": "J gene name",
+                "pl7.app/label": "J gene"
+            }
+        }
+    })
+  
+    cmdArgs = append(cmdArgs, "-cHit")
+    columns = append(columns, {
+        "column": "bestCHit",
+        "id": "c-gene",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "CGene"
+            },
+            "annotations": {
+                "type": "C gene name",
+                "pl7.app/label": "Best C hit"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-isotype")
+    columns = append(columns, {
+        "column": "isotype",
+        "id": "isotype",
+        "allowNA": true,
+        "spec": {
+          "valueType": "String",
+          "name": "pl7.app/vdj/isotype",
+          "annotations": {
+            "pl7.app/label": "IG isotype"
+          }
+        }
+    })
+
+    for feature in dataDescription["coveredFeatures"] {
+        cmdArgs = append(cmdArgs, "-aaFeature", feature)
+        columns = append(columns, {
+            "column": "aaSeq" + feature,
+            "id": "aa-seq-" + feature,
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "aminoacid"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " aa"
+                }
+            }
+        })
+
+        cmdArgs = append(cmdArgs, "-nFeature", feature)
+        columns = append(columns, {
+            "column": "nSeq" + feature,
+            "id": "n-seq-" + feature,
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "nucleotide"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " nt"
+                }
+            }
+        })
+    }
+
+	return {
+        "pfconvParams": {
+            "axes": axes,
+            "columns": columns,
+            "storageFormat": "Binary",
+            "partitionKeyLength": 0
+        },
+        "cmdArgs": cmdArgs
+    }
+}
+
 export ll.toStrict({
-	shmTreeTableOptions: shmTreeTableOptions
+	shmTreeTableOptions: shmTreeTableOptions,
+    shmTreeNodesTableOptions: shmTreeNodesTableOptions
 })

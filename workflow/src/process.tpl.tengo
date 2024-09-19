@@ -42,6 +42,7 @@ self.body(func(inputs) {
 	dataset := inputs.datasets["0"]
 
 	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
+	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription, false)
 
 	mixcrResults := llPFrames.aggregate(
 		dataset.get("data"), 
@@ -64,7 +65,8 @@ self.body(func(inputs) {
 		],
 		false,
 		{
-			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"]
+			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
+			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"]
 		}
 	)
 
@@ -77,9 +79,19 @@ self.body(func(inputs) {
         }
     )
 
+	treeNodes := xsv.importFileMap(
+        mixcrResults.output("treeNodes"), 
+        "tsv", 
+        shmTreeNodesTableOptions["pfconvParams"],
+        {
+            additionalAxesSpec: dataset.get("spec").getDataAsJson()["axesSpec"]
+        }
+    )
+
     return {
         "allelesLog": mixcrResults.output("allelesLog"),
         "treesLog": mixcrResults.output("treesLog"),
-        "trees": pframes.exportFrame(trees)
+        "trees": pframes.exportFrame(trees),
+        "treeNodes": pframes.exportFrame(treeNodes)
 	}
 })

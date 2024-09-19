@@ -82,7 +82,11 @@ self.body(func(inputs) {
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTreesWithNodes")
-    
+
+    for arg in inputs.shmTreeNodesTableOptions {
+        shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.arg(arg)
+    }
+
     shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.
         arg("input.shmt").
         arg("output.tsv").

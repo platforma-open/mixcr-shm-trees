@@ -24,7 +24,8 @@ wf.body(func(args) {
 		outputs: {
 			"allelesLog": results.output("allelesLog"),
 			"treesLog": results.output("treesLog"),
-			"trees": results.output("trees")
+			"trees": results.output("trees"),
+			"treeNodes": results.output("treeNodes")
 		},
 		exports: {}
 	}

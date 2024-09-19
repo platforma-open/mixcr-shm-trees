@@ -19,6 +19,7 @@ export type BlockArgs = {
 
 export type UiState = {
   treeTableState?: PlDataTableState;
+  treeNodesTableState?: PlDataTableState;
 };
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
@@ -107,6 +108,16 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     });
   })
 
+  .output('treeNodes', (ctx) => {
+    const pCols = ctx.outputs?.resolve("treeNodes")?.getPColumns();
+    if (pCols === undefined) return undefined;
+    return ctx.createPTable({
+      columns: pCols,
+      filters: ctx.uiState?.treeNodesTableState?.pTableParams?.filters ?? [],
+      sorting: ctx.uiState?.treeNodesTableState?.pTableParams?.sorting ?? []
+    });
+  })
+
   .output('temp', (ctx) => {
     return {
       fields: ctx.outputs?.resolve('trees')?.listInputFields(),
@@ -128,7 +139,8 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
   .sections([
     { type: 'link', href: '/', label: 'Settings' },
-    { type: 'link', href: '/trees', label: 'Trees Table' }
+    { type: 'link', href: '/trees', label: 'Trees Table' },
+    { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' },
   ])
 
   .done();
