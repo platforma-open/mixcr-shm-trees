@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { platforma } from '@milaboratory/milaboratories.mixcr-shm-trees.model';
+// import { platforma } from '@milaboratory/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
 import { computed } from 'vue';
-import { PlAgDataTable, PlDataTableSettings } from '@milaboratory/sdk-vue';
+import { PlAgDataTable, PlBlockPage, PlDataTableSettings } from '@milaboratory/sdk-vue';
 
 const app = useApp();
 
@@ -29,7 +29,7 @@ const tableSettings = computed<PlDataTableSettings>(() => ({
 </script>
 
 <template>
-  <div class="container">
+  <PlBlockPage>
     <PlAgDataTable v-model="uiState.model.treeNodesTableState" :settings="tableSettings"></PlAgDataTable>
-  </div>
+  </PlBlockPage>
 </template>
