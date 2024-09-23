@@ -6,8 +6,10 @@ import {
   InferOutputsType,
   PlDataTableState,
   isPColumn,
-  isPColumnSpec
+  isPColumnSpec,
+  PTableRecordSingleValueFilter
 } from '@milaboratory/sdk-ui';
+import { string } from 'zod';
 
 /**
  * Block arguments coming from the user interface
@@ -17,9 +19,14 @@ export type BlockArgs = {
   datasetColumns: (Ref | null)[];
 };
 
+export type TreeSelection = {
+  donor?: string,
+  treeId?: number
+}
+
 export type UiState = {
   treeTableState?: PlDataTableState;
-  treeNodesTableState?: PlDataTableState;
+  treeSelectionForTreeNodesTable: TreeSelection
 };
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
@@ -99,7 +106,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   })
 
   .output('trees', (ctx) => {
-    const pCols = ctx.outputs?.resolve("trees")?.getPColumns();
+    const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
     if (pCols === undefined) return undefined;
     return ctx.createPTable({
       columns: pCols,
@@ -108,25 +115,80 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     });
   })
 
+  // .output('treeNodes', (ctx) => {
+  //   const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+  //   if (pCols === undefined) return undefined;
+  //   const someCol = pCols![0];
+
+  //   const donors = someCol.data.listInputFields().map((o) => (JSON.parse(o) as string[])[0]);
+
+  //   const donor = donors[0];
+
+  //   const filters = ctx.uiState?.treeNodesTableState?.pTableParams?.filters ?? [];
+
+  //   filters.push({
+  //     type: 'bySingleColumn',
+  //     column: {
+  //       type: 'axis',
+  //       id: someCol.spec.axesSpec[0]
+  //     },
+  //     predicate: {
+  //       operator: 'Equal',
+  //       reference: donor
+  //     }
+  //   });
+
+  //   filters.push({
+  //     type: 'bySingleColumn',
+  //     column: {
+  //       type: 'axis',
+  //       id: someCol.spec.axesSpec[1]
+  //     },
+  //     predicate: {
+  //       operator: 'Equal',
+  //       reference: 1
+  //     }
+  //   });
+
+  //   return ctx.createPTable({
+  //     columns: pCols,
+  //     filters: filters,
+  //     sorting: ctx.uiState?.treeNodesTableState?.pTableParams?.sorting ?? []
+  //   });
+  // })
+
   .output('treeNodes', (ctx) => {
-    const pCols = ctx.outputs?.resolve("treeNodes")?.getPColumns();
+    const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
     if (pCols === undefined) return undefined;
-    return ctx.createPTable({
-      columns: pCols,
-      filters: ctx.uiState?.treeNodesTableState?.pTableParams?.filters ?? [],
-      sorting: ctx.uiState?.treeNodesTableState?.pTableParams?.sorting ?? []
-    });
+    
+    return ctx.createPFrame(pCols);
   })
 
   .output('temp', (ctx) => {
     return {
-      fields: ctx.outputs?.resolve('trees')?.listInputFields(),
-      columns: ctx.outputs?.resolve("trees")?.getPColumns()?.map((o) => ({
-          spec: o.spec,
-          resourseType: o.data.resourceType,
-          data: o.data.getDataAsJson()
-      }))
-    }
+      trees: {
+        fields: ctx.outputs?.resolve('trees')?.listInputFields(),
+        columns: ctx.outputs
+          ?.resolve('trees')
+          ?.getPColumns()
+          ?.map((o) => ({
+            spec: o.spec,
+            resourseType: o.data.resourceType,
+            data: o.data.getDataAsJson()
+          }))
+      },
+      treesWithNodes: {
+        fields: ctx.outputs?.resolve('treeNodes')?.listInputFields(),
+        columns: ctx.outputs
+          ?.resolve('treeNodes')
+          ?.getPColumns()
+          ?.map((o) => ({
+            spec: o.spec,
+            resourseType: o.data.resourceType,
+            data: o.data.getDataAsJson()
+          }))
+      }
+    };
   })
 
   .output('allelesLog', (ctx) => {
@@ -140,7 +202,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   .sections([
     { type: 'link', href: '/', label: 'Settings' },
     { type: 'link', href: '/trees', label: 'Trees Table' },
-    { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' },
+    { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' }
   ])
 
   .done();

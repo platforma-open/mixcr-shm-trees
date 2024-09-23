@@ -10,8 +10,9 @@ catalog:
   '@milaboratory/pl-block-tools': ^2.1.5
   '@milaboratory/block-builder': ^1.2.3
 
-  '@milaboratory/sdk-ui': ^0.12.22
+  '@milaboratory/sdk-ui': ^0.13.0
   '@milaboratory/sdk-test': ^1.5.5
+  "@milaboratory/graph-maker": ^1.0.0
 
   '@milaboratory/tengo-sdk': ^1.2.4
   '@milaboratory/pframes-conv': ^0.4.25
@@ -19,7 +20,7 @@ catalog:
   '@milaboratory/mixcr': 4.7.0-70-develop
 
   '@milaboratory/platforma-uikit': ^1.1.11
-  '@milaboratory/sdk-vue': ^1.1.4
+  '@milaboratory/sdk-vue': ^1.3.0
   '@milaboratory/helpers': ^1.5.3
 
   'vue': ^3.4.38

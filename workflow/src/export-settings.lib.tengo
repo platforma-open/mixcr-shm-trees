@@ -280,10 +280,11 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         "id": "parent-id",
         "allowNA": true,
         "spec": {
-            "name": "pl7.app/dendrogram/isTopology",
+            "name": "pl7.app/dendrogram/topology",
             "valueType": "Long",
             "annotations": {
-                "pl7.app/label": "Parent node id"
+                "pl7.app/label": "Parent node id",
+                "pl7.app/dendrogram/isTopology": "true"
             }
         }
     })
@@ -294,10 +295,11 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         "id": "distance-from-germline",
         "allowNA": true,
         "spec": {
-            "name": "pl7.app/dendrogram/isDistance",
+            "name": "pl7.app/dendrogram/distance",
             "valueType": "Double",
             "annotations": {
-                "pl7.app/label": "Distanse from germline"
+                "pl7.app/label": "Distanse from germline",
+                "pl7.app/dendrogram/isDistance": "true"
             }
         }
     })
@@ -563,7 +565,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             "axes": axes,
             "columns": columns,
             "storageFormat": "Binary",
-            "partitionKeyLength": 0
+            "partitionKeyLength": 1
         },
         "cmdArgs": cmdArgs
     }

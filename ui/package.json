@@ -18,6 +18,7 @@
     "@milaboratory/platforma-uikit": "catalog:",
     "@milaboratory/sdk-ui": "catalog:",
     "@milaboratory/sdk-vue": "catalog:",
+    "@milaboratory/graph-maker": "catalog:",
     "utility-types": "catalog:",
     "vue": "catalog:",
     "@vueuse/core": "catalog:",

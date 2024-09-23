@@ -7,6 +7,10 @@ ll := import("@milaboratory/tengo-sdk:ll")
 processTpl := assets.importTemplate(":process")
 
 wf.body(func(args) {
+	if is_undefined(args.donorColumn) {
+		ll.panic("No donor column")
+	}
+
 	if (len(args.datasetColumns) == 0) {
 		ll.panic("No datasets to process")
 	}

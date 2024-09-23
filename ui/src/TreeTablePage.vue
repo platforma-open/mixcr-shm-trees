@@ -2,14 +2,16 @@
 // import { platforma } from '@milaboratory/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
 import { computed } from 'vue';
-import { PlAgDataTable, PlBlockPage, PlBtnPrimary, PlDataTableSettings } from '@milaboratory/sdk-vue';
+import { PlAgDataTable, PlBlockPage, PlDataTableSettings } from '@milaboratory/sdk-vue';
 
 const app = useApp();
 
-const uiState = app.createUiModel({}, () => ({}))
+const uiState = app.createUiModel({}, () => ({
+  treeSelectionForTreeNodesTable: {}
+}))
 
 const tableSettings = computed<PlDataTableSettings>(() => ({
-  sourceType: "pframe",
+  sourceType: "ptable",
 
   pTable: app.outputs.trees,
 
