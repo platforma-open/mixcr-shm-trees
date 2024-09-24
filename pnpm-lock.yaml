@@ -22,8 +22,8 @@ catalogs:
       specifier: ^2.27.8
       version: 2.27.8
     '@milaboratory/graph-maker':
-      specifier: ^1.0.0
-      version: 1.0.0
+      specifier: ^1.0.2
+      version: 1.0.2
     '@milaboratory/helpers':
       specifier: ^1.5.3
       version: 1.5.3
@@ -175,7 +175,7 @@ importers:
         version: 32.1.0(typescript@5.5.4)
       '@milaboratory/graph-maker':
         specifier: 'catalog:'
-        version: 1.0.0(typescript@5.5.4)
+        version: 1.0.2(typescript@5.5.4)
       '@milaboratory/helpers':
         specifier: 'catalog:'
         version: 1.5.3
@@ -853,8 +853,8 @@ packages:
   '@milaboratory/computable@2.1.2':
     resolution: {integrity: sha512-TfL5KiRqm2G7BpzVUo3nVCWZvbLCNxqmK++4HPACmvgkj/agH6a2AB/2yBbUfhceTxLYZO7GC3UrN7KtXsCC8Q==, tarball: https://npm.pkg.github.com/download/@milaboratory/computable/2.1.2/5bfbcbe117a2b7517d4081c62a49b0804d233d69}
 
-  '@milaboratory/graph-maker@1.0.0':
-    resolution: {integrity: sha512-HcjMDBsRX5agJGjblsZr3Lw6kMC/9giT9diYgxpgfJxgnW6BGzKldI8IOHSWgLxvx7mgEfW5i+z2WIvjV2LVhA==, tarball: https://npm.pkg.github.com/download/@milaboratory/graph-maker/1.0.0/73cdeebaa525166770cc756f55e8bbfced09a31f}
+  '@milaboratory/graph-maker@1.0.2':
+    resolution: {integrity: sha512-U3Xct3yFZwEj0kFO6amOxlDbwZ9cxSEE+n1YT4gYDb6I9OBuyK2XJcygdVAHp/eW0h4fJBbF5Q+I0DhXeI28HQ==, tarball: https://npm.pkg.github.com/download/@milaboratory/graph-maker/1.0.2/646ae01cdebde600e53dd78d3ffbf6061ca7b82f}
 
   '@milaboratory/helpers@1.5.3':
     resolution: {integrity: sha512-NYxQidKlohXtlV/SkPe7TE2VMw21h+vouRjj6133fQMD/ttowVLQOVmQU9hC8Xx4wrby5dSPBKh/s1tgbuIB6w==, tarball: https://npm.pkg.github.com/download/@milaboratory/helpers/1.5.3/901706849014c6e7508aa8a9beea07cd5c208925}
@@ -5335,7 +5335,7 @@ snapshots:
       serialize-error: 11.0.3
       utility-types: 3.11.0
 
-  '@milaboratory/graph-maker@1.0.0(typescript@5.5.4)':
+  '@milaboratory/graph-maker@1.0.2(typescript@5.5.4)':
     dependencies:
       '@milaboratory/helpers': 1.5.3
       '@milaboratory/miplots4': 1.0.38

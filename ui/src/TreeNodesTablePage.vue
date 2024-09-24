@@ -5,7 +5,7 @@ import { computedAsync } from '@vueuse/core';
 import { GraphMakerSettings } from "@milaboratory/graph-maker/dist/GraphMaker/types";
 import { GraphMaker } from '@milaboratory/graph-maker'
 import { computed } from 'vue';
-import { PlBlockPage, PlDropdown } from '@milaboratory/sdk-vue';
+import { PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@milaboratory/sdk-vue';
 import { ref } from "vue";
 
 import "@milaboratory/graph-maker/dist/style.css";
@@ -87,24 +87,50 @@ const treesOptions = computed(() => {
   return result
 })
 
-const settings = ref({
-  chartType: "dendro",
-  template: "dendro",
-  optionsState: null,
-  statisticsSettings: null,
-  axesSettings: null,
-  layersSettings: null,
-  dataBindAes: null,
-} satisfies GraphMakerSettings);
+const settings = computedAsync(async () => {
+  const columns = await pFrameDriver.listColumns(pframe)
+  const column = columns[0]
+  return {
+    chartType: "dendro",
+    template: "dendro",
+    optionsState: null,
+    statisticsSettings: null,
+    axesSettings: null,
+    layersSettings: null,
+    dataBindAes: null,
+    fixedOptions: [
+      {
+        inputName: 'filters',
+        selectedSource: {
+          type: 'axis',
+          id: column.spec.axesSpec[0]
+        },
+        selectedFilterValue: uiState.model.treeSelectionForTreeNodesTable.donor
+      },
+      {
+        inputName: 'filters',
+        selectedSource: {
+          type: 'axis',
+          id: column.spec.axesSpec[1]
+        },
+        selectedFilterValue: uiState.model.treeSelectionForTreeNodesTable.treeId
+      },
+    ]
+  } satisfies GraphMakerSettings
+});
 
 </script>
 
 <template>
   <PlBlockPage>
-    <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
-    <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
+    <PlRow>
+      <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
+      <PlSpacer/>
+      <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
+    </PlRow>
     <GraphMaker 
-      v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value"
+      v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
+      !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"
       :p-frame-handle="app.outputs.treeNodes.value"
       :settings="settings"
       :p-frame-driver="platforma.pFrameDriver"

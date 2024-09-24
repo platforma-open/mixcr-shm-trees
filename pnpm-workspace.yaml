@@ -12,7 +12,7 @@ catalog:
 
   '@milaboratory/sdk-ui': ^0.13.0
   '@milaboratory/sdk-test': ^1.5.5
-  "@milaboratory/graph-maker": ^1.0.0
+  "@milaboratory/graph-maker": ^1.0.2
 
   '@milaboratory/tengo-sdk': ^1.2.4
   '@milaboratory/pframes-conv': ^0.4.25
