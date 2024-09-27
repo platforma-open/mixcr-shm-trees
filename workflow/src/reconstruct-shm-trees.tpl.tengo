@@ -4,6 +4,8 @@ ll := import("@milaboratory/tengo-sdk:ll")
 assets := import("@milaboratory/tengo-sdk:assets")
 exec := import("@milaboratory/tengo-sdk:exec")
 
+json := import("json")
+
 self.defineOutputs("allelesLog", "treesLog", "trees", "treeNodes")
 
 mixcrSw := assets.importSoftware("@milaboratory/mixcr:main")
@@ -21,8 +23,10 @@ self.body(func(inputs) {
 
     toProcess := []
     for sKey, inputFile in inputData.inputs() {
-        key := "123"
-        fileName := key + ".clns"
+        key := json.decode(sKey)
+        sampleId := key[0]
+        clonotypingBlockId := key[1]
+        fileName := sampleId + "___" + clonotypingBlockId + ".clns"
         element := {
             "fileName": fileName,
             "input": inputFile

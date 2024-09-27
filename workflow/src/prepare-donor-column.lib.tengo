@@ -1,0 +1,78 @@
+ll := import("@milaboratory/tengo-sdk:ll")
+smart := import("@milaboratory/tengo-sdk:smart")
+
+json := import("json")
+
+_P_COLUMN_DATA_RESOURCE_MAP := { Name: "PColumnData/ResourceMap", Version: "1" }
+
+groupDataByDonorId := func(donorColumn, datasets) {
+    // we need to form a pColumn with two axes:
+	//    axes[0]: donorId
+	//    axes[1]: sampleId
+	//    axes[2]: mixcrBlockId
+	//      value: fileRef resource
+
+	// we have:
+	//    column of donorIds:
+	//        axes[0]: sampleId
+	//          value: donorId
+	//    several columns of clns:
+	//        axes[0]: sampleId
+	//          value: fileRef resource
+
+    donorColumnSpec := donorColumn.get("spec").getDataAsJson()
+    
+    resultSpec := {
+        // annotations and domain could differ between datasets
+        "annotations": {},
+        "domain": {},
+        "axesSpec": [
+            {
+                "annotations": donorColumnSpec["annotations"],
+                "domain": donorColumnSpec["domain"],
+                "name": donorColumnSpec["name"],
+                "type": donorColumnSpec["valueType"]
+            },
+            donorColumnSpec["axesSpec"][0],
+            {
+                "annotations": {
+                    "pl7.app/label": "Clonotyping block id"
+                },
+                "domain": {},
+                "name": "pl7.app/blockId",
+                "type": "String"
+            }
+        ],
+        "kind": "PColumn",
+        "name": "mixcr.com/clns",
+        "valueType": "File"
+    }
+    
+
+    sampleToDonor := {}
+
+	for k, v in donorColumn.get("data").getDataAsJson()["data"] {
+        sampleId := json.decode(k)[0]
+        sampleToDonor[sampleId] = v
+	}
+
+    dataBuilder := smart.structBuilder(_P_COLUMN_DATA_RESOURCE_MAP, json.encode({
+        keyLength: 3
+    }))
+
+	for blockId, dataset in datasets {
+		for sKey, fileRef in dataset.get("data").inputs() {
+            sampleId := json.decode(sKey)[0]
+            dataBuilder.createInputField(json.encode([sampleToDonor[sampleId], sampleId, blockId])).set(fileRef)
+		}
+    }
+
+    return {
+        spec: resultSpec,
+        data: dataBuilder.lockAndBuild()
+    }
+}
+
+export ll.toStrict({
+	groupDataByDonorId: groupDataByDonorId
+})

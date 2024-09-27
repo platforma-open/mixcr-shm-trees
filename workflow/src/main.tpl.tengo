@@ -16,8 +16,9 @@ wf.body(func(args) {
 	}
 
 	datasets := {}
-	for i, datasetRef in args.datasetColumns {
-		datasets[string(i)] = wf.resolve(datasetRef)
+	for datasetRef in args.datasetColumns {
+		ll.print("DEBUG_MESSAGE", datasetRef)
+		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
 	}
 
 	donorColumn := wf.resolve(args.donorColumn)

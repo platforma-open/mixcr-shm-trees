@@ -6,6 +6,7 @@ assets := import("@milaboratory/tengo-sdk:assets")
 xsv := import("@milaboratory/tengo-sdk:pframes.xsv")
 text := import("text")
 exportSettings := import(":export-settings")
+prepareDonorColumn := import(":prepare-donor-column")
 pframes := import("@milaboratory/tengo-sdk:pframes")
 
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
@@ -14,10 +15,6 @@ self.awaitState("datasets", { wildcard: "*" }, "ResourceReady")
 self.awaitState("donorColumn", "ResourceReady")
 
 self.body(func(inputs) {
-	// ll.print("DEBUG_MESSAGE donorColumn", inputs.donorColumn.get("data").getDataAsJson())
-	// ll.print("DEBUG_MESSAGE datasets", inputs.datasets)
-	// ll.panic("exit")
-
     dataDescription := {
 		"hasUmiTags": false,
 		"hasCellTags": false,
@@ -42,15 +39,14 @@ self.body(func(inputs) {
 		}
 	}
 
-	// TODO proccess list, not the first
-	dataset := inputs.datasets["0"]
+	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
 
 	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
 	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription, false)
 
 	mixcrResults := llPFrames.aggregate(
-		dataset.get("data"), 
-		[1], 
+		dataGroupedByDonorId["data"], 
+		[1, 2], 
 		reconstructShmTreesTpl,
 		[
 			{
@@ -79,7 +75,7 @@ self.body(func(inputs) {
         "tsv", 
         shmTreeTableOptions["pfconvParams"],
         {
-            additionalAxesSpec: dataset.get("spec").getDataAsJson()["axesSpec"]
+            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
         }
     )
 
@@ -88,7 +84,7 @@ self.body(func(inputs) {
         "tsv", 
         shmTreeNodesTableOptions["pfconvParams"],
         {
-            additionalAxesSpec: dataset.get("spec").getDataAsJson()["axesSpec"]
+            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
         }
     )
 
