@@ -87,6 +87,7 @@ const treesOptions = computed(() => {
   return result
 })
 
+// TODO save up changes
 const settings = computedAsync(async () => {
   const columns = await pFrameDriver.listColumns(pframe)
   const column = columns[0]
@@ -126,8 +127,10 @@ const settings = computedAsync(async () => {
     <PlRow>
       <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
       <PlSpacer/>
+      <!-- TODO make it work better after refresh -->
       <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
     </PlRow>
+    <!-- TODO generate and save title -->
     <GraphMaker 
       v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
       !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"

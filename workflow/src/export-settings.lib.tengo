@@ -378,7 +378,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
           "name": "pl7.app/vdj/readCount",
           "valueType": "Long",
           "annotations": {
-            "pl7.app/label": "Number Of Reads"
+            "pl7.app/label": "Number of Reads"
           }
         }
     })

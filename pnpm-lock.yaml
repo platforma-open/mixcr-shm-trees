@@ -22,7 +22,7 @@ catalogs:
       specifier: ^2.27.8
       version: 2.27.8
     '@milaboratory/graph-maker':
-      specifier: ^1.0.2
+      specifier: 1.0.2
       version: 1.0.2
     '@milaboratory/helpers':
       specifier: ^1.5.3
@@ -871,14 +871,14 @@ packages:
   '@milaboratory/milaboratories.samples-and-data@1.1.6':
     resolution: {integrity: sha512-uDJJQwaYSS18RYWJzA111IErQdYpXJuEQiJ2rLSBePBU1dNj8SfJwQcDvehKrx9YetPYMbBsQbS9EcscJMjvzg==, tarball: https://npm.pkg.github.com/download/@milaboratory/milaboratories.samples-and-data/1.1.6/50d9dd671f9a1307cdcddb4f3bc67e6eb47e8cc8}
 
-  '@milaboratory/miplots4@1.0.38':
-    resolution: {integrity: sha512-NRucKlsjeciwf9MK/4b2pHW38uiNMFpaywI9yi8D4KYnscSBreWJi6S0ofk6L6Khy7FjpQt7+MroG6wdYBnoAw==, tarball: https://npm.pkg.github.com/download/@milaboratory/miplots4/1.0.38/9a7e3698fd03805fd1e4ba576433db03a561cd61}
+  '@milaboratory/miplots4@1.0.39':
+    resolution: {integrity: sha512-5vF3+heiZWkPI5TmFV8zcWbUaqrdkqI5OHMZk6KhP03tEC7HTePiB4y7D6ZDXzIy/FM8n5KqwLGxXpj1QyJJ9A==, tarball: https://npm.pkg.github.com/download/@milaboratory/miplots4/1.0.39/307ae42515e1c52a1a534e8c4a6cf2f1b1a8c7ef}
 
   '@milaboratory/mixcr@4.7.0-70-develop':
     resolution: {integrity: sha512-C/GGIzrrow07uQnx7Pqr3z+kF9jDLFUOKfHjZMwWQBhe+tN+0SoVLSh+TRGXgfD7SnS8CinKs/xz7yAKWx6+Mw==, tarball: https://npm.pkg.github.com/download/@milaboratory/mixcr/4.7.0-70-develop/26e2a7be5d49630243d7e32ae44925e17e07db41}
 
-  '@milaboratory/pf-plots@1.0.38':
-    resolution: {integrity: sha512-usrDrOOGKmXwl08l2PwuBajfuXQzXWuXILYt98omYpTvvfN8chG4UMMGGd+i5jNHaEPLJr5S1JGKzL/ccUUv6A==, tarball: https://npm.pkg.github.com/download/@milaboratory/pf-plots/1.0.38/c38dcd9c6f26268e99a86638c29d560bc47c94ab}
+  '@milaboratory/pf-plots@1.0.40':
+    resolution: {integrity: sha512-TR10fVr4besBwa0AV/dC22Zq/IZ3x9PmVMsnYxcz27HTZY/0R8rKjUrdOQIr+elVuEa5QQWA2lNCAiDh/8lfoQ==, tarball: https://npm.pkg.github.com/download/@milaboratory/pf-plots/1.0.40/2abcbeb388f4e9c455a9438bdbe730ecf11dbbc3}
 
   '@milaboratory/pframes-conv@0.4.26':
     resolution: {integrity: sha512-pPfr3tld22EcjtwLrf7dI5o7EwB3f3rkmyvDzYpE0NuQ92SmgSuEVzUUy8r/WmL2UQhHCVG+HJIFINz5nSpxBw==, tarball: https://npm.pkg.github.com/download/@milaboratory/pframes-conv/0.4.26/8e913dd0c25060f11eaa2ce185fe206289f42be7}
@@ -5338,8 +5338,8 @@ snapshots:
   '@milaboratory/graph-maker@1.0.2(typescript@5.5.4)':
     dependencies:
       '@milaboratory/helpers': 1.5.3
-      '@milaboratory/miplots4': 1.0.38
-      '@milaboratory/pf-plots': 1.0.38
+      '@milaboratory/miplots4': 1.0.39
+      '@milaboratory/pf-plots': 1.0.40
       '@milaboratory/platforma-uikit': 1.0.7(typescript@5.5.4)
       '@milaboratory/sdk-model': 1.3.9
       '@types/d3-hierarchy': 3.1.7
@@ -5386,7 +5386,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@milaboratory/miplots4@1.0.38':
+  '@milaboratory/miplots4@1.0.39':
     dependencies:
       '@stdlib/stats-anova1': 0.0.7
       '@stdlib/stats-kruskal-test': 0.0.7
@@ -5410,7 +5410,7 @@ snapshots:
 
   '@milaboratory/mixcr@4.7.0-70-develop': {}
 
-  '@milaboratory/pf-plots@1.0.38':
+  '@milaboratory/pf-plots@1.0.40':
     dependencies:
       '@milaboratory/sdk-model': 1.3.9
       canonicalize: 2.0.0

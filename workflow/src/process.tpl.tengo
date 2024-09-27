@@ -11,23 +11,23 @@ pframes := import("@milaboratory/tengo-sdk:pframes")
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
 
 self.awaitState("datasets", { wildcard: "*" }, "ResourceReady")
+self.awaitState("donorColumn", "ResourceReady")
 
 self.body(func(inputs) {
-    // TODO from real annotations
-	presetAnnotations := {
-      "mixcr.com/assemblingFeature": "VDJRegion",
-      "mixcr.com/cellTags": "",
-      "mixcr.com/coveredFeaturesOnExport": "FR1,CDR1,FR2,CDR2,FR3,CDR3,FR4",
-      "mixcr.com/umiTags": "UMI"
-    }
+	// ll.print("DEBUG_MESSAGE donorColumn", inputs.donorColumn.get("data").getDataAsJson())
+	// ll.print("DEBUG_MESSAGE datasets", inputs.datasets)
+	// ll.panic("exit")
 
-	dataDescription := {
+    dataDescription := {
 		"hasUmiTags": false,
 		"hasCellTags": false,
 		"coveredFeatures": []
 	}
 
+	assemblingFeature := ""
 	for _, dataset in inputs.datasets {
+		presetAnnotations := dataset.get("spec").getDataAsJson()["annotations"]
+	
 		if presetAnnotations["mixcr.com/cellTags"] != "" {
 			dataDescription["hasCellTags"] = true
 		}
@@ -35,7 +35,11 @@ self.body(func(inputs) {
 			dataDescription["hasUmiTags"] = true
 		}
 		dataDescription["coveredFeatures"] = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
-		// TODO chech assemblingFeature equality
+		if (assemblingFeature == "") {
+			assemblingFeature = dataDescription["mixcr.com/assemblingFeature"]
+		} else if (assemblingFeature != dataDescription["mixcr.com/assemblingFeature"]) {
+			ll.panic("Assmble features should be the same for process tress. Got " + assemblingFeature + " and " + dataDescription["mixcr.com/assemblingFeature"])
+		}
 	}
 
 	// TODO proccess list, not the first

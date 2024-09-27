@@ -20,8 +20,11 @@ wf.body(func(args) {
 		datasets[string(i)] = wf.resolve(datasetRef)
 	}
 
+	donorColumn := wf.resolve(args.donorColumn)
+
 	results := render.createEphemeral(processTpl, {
-		datasets: datasets
+		datasets: datasets,
+		donorColumn: donorColumn
 	})
 
 	return {
