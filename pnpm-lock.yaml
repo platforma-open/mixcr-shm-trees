@@ -37,8 +37,8 @@ catalogs:
       specifier: 4.7.0-70-develop
       version: 4.7.0-70-develop
     '@platforma-sdk/block-tools':
-      specifier: ^2.1.5
-      version: 2.1.5
+      specifier: ^2.3.4
+      version: 2.3.4
     '@platforma-sdk/model':
       specifier: ^1.2.27
       version: 1.2.27
@@ -107,7 +107,7 @@ importers:
         version: 2.27.8
       '@platforma-sdk/block-tools':
         specifier: 'catalog:'
-        version: 2.1.5
+        version: 2.3.4
 
   model:
     dependencies:
@@ -120,7 +120,7 @@ importers:
     devDependencies:
       '@platforma-sdk/block-tools':
         specifier: 'catalog:'
-        version: 2.1.5
+        version: 2.3.4
       tsup:
         specifier: 'catalog:'
         version: 8.1.2(postcss@8.4.47)(typescript@5.5.4)(yaml@2.5.1)
@@ -931,10 +931,6 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
-
-  '@platforma-sdk/block-tools@2.1.5':
-    resolution: {integrity: sha512-IUmpyUo+MYZ15BZ4CysaWDVRy+supZp/I6OwL0Vc2bV5IgczoM7VPClt7Wo7ASav/mvkyJ/eQVS1do8G3Z7BPA==}
-    hasBin: true
 
   '@platforma-sdk/block-tools@2.3.4':
     resolution: {integrity: sha512-cIff6ERlFaHZ98Ojo59ZPYzK91Dck2AlBtYdb+YbAEaYLwv4toXaIs3AxTA21RIYoP8EuB0744o5c6XcTZ9h+A==}
@@ -5616,21 +5612,6 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
-
-  '@platforma-sdk/block-tools@2.1.5':
-    dependencies:
-      '@aws-sdk/client-s3': 3.658.1
-      '@milaboratories/pl-model-middle-layer': 1.4.2
-      '@milaboratories/ts-helpers': 1.0.27
-      '@milaboratories/ts-helpers-oclif': 1.1.5
-      '@oclif/core': 4.0.23
-      mime-types: 2.1.35
-      semver: 7.6.3
-      tar: 7.4.3
-      yaml: 2.5.1
-      zod: 3.23.8
-    transitivePeerDependencies:
-      - aws-crt
 
   '@platforma-sdk/block-tools@2.3.4':
     dependencies:

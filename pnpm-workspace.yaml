@@ -7,8 +7,7 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^1.14.11
-  '@platforma-sdk/block-tools': ^2.1.5
-  '@milaboratory/block-builder': ^1.2.3
+  '@platforma-sdk/block-tools': ^2.3.4
 
   '@platforma-sdk/model': ^1.2.27
   '@platforma-sdk/test': ^1.5.23
