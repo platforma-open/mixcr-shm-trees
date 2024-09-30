@@ -8,7 +8,7 @@ import {
   isPColumn,
   isPColumnSpec,
   PTableRecordSingleValueFilter
-} from '@milaboratory/sdk-ui';
+} from '@platforma-sdk/model';
 import { string } from 'zod';
 
 /**

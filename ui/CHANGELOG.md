@@ -1,1 +1,1 @@
-# @milaboratory/milaboratories.mixcr-shm-trees.ui
+# @platforma-open/milaboratories.mixcr-shm-trees.ui

@@ -1,5 +1,5 @@
 {
-  "name": "@milaboratory/milaboratories.mixcr-shm-trees.test",
+  "name": "@platforma-open/milaboratories.mixcr-shm-trees.test",
   "private": true,
   "version": "1.0.1",
   "description": "Block tests",
@@ -10,12 +10,10 @@
   "files": [],
   "keywords": [],
   "dependencies": {
-    "this-block": "workspace:@milaboratory/milaboratories.mixcr-shm-trees@*",
-    "@milaboratory/milaboratories.samples-and-data.model": "catalog:",
-    "@milaboratory/milaboratories.samples-and-data": "catalog:"
+    "this-block": "workspace:@platforma-open/milaboratories.mixcr-shm-trees@*"
   },
   "devDependencies": {
-    "@milaboratory/sdk-test": "catalog:",
+    "@platforma-sdk/test": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"
   }

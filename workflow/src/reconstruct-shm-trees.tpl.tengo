@@ -1,8 +1,8 @@
-self := import("@milaboratory/tengo-sdk:tpl")
-pConstants := import("@milaboratory/tengo-sdk:pframes.constants")
-ll := import("@milaboratory/tengo-sdk:ll")
-assets := import("@milaboratory/tengo-sdk:assets")
-exec := import("@milaboratory/tengo-sdk:exec")
+self := import("@platforma-sdk/workflow-tengo:tpl")
+pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
+ll := import("@platforma-sdk/workflow-tengo:ll")
+assets := import("@platforma-sdk/workflow-tengo:assets")
+exec := import("@platforma-sdk/workflow-tengo:exec")
 
 json := import("json")
 

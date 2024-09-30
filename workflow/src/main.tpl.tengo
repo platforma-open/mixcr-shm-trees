@@ -1,8 +1,8 @@
-wf := import("@milaboratory/tengo-sdk:workflow")
+wf := import("@platforma-sdk/workflow-tengo:workflow")
 
-render := import("@milaboratory/tengo-sdk:render")
-assets := import("@milaboratory/tengo-sdk:assets")
-ll := import("@milaboratory/tengo-sdk:ll")
+render := import("@platforma-sdk/workflow-tengo:render")
+assets := import("@platforma-sdk/workflow-tengo:assets")
+ll := import("@platforma-sdk/workflow-tengo:ll")
 
 processTpl := assets.importTemplate(":process")
 

@@ -1,5 +1,5 @@
-ll := import("@milaboratory/tengo-sdk:ll")
-smart := import("@milaboratory/tengo-sdk:smart")
+ll := import("@platforma-sdk/workflow-tengo:ll")
+smart := import("@platforma-sdk/workflow-tengo:smart")
 
 json := import("json")
 

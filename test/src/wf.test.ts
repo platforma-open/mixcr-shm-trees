@@ -3,12 +3,12 @@ import {
   BlockOutputs,
   platforma,
   uniquePlId
-} from '@milaboratory/milaboratories.mixcr-shm-trees.model';
-import { awaitStableState, blockTest } from '@milaboratory/sdk-test';
-import { blockSpec as samplesAndDataBlockSpec } from '@milaboratory/milaboratories.samples-and-data';
-import { BlockArgs as SamplesAndDataBlockArgs } from '@milaboratory/milaboratories.samples-and-data.model';
+} from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { awaitStableState, blockTest } from '@platforma-sdk/test';
+import { blockSpec as samplesAndDataBlockSpec } from '@platforma-open/milaboratories.samples-and-data';
+import { BlockArgs as SamplesAndDataBlockArgs } from '@platforma-open/milaboratories.samples-and-data.model';
 import { blockSpec as myBlockSpec } from 'this-block';
-import { InferBlockState, fromPlRef, wrapOutputs } from '@milaboratory/sdk-ui';
+import { InferBlockState, fromPlRef, wrapOutputs } from '@platforma-sdk/model';
 import * as tp from 'node:timers/promises';
 
 blockTest('empty imputs', { timeout: 30000 }, async ({ rawPrj: project, ml, helpers, expect }) => {

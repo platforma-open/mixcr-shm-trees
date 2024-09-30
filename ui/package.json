@@ -1,5 +1,5 @@
 {
-  "name": "@milaboratory/milaboratories.mixcr-shm-trees.ui",
+  "name": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
   "version": "1.0.1",
   "type": "module",
   "scripts": {
@@ -13,11 +13,11 @@
     "@ag-grid-community/core": "catalog:",
     "@ag-grid-community/styles": "catalog:",
     "@ag-grid-community/vue3": "catalog:",
-    "@milaboratory/helpers": "catalog:",
-    "@milaboratory/milaboratories.mixcr-shm-trees.model": "workspace:*",
-    "@milaboratory/platforma-uikit": "catalog:",
-    "@milaboratory/sdk-ui": "catalog:",
-    "@milaboratory/sdk-vue": "catalog:",
+    "@milaboratories/helpers": "catalog:",
+    "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
+    "@milaboratories/uikit": "catalog:",
+    "@platforma-sdk/model": "catalog:",
+    "@platforma-sdk/ui-vue": "catalog:",
     "@milaboratory/graph-maker": "catalog:",
     "utility-types": "catalog:",
     "vue": "catalog:",

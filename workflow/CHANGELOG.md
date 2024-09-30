@@ -1,1 +1,1 @@
-# @milaboratory/milaboratories.mixcr-shm-trees.workflow
+# @platforma-open/milaboratories.mixcr-shm-trees.workflow

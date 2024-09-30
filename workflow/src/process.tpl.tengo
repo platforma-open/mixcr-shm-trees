@@ -1,13 +1,13 @@
-self := import("@milaboratory/tengo-sdk:tpl")
+self := import("@platforma-sdk/workflow-tengo:tpl")
 
-llPFrames := import("@milaboratory/tengo-sdk:pframes.ll")
-ll := import("@milaboratory/tengo-sdk:ll")
-assets := import("@milaboratory/tengo-sdk:assets")
-xsv := import("@milaboratory/tengo-sdk:pframes.xsv")
+llPFrames := import("@platforma-sdk/workflow-tengo:pframes.ll")
+ll := import("@platforma-sdk/workflow-tengo:ll")
+assets := import("@platforma-sdk/workflow-tengo:assets")
+xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 text := import("text")
 exportSettings := import(":export-settings")
 prepareDonorColumn := import(":prepare-donor-column")
-pframes := import("@milaboratory/tengo-sdk:pframes")
+pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
 

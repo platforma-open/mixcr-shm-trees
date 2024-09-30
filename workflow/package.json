@@ -1,5 +1,5 @@
 {
-  "name": "@milaboratory/milaboratories.mixcr-shm-trees.workflow",
+  "name": "@platforma-open/milaboratories.mixcr-shm-trees.workflow",
   "version": "1.0.1",
   "type": "module",
   "description": "Tengo-based template",
@@ -12,11 +12,11 @@
     "test": "vitest"
   },
   "devDependencies": {
-    "@milaboratory/tengo-template-builder": "catalog:",
-    "@milaboratory/tengo-sdk": "catalog:",
-    "@milaboratory/pframes-conv": "catalog:",
+    "@platforma-sdk/tengo-builder": "catalog:",
+    "@platforma-sdk/workflow-tengo": "catalog:",
+    "@milaboratories/software-pframes-conv": "catalog:",
     "@milaboratory/mixcr": "catalog:",
-    "@milaboratory/sdk-test": "catalog:",
+    "@platforma-sdk/test": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"
   }

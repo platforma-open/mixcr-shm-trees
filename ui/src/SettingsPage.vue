@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useApp } from './app';
 import { computed } from 'vue';
-import { PlBlockPage, PlDropdown } from '@milaboratory/platforma-uikit';
+import { PlBlockPage, PlDropdown } from '@milaboratories/uikit';
 
 const app = useApp();
 const args = app.createArgsModel();
