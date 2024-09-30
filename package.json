@@ -43,6 +43,7 @@
     "@changesets/cli": "catalog:"
   },
   "//": {
+    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'",
     "pnpm": {
       "overrides": {
         "@milaboratory/pl-middle-layer": "file:/Volumes/Data/Projects/MiLaboratory/platforma/ts-pl-middle-layer/milaboratory-pl-middle-layer-1.9.30.tgz"
