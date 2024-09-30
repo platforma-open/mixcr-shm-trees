@@ -6,10 +6,8 @@ import { GraphMakerSettings } from "@milaboratory/graph-maker/dist/GraphMaker/ty
 import { GraphMaker } from '@milaboratory/graph-maker'
 import { computed } from 'vue';
 import { PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
-import { ref } from "vue";
 
 import "@milaboratory/graph-maker/dist/style.css";
-import "@milaboratories/uikit/lib/dist/style.css";
 
 type DonorOptions = { [index: string]: number[] }
 
