@@ -7,9 +7,7 @@ import {
   PlDataTableState,
   isPColumn,
   isPColumnSpec,
-  PTableRecordSingleValueFilter
 } from '@platforma-sdk/model';
-import { string } from 'zod';
 
 /**
  * Block arguments coming from the user interface
@@ -28,6 +26,12 @@ export type UiState = {
   treeTableState?: PlDataTableState;
   treeSelectionForTreeNodesTable: TreeSelection
 };
+
+export type ColumnOption = {
+  ref: Ref,
+  label: string,
+  spec: PColumnSpec
+}
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
@@ -94,8 +98,9 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
             // @todo info about what was run
             label: `${ctx.getBlockLabel(v.ref.blockId)} / ${
               v.obj.annotations?.['pl7.app/label'] ?? `unlabelled`
-            }`
-          } satisfies Option)
+            }`,
+            spec: v.obj as PColumnSpec
+          } as ColumnOption)
       );
   })
 

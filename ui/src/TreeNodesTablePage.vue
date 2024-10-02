@@ -1,31 +1,39 @@
 <script setup lang="ts">
 import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
-import { computedAsync } from '@vueuse/core';
 import { GraphMakerSettings } from "@milaboratory/graph-maker/dist/GraphMaker/types";
 import { GraphMaker } from '@milaboratory/graph-maker'
-import { computed } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
 
 import "@milaboratory/graph-maker/dist/style.css";
+import { PColumnIdAndSpec } from '@platforma-sdk/model';
 
-type DonorOptions = { [index: string]: number[] }
+type DonorOptions = { 
+  [index: string]: number[] 
+}
+
+type State = {
+  columns?: PColumnIdAndSpec[],
+  donors?: DonorOptions
+}
 
 const app = useApp();
+const pframe = computed(() => app.getOutputFieldOkOptional('treeNodes')!)
+const pFrameDriver = platforma.pFrameDriver
 
 const uiState = app.createUiModel({}, () => ({
   treeSelectionForTreeNodesTable: {}
 }))
 
-const pframe = app.getOutputFieldOkOptional('treeNodes')!
+const state = reactive({} as State)
 
-const pFrameDriver = platforma.pFrameDriver
-
-const donors = computedAsync(async () => {
-  const columns = await pFrameDriver.listColumns(pframe)
-  const column = columns[0]
+watch(() => pframe, async (it) => {
+  state.columns = await pFrameDriver.listColumns(it.value)
   
-  const donors = await platforma.pFrameDriver.getUniqueValues(pframe, {
+  const column = state.columns[0]
+  
+  const donors = await platforma.pFrameDriver.getUniqueValues(it.value, {
     columnId: column.columnId,
     axis: column.spec.axesSpec[0],
     filters: [],
@@ -34,7 +42,7 @@ const donors = computedAsync(async () => {
 
   const posibleValues = {} as DonorOptions
   for (const donor of donors.values.data) {
-    const treeIds = await platforma.pFrameDriver.getUniqueValues(pframe, {
+    const treeIds = await platforma.pFrameDriver.getUniqueValues(it.value, {
       columnId: column.columnId,
       axis: column.spec.axesSpec[1],
       filters: [
@@ -58,37 +66,19 @@ const donors = computedAsync(async () => {
     }
   }
 
-  return posibleValues
-})
+  state.donors = posibleValues
+}, { immediate: true})
 
-const donorOptions = computed(() => {
-  const result = []
-  if (donors.value === undefined) {
-    return []
+watch(() => uiState.model.treeSelectionForTreeNodesTable.donor, (newDonorValue, oldDonorValue) => {
+  if (newDonorValue !== oldDonorValue) {
+    delete uiState.model.treeSelectionForTreeNodesTable.treeId
   }
-  for (const donor in donors.value) {
-    result.push({ text: donor, value: donor })
-  }
-  return result
-})
-
-const treesOptions = computed(() => {
-  const selectedDonor = uiState.model.treeSelectionForTreeNodesTable.donor
-  if (donors.value === undefined || selectedDonor === undefined || selectedDonor === null) {
-    return []
-  } 
-  const treeIds = donors.value[selectedDonor] ?? []
-  const result = []
-  for (const treeId of treeIds) {
-    result.push({ text: treeId.toString(), value: treeId })
-  }
-  return result
 })
 
 // TODO save up changes
-const settings = computedAsync(async () => {
-  const columns = await pFrameDriver.listColumns(pframe)
-  const column = columns[0]
+const settings = computed(() => {
+  if (state.columns === undefined || state.columns.length === 1) return undefined
+  const column = state.columns[0]
   return {
     chartType: "dendro",
     template: "dendro",
@@ -116,26 +106,52 @@ const settings = computedAsync(async () => {
       },
     ]
   } satisfies GraphMakerSettings
-});
+})
+
+
+const donorOptions = computed(() => {
+  const result = []
+  if (state.donors === undefined) {
+    return []
+  }
+  for (const donor in state.donors) {
+    result.push({ text: donor, value: donor })
+  }
+  return result
+})
+
+const treesOptions = computed(() => {
+  const selectedDonor = uiState.model.treeSelectionForTreeNodesTable.donor
+  if (state.donors === undefined || selectedDonor === undefined || selectedDonor === null) {
+    return []
+  } 
+  const treeIds = state.donors[selectedDonor] ?? []
+  const result = []
+  for (const treeId of treeIds) {
+    result.push({ text: treeId.toString(), value: treeId })
+  }
+  return result
+})
 
 </script>
 
 <template>
-  <PlBlockPage>
-    <PlRow>
-      <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
-      <PlSpacer/>
-      <!-- TODO make it work better after refresh -->
-      <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
-    </PlRow>
-    <!-- TODO generate and save title -->
-    <GraphMaker 
-      v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
-      !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"
-      :p-frame-handle="app.outputs.treeNodes.value"
-      :settings="settings"
-      :p-frame-driver="platforma.pFrameDriver"
-      graph-title="Title"
-      />
-  </PlBlockPage>
+  <template v-if="state.donors">
+    <PlBlockPage>
+      <PlRow>
+        <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
+        <PlSpacer/>
+        <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
+      </PlRow>
+      <!-- TODO generate and save title -->
+      <GraphMaker 
+        v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
+        !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"
+        :p-frame-handle=app.outputs.treeNodes.value
+        :settings=settings
+        :p-frame-driver=platforma.pFrameDriver
+        graph-title="Title"
+        />
+    </PlBlockPage>
+  </template>
 </template>
