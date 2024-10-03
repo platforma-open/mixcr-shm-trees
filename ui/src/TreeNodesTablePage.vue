@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
-import { GraphMakerSettings } from "@milaboratory/graph-maker/dist/GraphMaker/types";
-import { GraphMaker } from '@milaboratory/graph-maker'
+import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
+import { GraphMaker } from '@milaboratories/graph-maker'
 import { computed, reactive, watch } from 'vue';
 import { PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
 
-import "@milaboratory/graph-maker/dist/style.css";
+import "@milaboratories/graph-maker/dist/style.css";
 import { PColumnIdAndSpec } from '@platforma-sdk/model';
+import { deepClone } from '@milaboratories/helpers';
 
 type DonorOptions = { 
   [index: string]: number[] 
@@ -19,7 +20,6 @@ type State = {
 }
 
 const app = useApp();
-const pframe = computed(() => app.getOutputFieldOkOptional('treeNodes')!)
 const pFrameDriver = platforma.pFrameDriver
 
 const uiState = app.createUiModel({}, () => ({
@@ -28,21 +28,24 @@ const uiState = app.createUiModel({}, () => ({
 
 const state = reactive({} as State)
 
-watch(() => pframe, async (it) => {
-  state.columns = await pFrameDriver.listColumns(it.value)
+watch(() => app.getOutputFieldOkOptional('treeNodes'), async (pframe) => {
+  if (pframe === undefined) return
+  state.columns = await pFrameDriver.listColumns(pframe)
   
   const column = state.columns[0]
   
-  const donors = await platforma.pFrameDriver.getUniqueValues(it.value, {
+  // TODO remove deepClone after fix of API
+  const donors = await pFrameDriver.getUniqueValues(pframe, deepClone({
     columnId: column.columnId,
     axis: column.spec.axesSpec[0],
     filters: [],
     limit: Number.MAX_SAFE_INTEGER
-  })
+  }))
 
   const posibleValues = {} as DonorOptions
   for (const donor of donors.values.data) {
-    const treeIds = await platforma.pFrameDriver.getUniqueValues(it.value, {
+    // TODO remove deepClone after fix of API
+    const treeIds = await pFrameDriver.getUniqueValues(pframe, deepClone({
       columnId: column.columnId,
       axis: column.spec.axesSpec[1],
       filters: [
@@ -59,7 +62,7 @@ watch(() => pframe, async (it) => {
        }
       ],
       limit: Number.MAX_SAFE_INTEGER
-    })
+    }))
     posibleValues[donor as string] = []
     for (const treeId of treeIds.values.data) {
       posibleValues[donor as string].push(Number(treeId as bigint))
@@ -69,8 +72,19 @@ watch(() => pframe, async (it) => {
   state.donors = posibleValues
 }, { immediate: true})
 
-watch(() => uiState.model.treeSelectionForTreeNodesTable.donor, (newDonorValue, oldDonorValue) => {
-  if (newDonorValue !== oldDonorValue) {
+// watch(() => uiState.model.treeSelectionForTreeNodesTable.donor, (newDonorValue, oldDonorValue) => {
+//   if (newDonorValue !== oldDonorValue) {
+//     uiState.model.treeSelectionForTreeNodesTable.treeId = undefined
+//   }
+// })
+
+// TODO replace donorProperty with watch above after fix of rewriting of uistate
+const donorProperty = computed({
+  get() { 
+    return uiState.model.treeSelectionForTreeNodesTable.donor 
+  },
+  set(donor) {
+    uiState.model.treeSelectionForTreeNodesTable.donor = donor
     delete uiState.model.treeSelectionForTreeNodesTable.treeId
   }
 })
@@ -139,14 +153,14 @@ const treesOptions = computed(() => {
   <template v-if="state.donors">
     <PlBlockPage>
       <PlRow>
-        <PlDropdown :options="donorOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.donor" label="Donor" clearable />
+        <PlDropdown :options="donorOptions ?? []" v-model="donorProperty" label="Donor" clearable />
         <PlSpacer/>
         <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
       </PlRow>
       <!-- TODO generate and save title -->
       <GraphMaker 
         v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
-        !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"
+        !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined || settings === undefined)"
         :p-frame-handle=app.outputs.treeNodes.value
         :settings=settings
         :p-frame-driver=platforma.pFrameDriver
@@ -154,4 +168,5 @@ const treesOptions = computed(() => {
         />
     </PlBlockPage>
   </template>
+  <template v-else>loading...</template>
 </template>

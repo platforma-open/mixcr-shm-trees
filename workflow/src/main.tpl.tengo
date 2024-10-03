@@ -17,7 +17,9 @@ wf.body(func(args) {
 
 	datasets := {}
 	for datasetRef in args.datasetColumns {
-		ll.print("DEBUG_MESSAGE", datasetRef)
+		if is_undefined(datasetRef) {
+			ll.panic("Dataset is undefined")
+		}
 		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
 	}
 

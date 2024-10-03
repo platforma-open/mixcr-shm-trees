@@ -60,7 +60,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
   .output('datasetColumnOptions', (ctx) => {
     if (ctx.args.donorColumn === undefined) {
-      return [];
+      return undefined;
     }
     const donorColumn = ctx.args.donorColumn;
     const donorColumnSpec = ctx.resultPool
@@ -104,12 +104,6 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
       );
   })
 
-  .output('allColumnSpecs', (ctx) => {
-    return ctx.resultPool.getSpecsFromResultPool().entries.filter((v) => {
-      return isPColumnSpec(v.obj);
-    });
-  })
-
   .output('trees', (ctx) => {
     const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
     if (pCols === undefined) return undefined;
@@ -120,80 +114,11 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     });
   })
 
-  // .output('treeNodes', (ctx) => {
-  //   const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
-  //   if (pCols === undefined) return undefined;
-  //   const someCol = pCols![0];
-
-  //   const donors = someCol.data.listInputFields().map((o) => (JSON.parse(o) as string[])[0]);
-
-  //   const donor = donors[0];
-
-  //   const filters = ctx.uiState?.treeNodesTableState?.pTableParams?.filters ?? [];
-
-  //   filters.push({
-  //     type: 'bySingleColumn',
-  //     column: {
-  //       type: 'axis',
-  //       id: someCol.spec.axesSpec[0]
-  //     },
-  //     predicate: {
-  //       operator: 'Equal',
-  //       reference: donor
-  //     }
-  //   });
-
-  //   filters.push({
-  //     type: 'bySingleColumn',
-  //     column: {
-  //       type: 'axis',
-  //       id: someCol.spec.axesSpec[1]
-  //     },
-  //     predicate: {
-  //       operator: 'Equal',
-  //       reference: 1
-  //     }
-  //   });
-
-  //   return ctx.createPTable({
-  //     columns: pCols,
-  //     filters: filters,
-  //     sorting: ctx.uiState?.treeNodesTableState?.pTableParams?.sorting ?? []
-  //   });
-  // })
-
   .output('treeNodes', (ctx) => {
     const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
     if (pCols === undefined) return undefined;
     
     return ctx.createPFrame(pCols);
-  })
-
-  .output('temp', (ctx) => {
-    return {
-      trees: {
-        fields: ctx.outputs?.resolve('trees')?.listInputFields(),
-        columns: ctx.outputs
-          ?.resolve('trees')
-          ?.getPColumns()
-          ?.map((o) => ({
-            spec: o.spec,
-            resourseType: o.data.resourceType,
-            data: o.data.getDataAsJson()
-          }))
-      },
-      treesWithNodes: {
-        fields: ctx.outputs?.resolve('treeNodes')?.listInputFields(),
-        columns: ctx.outputs
-          ?.resolve('treeNodes')
-          ?.getPColumns()
-          ?.map((o) => ({
-            spec: o.spec,
-            resourseType: o.data.resourceType,
-            data: o.data.getDataAsJson()
-          }))
-      }
-    };
   })
 
   .output('allelesLog', (ctx) => {

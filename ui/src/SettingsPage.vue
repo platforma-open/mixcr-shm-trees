@@ -105,10 +105,12 @@ function onRemove(i: number) {
 <template>
   <PlBlockPage>
     <template #title>Settings</template>
-    <PlDropdown :options="donorColumnOptions ?? []" v-model="args.model.donorColumn" label="Select donor column" clearable />
-    <template v-if="!(args.model.donorColumn === undefined) && supportedDatasetColumns === undefined">
-      loading...
+    <template v-if="donorColumnOptions">
+      <PlDropdown :options="donorColumnOptions" v-model="args.model.donorColumn" label="Select donor column" clearable />
     </template>
+    <template v-else>loading...</template>
+
+    <template v-if="!(args.model.donorColumn === undefined) && supportedDatasetColumns === undefined">loading...</template>
     <template v-else-if="!(args.model.donorColumn === undefined || supportedDatasetColumns === undefined)">
       <template v-if="supportedDatasetColumns.length > 0">
         <div v-for="(dataset, index) in args.model.datasetColumns" class="d-flex gap-8 align-center">
