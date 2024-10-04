@@ -50,16 +50,22 @@ self.body(func(inputs) {
 		reconstructShmTreesTpl,
 		[
 			{
+				"name": "trees", 
+				"type": "Resource"
+			}, {
+				"name": "treeNodes", 
+				"type": "Resource"
+			}, {
 				"name": "allelesLog", 
 				"type": "Resource"
 			}, {
 				"name": "treesLog", 
 				"type": "Resource"
 			}, {
-				"name": "trees", 
+				"name": "allelesReport", 
 				"type": "Resource"
 			}, {
-				"name": "treeNodes", 
+				"name": "treesReport", 
 				"type": "Resource"
 			}
 		],
@@ -89,9 +95,13 @@ self.body(func(inputs) {
     )
 
     return {
-        "allelesLog": mixcrResults.output("allelesLog"),
-        "treesLog": mixcrResults.output("treesLog"),
         "trees": pframes.exportFrame(trees),
-        "treeNodes": pframes.exportFrame(treeNodes)
+        "treeNodes": pframes.exportFrame(treeNodes),
+        
+		"allelesLogs": mixcrResults.output("allelesLog"),
+        "treesLogs": mixcrResults.output("treesLog"),
+
+		"allelesReports": mixcrResults.output("allelesReport"),
+        "treesReports": mixcrResults.output("treesReport")
 	}
 })

@@ -23,7 +23,10 @@ const app = useApp();
 const pFrameDriver = platforma.pFrameDriver
 
 const uiState = app.createUiModel({}, () => ({
-  treeSelectionForTreeNodesTable: {}
+  treeSelectionForTreeNodesTable: {},
+  reportSelection: {
+    type: 'alleles'
+  }
 }))
 
 const state = reactive({} as State)
@@ -153,9 +156,9 @@ const treesOptions = computed(() => {
   <template v-if="state.donors">
     <PlBlockPage>
       <PlRow>
-        <PlDropdown :options="donorOptions ?? []" v-model="donorProperty" label="Donor" clearable />
+        <PlDropdown :options="donorOptions ?? []" v-model=donorProperty label="Donor" clearable />
         <PlSpacer/>
-        <PlDropdown :options="treesOptions ?? []" v-model="uiState.model.treeSelectionForTreeNodesTable.treeId" label="Tree" clearable />
+        <PlDropdown :options="treesOptions ?? []" v-model=uiState.model.treeSelectionForTreeNodesTable.treeId label="Tree" clearable />
       </PlRow>
       <!-- TODO generate and save title -->
       <GraphMaker 
@@ -163,8 +166,10 @@ const treesOptions = computed(() => {
         !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined || settings === undefined)"
         :p-frame-handle=app.outputs.treeNodes.value
         :settings=settings
+        @settings-update=""
         :p-frame-driver=platforma.pFrameDriver
         graph-title="Title"
+        @graph-title-update=""
         />
     </PlBlockPage>
   </template>

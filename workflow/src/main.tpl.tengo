@@ -3,6 +3,7 @@ wf := import("@platforma-sdk/workflow-tengo:workflow")
 render := import("@platforma-sdk/workflow-tengo:render")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 ll := import("@platforma-sdk/workflow-tengo:ll")
+pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 processTpl := assets.importTemplate(":process")
 
@@ -32,10 +33,14 @@ wf.body(func(args) {
 
 	return {
 		outputs: {
-			"allelesLog": results.output("allelesLog"),
-			"treesLog": results.output("treesLog"),
 			"trees": results.output("trees"),
-			"treeNodes": results.output("treeNodes")
+			"treeNodes": results.output("treeNodes"),
+			
+			"allelesLogs": results.output("allelesLogs"),
+			"treesLogs": results.output("treesLogs"),
+
+			"allelesReports": pframes.exportColumnData(results.output("allelesReports")),
+			"treesReports": pframes.exportColumnData(results.output("treesReports"))
 		},
 		exports: {}
 	}

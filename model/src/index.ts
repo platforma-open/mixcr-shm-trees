@@ -6,8 +6,9 @@ import {
   InferOutputsType,
   PlDataTableState,
   isPColumn,
-  isPColumnSpec,
+  isPColumnSpec
 } from '@platforma-sdk/model';
+import { parseResourceMap } from './helpers';
 
 /**
  * Block arguments coming from the user interface
@@ -18,20 +19,26 @@ export type BlockArgs = {
 };
 
 export type TreeSelection = {
-  donor?: string,
-  treeId?: number
-}
+  donor?: string;
+  treeId?: number;
+};
+
+export type ReportSelection = {
+  donor?: string;
+  type: 'alleles' | 'shmTrees';
+};
 
 export type UiState = {
   treeTableState?: PlDataTableState;
-  treeSelectionForTreeNodesTable: TreeSelection
+  treeSelectionForTreeNodesTable: TreeSelection;
+  reportSelection: ReportSelection;
 };
 
 export type ColumnOption = {
-  ref: Ref,
-  label: string,
-  spec: PColumnSpec
-}
+  ref: Ref;
+  label: string;
+  spec: PColumnSpec;
+};
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
@@ -39,8 +46,8 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     datasetColumns: [null]
   })
 
-  .output('donorColumnOptions', (ctx) => {
-    return ctx.resultPool
+  .output('donorColumnOptions', (ctx) =>
+    ctx.resultPool
       .getSpecsFromResultPool()
       .entries.filter((v) => isPColumnSpec(v.obj))
       .filter((v) => {
@@ -55,8 +62,8 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
               v.obj.annotations?.['pl7.app/label'] ?? `unlabelled`
             }`
           } satisfies Option)
-      );
-  })
+      )
+  )
 
   .output('datasetColumnOptions', (ctx) => {
     if (ctx.args.donorColumn === undefined) {
@@ -117,20 +124,27 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   .output('treeNodes', (ctx) => {
     const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
     if (pCols === undefined) return undefined;
-    
+
     return ctx.createPFrame(pCols);
   })
 
-  .output('allelesLog', (ctx) => {
-    return ctx.outputs?.resolve('allelesLog')?.listInputFields();
-  })
+  .output('allelesReports', (ctx) =>
+    parseResourceMap(
+      ctx.outputs?.resolve({ field: 'allelesReports', assertFieldType: 'Input' }),
+      (acc) => acc.getFileContentAsString()
+    )
+  )
 
-  .output('treesLog', (ctx) => {
-    return ctx.outputs?.resolve('treesLog')?.listInputFields();
-  })
+  .output('treesReports', (ctx) =>
+    parseResourceMap(
+      ctx.outputs?.resolve({ field: 'treesReports', assertFieldType: 'Input' }),
+      (acc) => acc.getFileContentAsString()
+    )
+  )
 
   .sections([
     { type: 'link', href: '/', label: 'Settings' },
+    { type: 'link', href: '/reports', label: 'Reports' },
     { type: 'link', href: '/trees', label: 'Trees Table' },
     { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' }
   ])

@@ -7,7 +7,10 @@ import { PlAgDataTable, PlBlockPage, PlDataTableSettings } from '@platforma-sdk/
 const app = useApp();
 
 const uiState = app.createUiModel({}, () => ({
-  treeSelectionForTreeNodesTable: {}
+  treeSelectionForTreeNodesTable: {},
+  reportSelection: {
+    type: 'alleles'
+  }
 }))
 
 const tableSettings = computed<PlDataTableSettings>(() => ({

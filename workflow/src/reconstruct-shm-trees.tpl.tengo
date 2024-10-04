@@ -6,7 +6,11 @@ exec := import("@platforma-sdk/workflow-tengo:exec")
 
 json := import("json")
 
-self.defineOutputs("allelesLog", "treesLog", "trees", "treeNodes")
+self.defineOutputs(
+    "trees", "treeNodes",
+    "allelesLog", "treesLog",
+    "allelesReport", "treesReport"
+)
 
 mixcrSw := assets.importSoftware("@milaboratory/mixcr:main")
 progressPrefix := "[==PROGRESS==]"
@@ -19,6 +23,8 @@ self.body(func(inputs) {
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findAlleles").
+        arg("--report").arg("report.txt").
+        saveFile("report.txt").
         arg("--output-template").arg("alleles/{file_name}.clns")
 
     toProcess := []
@@ -47,6 +53,8 @@ self.body(func(inputs) {
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findShmTrees").
+        arg("--report").arg("report.txt").
+        saveFile("report.txt").
         // TODO support single cell trees
         arg("--dont-combine-tree-by-cells")
     
@@ -100,10 +108,13 @@ self.body(func(inputs) {
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
 
     return {
-        // TODO reports
+        "trees": shmTreeExports.getFile("output.tsv"),
+        "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
+
         "allelesLog": alleles.getStdoutStream(),
         "treesLog": shmTrees.getStdoutStream(),
-        "trees": shmTreeExports.getFile("output.tsv"),
-        "treeNodes": shmTreeNodesExports.getFile("output.tsv")
+
+        "allelesReport": alleles.getFile("report.txt"),
+        "treesReport": shmTrees.getFile("report.txt")
     }
 })
