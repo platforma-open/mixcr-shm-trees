@@ -8,6 +8,7 @@ import {
   isPColumn,
   isPColumnSpec
 } from '@platforma-sdk/model';
+import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
 
 /**
@@ -32,6 +33,7 @@ export type UiState = {
   treeTableState?: PlDataTableState;
   treeSelectionForTreeNodesTable: TreeSelection;
   reportSelection: ReportSelection;
+  treeNodesGraphState: GraphMakerSettings
 };
 
 export type ColumnOption = {

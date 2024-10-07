@@ -9,11 +9,13 @@ const args = app.createArgsModel();
 
 type State = {
   allDatasetColumns?: ColumnOption[],
+  // all selected datasets should have the same assmble feature, otherwise it's not possible to run alleles and trees
   selecetedAssembleFeature?: string
 }
 
 const state = reactive({} as State)
 
+// dataset options will be loaded with some delay. Copping it to state allow us to temporaly clean it up while loading
 watch(() => app.getOutputFieldOkOptional("datasetColumnOptions"), (options) => {
   console.log("new dataset options", options)
   state.allDatasetColumns = options 
@@ -22,13 +24,15 @@ watch(() => app.getOutputFieldOkOptional("datasetColumnOptions"), (options) => {
 watch(() => app.args.donorColumn, (donorNew, donorOld) => {
   if (donorNew?.blockId !== donorOld?.blockId && donorNew?.name !== donorOld?.name) {
     console.log("change of the donor", donorOld, donorNew)
+    // that will show loading message for the user while retriving new options
     delete state.allDatasetColumns
-    // cleanup selection of datasets on change of donor column
+    // cleanup all selection of datasets on change of donor column
     app.args.datasetColumns[0] = null
     app.args.datasetColumns.splice(1, app.args.datasetColumns.length - 1)
   }
 })
 
+// update assemble feature to filter dataset options according to choise of the first dataset
 watch(() => app.args.datasetColumns[0], (datasetColumnValue) => {
   console.log("change of seleceted first dataset", datasetColumnValue)
   if (state.allDatasetColumns === undefined || datasetColumnValue === null) {
@@ -55,6 +59,7 @@ watch(() => state.selecetedAssembleFeature, (newValue, oldValue) => {
   }
 })
 
+// all datasets available without regard is it possible to run trees on them
 const donorColumnOptions = computed(() =>
   app.getOutputFieldOkOptional("donorColumnOptions")?.map((v) => ({
     text: v.label,
@@ -62,6 +67,7 @@ const donorColumnOptions = computed(() =>
   }))
 );
 
+// select only datasets that could be used. Filter by assembling feature if any dataset is selected already
 const supportedDatasetColumns = computed(() => {
   const columns = state.allDatasetColumns
   if (columns === undefined) return undefined
@@ -69,13 +75,17 @@ const supportedDatasetColumns = computed(() => {
   return columns.filter((v) => {
     if (v.spec.annotations === undefined) return false
     const assemblingFeature = v.spec.annotations["mixcr.com/assemblingFeature"]
+    // assemblingFeature should exists
     if (assemblingFeature === undefined) return false
+    // assemblingFeature should not be just CDR3
     if (assemblingFeature === "CDR3" || assemblingFeature === "[CDR3]") return false
     if (state.selecetedAssembleFeature === undefined) return true
+    // assemblingFeature should be the same for all selected datasets
     return state.selecetedAssembleFeature === assemblingFeature
   })
 })
 
+// all supported options without already selected ones
 function datasetOptionsForRow(i: number) {
   return computed(() => {
     const selectedOptions = new Set()
@@ -125,7 +135,7 @@ function onRemove(i: number) {
             @click=onRemove(index)
           />
         </div>
-        <div v-if="supportedDatasetColumns.length > args.model.datasetColumns.length" class="d-flex gap-8 align-center">
+        <div v-if="supportedDatasetColumns.length > args.model.datasetColumns.length && args.model.datasetColumns[args.model.datasetColumns.length - 1] !== null" class="d-flex gap-8 align-center">
           <PlBtnPrimary
             icon="add"
             size="medium"

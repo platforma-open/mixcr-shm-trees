@@ -6,29 +6,28 @@ import { PlAgDataTable, PlBlockPage, PlDataTableSettings } from '@platforma-sdk/
 
 const app = useApp();
 
+// TODO should be moved to model
 const uiState = app.createUiModel({}, () => ({
   treeSelectionForTreeNodesTable: {},
   reportSelection: {
     type: 'alleles'
+  },
+  treeNodesGraphState: {
+    title: "",
+    chartType: "dendro",
+    template: "dendro",
+    optionsState: null,
+    statisticsSettings: null,
+    axesSettings: null,
+    layersSettings: null,
+    dataBindAes: null
   }
 }))
 
+// TODO add default option to filter table by donor
 const tableSettings = computed<PlDataTableSettings>(() => ({
   sourceType: "ptable",
-
-  pTable: app.outputs.trees,
-
-  // sheets: [
-  //   {
-  //     id: "trees",
-  //     axis: {
-  //       type: "String",
-  //       name: "pl7.app/sampleId",
-  //     },
-  //     options: [],
-  //     // defaultValue: ",
-  //   }
-  // ],
+  pTable: app.outputs.trees
 }));
 
 </script>

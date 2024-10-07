@@ -1,15 +1,25 @@
 <script setup lang="ts">
-import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
 import { computed, reactive, watch } from 'vue';
 import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlTextArea, SimpleOption } from '@platforma-sdk/ui-vue';
 
 const app = useApp();
 
+// TODO should be moved to model
 const uiState = app.createUiModel({}, () => ({
   treeSelectionForTreeNodesTable: {},
   reportSelection: {
     type: 'alleles'
+  },
+  treeNodesGraphState: {
+    title: "",
+    chartType: "dendro",
+    template: "dendro",
+    optionsState: null,
+    statisticsSettings: null,
+    axesSettings: null,
+    layersSettings: null,
+    dataBindAes: null
   }
 }))
 
@@ -28,6 +38,7 @@ watch(() => app.getOutputFieldOkOptional('allelesReports'), (reports) => {
   for (const data of reports.data) {
     donors.push(data.key[0] as string)
   }
+  // update selection choises
   state.donors = donors.map((donor) => ({ text: donor, value: donor }))
 
   // if previously selected donor isn't in available options, remove selection
@@ -37,12 +48,14 @@ watch(() => app.getOutputFieldOkOptional('allelesReports'), (reports) => {
   }
 }, { immediate: true })
 
+// extract report to show
 const reportText = computed(() => {
   const selecetedDonor = uiState.model.reportSelection.donor
   if (selecetedDonor === undefined) {
     return undefined
   }
 
+  // choose an output to extract report from
   var field
   switch(uiState.model.reportSelection.type) {
     case 'alleles': {
@@ -59,13 +72,7 @@ const reportText = computed(() => {
     return undefined
   }
 
-  const selectedReport = field.data.find((data) => data.key[0] === selecetedDonor)
-
-  if (selectedReport === undefined || selectedReport.value === undefined) {
-    return undefined
-  }
-
-  return selectedReport.value
+  return field.data.find((data) => data.key[0] === selecetedDonor)?.value
 })
 
 const reportOptions = [
