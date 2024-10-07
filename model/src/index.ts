@@ -48,6 +48,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     datasetColumns: [null]
   })
 
+  // select metadata columns
   .output('donorColumnOptions', (ctx) =>
     ctx.resultPool
       .getSpecsFromResultPool()
@@ -67,6 +68,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
       )
   )
 
+  // selected all dataset options that have the same axis as selected metadata column
   .output('datasetColumnOptions', (ctx) => {
     if (ctx.args.donorColumn === undefined) {
       return undefined;
