@@ -15,12 +15,7 @@ const uiState = app.createUiModel({}, () => ({
   treeNodesGraphState: {
     title: "",
     chartType: "dendro",
-    template: "dendro",
-    optionsState: null,
-    statisticsSettings: null,
-    axesSettings: null,
-    layersSettings: null,
-    dataBindAes: null
+    template: "dendro"
   }
 }))
 

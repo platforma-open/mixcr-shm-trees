@@ -11,7 +11,7 @@ catalog:
 
   '@platforma-sdk/model': ^1.2.27
   '@platforma-sdk/test': ^1.5.23
-  "@milaboratories/graph-maker": ^1.0.7
+  "@milaboratories/graph-maker": ^1.0.8
 
   '@platforma-sdk/workflow-tengo': ^1.2.8
   '@milaboratories/software-pframes-conv': ^1.5.6

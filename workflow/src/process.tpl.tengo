@@ -43,6 +43,7 @@ self.body(func(inputs) {
 
 	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
 	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription, false)
+	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn, false)
 
 	mixcrResults := llPFrames.aggregate(
 		dataGroupedByDonorId["data"], 
@@ -54,6 +55,9 @@ self.body(func(inputs) {
 				"type": "Resource"
 			}, {
 				"name": "treeNodes", 
+				"type": "Resource"
+			}, {
+				"name": "treeNodesWithClones", 
 				"type": "Resource"
 			}, {
 				"name": "allelesLog", 
@@ -72,7 +76,8 @@ self.body(func(inputs) {
 		false,
 		{
 			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
-			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"]
+			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"],
+			"shmTreeNodesWithClonesTableOptions": shmTreeNodesWithClonesTableOptions["cmdArgs"]
 		}
 	)
 
@@ -94,9 +99,19 @@ self.body(func(inputs) {
         }
     )
 
+	treeNodesWithClones := xsv.importFileMap(
+        mixcrResults.output("treeNodesWithClones"), 
+        "tsv", 
+        shmTreeNodesWithClonesTableOptions["pfconvParams"],
+        {
+            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
+        }
+    )
+
     return {
         "trees": pframes.exportFrame(trees),
         "treeNodes": pframes.exportFrame(treeNodes),
+        "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
         
 		"allelesLogs": mixcrResults.output("allelesLog"),
         "treesLogs": mixcrResults.output("treesLog"),

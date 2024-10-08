@@ -7,7 +7,7 @@ exec := import("@platforma-sdk/workflow-tengo:exec")
 json := import("json")
 
 self.defineOutputs(
-    "trees", "treeNodes",
+    "trees", "treeNodes", "treeNodesWithClones",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport"
 )
@@ -107,9 +107,29 @@ self.body(func(inputs) {
 
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
 
+    shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        env("MI_PROGRESS_PREFIX", progressPrefix).
+        software(mixcrSw).
+        arg("exportShmTreesWithNodes").
+        arg("--only-observed")
+
+    for arg in inputs.shmTreeNodesWithClonesTableOptions {
+        shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.arg(arg)
+    }
+
+    shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        saveFile("output.tsv")
+
+    shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
+
     return {
         "trees": shmTreeExports.getFile("output.tsv"),
         "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
+        "treeNodesWithClones": shmTreeNodesWithClonesExports.getFile("output.tsv"),
 
         "allelesLog": alleles.getStdoutStream(),
         "treesLog": shmTrees.getStdoutStream(),

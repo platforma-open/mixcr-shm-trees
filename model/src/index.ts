@@ -47,6 +47,14 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   .initialArgs({
     datasetColumns: [null]
   })
+  
+  // for debuginf: specs for all available columns
+  // .output('allColumns', (ctx) =>
+  //   ctx.resultPool
+  //     .getSpecsFromResultPool()
+  //     .entries.filter((v) => isPColumnSpec(v.obj))
+  //     .map( (v) => v.obj as PColumnSpec )
+  // )
 
   // select metadata columns
   .output('donorColumnOptions', (ctx) =>
@@ -126,10 +134,13 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   })
 
   .output('treeNodes', (ctx) => {
-    const pCols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
-    if (pCols === undefined) return undefined;
+    const treeNodesColumns = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+    if (treeNodesColumns === undefined) return undefined;
 
-    return ctx.createPFrame(pCols);
+    const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+    if (treeNodesWithClonesColumns === undefined) return undefined;
+
+    return ctx.createPFrame(treeNodesColumns.concat(treeNodesWithClonesColumns));
   })
 
   .output('allelesReports', (ctx) =>

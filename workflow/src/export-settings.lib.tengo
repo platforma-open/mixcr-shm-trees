@@ -20,7 +20,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
             }
         }
     })
-    
+
     if runWithSingleCell && dataDescription["hasCellTags"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {
@@ -304,6 +304,187 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
     
+    cmdArgs = append(cmdArgs, "-nMutationsRate")
+    columns = append(columns, {
+        "column": "nMutationsRate",
+        "id": "n-mutations-rate",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/mutationsRate",
+            "valueType": "Double",
+            "domain": {
+                "pl7.app/vdj/features": text.join(dataDescription["coveredFeatures"], ","),
+                "pl7.app/alphabet": "nucleotide"
+            },
+            "annotations": {
+                "pl7.app/label": "Mutations rate nt"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-vHit")
+    columns = append(columns, {
+        "column": "bestVHit",
+        "id": "v-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "VGene"
+            },
+            "annotations": {
+                "type": "V gene name",
+                "pl7.app/label": "V gene"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-jHit")
+    columns = append(columns, {
+        "column": "bestJHit",
+        "id": "j-gene",
+        "allowNA": false,
+        "spec": {
+            "name": "pl7.app/vdj/geneHit",
+            "valueType": "String",
+            "domain": {
+                "pl7.app/vdj/reference": "JGene"
+            },
+            "annotations": {
+                "type": "J gene name",
+                "pl7.app/label": "J gene"
+            }
+        }
+    })
+
+    for feature in dataDescription["coveredFeatures"] {
+        cmdArgs = append(cmdArgs, "-aaFeature", feature)
+        columns = append(columns, {
+            "column": "aaSeq" + feature,
+            "id": "aa-seq-" + feature,
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "aminoacid"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " aa"
+                }
+            }
+        })
+
+        cmdArgs = append(cmdArgs, "-nFeature", feature)
+        columns = append(columns, {
+            "column": "nSeq" + feature,
+            "id": "n-seq-" + feature,
+            "allowNA": false,
+            "spec": {
+                "name": "pl7.app/vdj/sequence",
+                "valueType": "String",
+                "domain": {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "nucleotide"
+                },
+                "annotations": {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " nt"
+                }
+            }
+        })
+    }
+
+	return {
+        "pfconvParams": {
+            "axes": axes,
+            "columns": columns,
+            "storageFormat": "Binary",
+            "partitionKeyLength": 1
+        },
+        "cmdArgs": cmdArgs
+    }
+}
+
+shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWithSingleCell) {
+    // TODO add forChain if runWithSingleCell
+    donorColumnSpec := donorColumn.get("spec").getDataAsJson()
+
+    axes := []
+    columns := []
+    cmdArgs := []
+
+    cmdArgs = append(cmdArgs, "-treeId")
+    axes = append(axes, {
+        "column": "treeId",
+        "spec": {
+            "name": "pl7.app/dendrogram/treeId",
+            "type": "Long",
+            "domain": { },
+            "annotations": {
+                "pl7.app/label": "Tree id"
+            }
+        }
+    })
+    
+    if runWithSingleCell && dataDescription["hasCellTags"] {
+        cmdArgs = append(cmdArgs, "-subtreeId")
+        axes = append(axes, {
+            "column": "subtreeId",
+            "spec": {
+                "name": "pl7.app/dendrogram/subtreeId",
+                "type": "Long",
+                "domain": { },
+                "annotations": {
+                    "pl7.app/label": "Subtree id"
+                }
+            }
+        })
+    }
+
+    cmdArgs = append(cmdArgs, "-nodeId")
+    axes = append(axes, {
+        "column": "nodeId",
+        "spec": {
+            "name": "pl7.app/dendrogram/nodeId",
+            "type": "Long",
+            "domain": { },
+            "annotations": {
+                "pl7.app/label": "Node id"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-fileName")
+    axes = append(axes, {
+        "column": "fileName",
+        "preProcess": [
+            {
+                "type": "regexpReplace",
+                "pattern": "^(.*)___.*\\.clns$",
+                "replacement": "$1"
+            }
+        ],
+        "spec": donorColumnSpec.axesSpec[0]
+    })
+
+    cmdArgs = append(cmdArgs, "-cloneId")
+    axes = append(axes, {
+        "column": "cloneId",
+        "id": "clone-id",
+        "spec": {
+            "name": "pl7.app/vdj/cloneId",
+            "type": "Long",
+            // TODO domain with blockId
+            "annotations": {
+                "pl7.app/label": "Clone id"
+            }
+        }
+    })
+
     if dataDescription["hasCellTags"] {
         cmdArgs = append(cmdArgs, "-uniqueTagCount", "Cell")
         columns = append(columns, {
@@ -335,39 +516,6 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             }
         })
     }
-
-    cmdArgs = append(cmdArgs, "-nMutationsRate")
-    columns = append(columns, {
-        "column": "nMutationsRate",
-        "id": "n-mutations-rate",
-        "allowNA": false,
-        "spec": {
-            "name": "pl7.app/vdj/mutationsRate",
-            "valueType": "Double",
-            "domain": {
-                "pl7.app/vdj/features": text.join(dataDescription["coveredFeatures"], ","),
-                "pl7.app/alphabet": "nucleotide"
-            },
-            "annotations": {
-                "pl7.app/label": "Mutations rate nt"
-            }
-        }
-    })
-
-    cmdArgs = append(cmdArgs, "-cloneId")
-    columns = append(columns, {
-        "column": "cloneId",
-        "id": "clone-id",
-        "allowNA": true,
-        "spec": {
-            "name": "pl7.app/vdj/cloneId",
-            "valueType": "Long",
-            // TODO domain with blockId
-            "annotations": {
-                "pl7.app/label": "Clone id"
-            }
-        }
-    })
 
     cmdArgs = append(cmdArgs, "-readCount")
     columns = append(columns, {
@@ -434,24 +582,6 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
 
-    cmdArgs = append(cmdArgs, "-vHit")
-    columns = append(columns, {
-        "column": "bestVHit",
-        "id": "v-gene",
-        "allowNA": false,
-        "spec": {
-            "name": "pl7.app/vdj/geneHit",
-            "valueType": "String",
-            "domain": {
-                "pl7.app/vdj/reference": "VGene"
-            },
-            "annotations": {
-                "type": "V gene name",
-                "pl7.app/label": "V gene"
-            }
-        }
-    })
-
     cmdArgs = append(cmdArgs, "-dHit")
     columns = append(columns, {
         "column": "bestDHit",
@@ -470,24 +600,6 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
 
-    cmdArgs = append(cmdArgs, "-jHit")
-    columns = append(columns, {
-        "column": "bestJHit",
-        "id": "j-gene",
-        "allowNA": false,
-        "spec": {
-            "name": "pl7.app/vdj/geneHit",
-            "valueType": "String",
-            "domain": {
-                "pl7.app/vdj/reference": "JGene"
-            },
-            "annotations": {
-                "type": "J gene name",
-                "pl7.app/label": "J gene"
-            }
-        }
-    })
-  
     cmdArgs = append(cmdArgs, "-cHit")
     columns = append(columns, {
         "column": "bestCHit",
@@ -520,46 +632,6 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
 
-    for feature in dataDescription["coveredFeatures"] {
-        cmdArgs = append(cmdArgs, "-aaFeature", feature)
-        columns = append(columns, {
-            "column": "aaSeq" + feature,
-            "id": "aa-seq-" + feature,
-            "allowNA": false,
-            "spec": {
-                "name": "pl7.app/vdj/sequence",
-                "valueType": "String",
-                "domain": {
-                    "pl7.app/vdj/feature": feature,
-                    "pl7.app/alphabet": "aminoacid"
-                },
-                "annotations": {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " aa"
-                }
-            }
-        })
-
-        cmdArgs = append(cmdArgs, "-nFeature", feature)
-        columns = append(columns, {
-            "column": "nSeq" + feature,
-            "id": "n-seq-" + feature,
-            "allowNA": false,
-            "spec": {
-                "name": "pl7.app/vdj/sequence",
-                "valueType": "String",
-                "domain": {
-                    "pl7.app/vdj/feature": feature,
-                    "pl7.app/alphabet": "nucleotide"
-                },
-                "annotations": {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " nt"
-                }
-            }
-        })
-    }
-
 	return {
         "pfconvParams": {
             "axes": axes,
@@ -573,5 +645,6 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
 
 export ll.toStrict({
 	shmTreeTableOptions: shmTreeTableOptions,
-    shmTreeNodesTableOptions: shmTreeNodesTableOptions
+    shmTreeNodesTableOptions: shmTreeNodesTableOptions,
+    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions
 })

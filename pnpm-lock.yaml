@@ -22,8 +22,8 @@ catalogs:
       specifier: ^2.27.8
       version: 2.27.8
     '@milaboratories/graph-maker':
-      specifier: ^1.0.7
-      version: 1.0.7
+      specifier: ^1.0.8
+      version: 1.0.8
     '@milaboratories/helpers':
       specifier: ^1.6.2
       version: 1.6.2
@@ -113,7 +113,7 @@ importers:
     dependencies:
       '@milaboratories/graph-maker':
         specifier: 'catalog:'
-        version: 1.0.7(typescript@5.5.4)
+        version: 1.0.8(typescript@5.5.4)
       '@platforma-sdk/model':
         specifier: 'catalog:'
         version: 1.2.27
@@ -166,7 +166,7 @@ importers:
         version: 32.2.1(typescript@5.5.4)
       '@milaboratories/graph-maker':
         specifier: 'catalog:'
-        version: 1.0.7(typescript@5.5.4)
+        version: 1.0.8(typescript@5.5.4)
       '@milaboratories/helpers':
         specifier: 'catalog:'
         version: 1.6.2
@@ -840,14 +840,14 @@ packages:
   '@milaboratories/computable@2.1.7':
     resolution: {integrity: sha512-sNkSqyDJqBpzkCLl3qrrGFhue4Gz0uP7nkE2V2KD7GOpJ/NhRngRrgE4oxKVKnpoHofJHlHrX1D8TX+vN0W4dw==}
 
-  '@milaboratories/graph-maker@1.0.7':
-    resolution: {integrity: sha512-BpW9W6x1nPThVgBdcdnuKXYjdQ0rILLoVkfgOrufnd+a7Tw9EUNZwgvCjAefyFerVqIx+yX2AGWNiMria1jAew==}
+  '@milaboratories/graph-maker@1.0.8':
+    resolution: {integrity: sha512-IvX9fJACAmVB0SY5FsiSHhR63YXWD1jWE35IoToXbORr826dJVVmcbWueLovufteNOPZec2OJZkpGDl2WbNMBg==}
 
   '@milaboratories/helpers@1.6.2':
     resolution: {integrity: sha512-w6LeiA5Q1bFNLRf+Q/9N72QSPG+LyAQPU15c73/ZwLFIWwxSMNWeH4KSwhqsfDJXv0XjfHGgSO0fxM6q4J7gIw==}
 
-  '@milaboratories/miplots4@1.0.42':
-    resolution: {integrity: sha512-mhh10y+PGjHvSWECSh0q911zpt0eEn5XI25cbOt4g1V9+mPl6NpS+mBvjLMpYwFU0gcdz0LQUJqvEMlJN5fiVA==}
+  '@milaboratories/miplots4@1.0.43':
+    resolution: {integrity: sha512-EWslF/5enrmQUVHLvgDmWOwTcZYR5HNnmhu4W5GQZryo7xwMf3ZXa3nnBYIShJ4vmRnVMLf6dwBDIea+EzN3Zw==}
 
   '@milaboratories/pf-plots@1.0.42':
     resolution: {integrity: sha512-7N2FhH2rQiMgpYeCazOvS1vH3jc01Nv5vIDbRfA4vrpQsue02yTlDNGgL3eZH359jdS9g+Zq9Rj3W5IF0RijmQ==}
@@ -5240,10 +5240,10 @@ snapshots:
       '@types/node': 20.16.10
       utility-types: 3.11.0
 
-  '@milaboratories/graph-maker@1.0.7(typescript@5.5.4)':
+  '@milaboratories/graph-maker@1.0.8(typescript@5.5.4)':
     dependencies:
       '@milaboratories/helpers': 1.6.2
-      '@milaboratories/miplots4': 1.0.42
+      '@milaboratories/miplots4': 1.0.43
       '@milaboratories/pf-plots': 1.0.42
       '@milaboratories/uikit': 1.2.11(typescript@5.5.4)
       '@platforma-sdk/model': 1.2.27
@@ -5258,7 +5258,7 @@ snapshots:
 
   '@milaboratories/helpers@1.6.2': {}
 
-  '@milaboratories/miplots4@1.0.42':
+  '@milaboratories/miplots4@1.0.43':
     dependencies:
       '@stdlib/stats-anova1': 0.2.2
       '@stdlib/stats-kruskal-test': 0.2.2
