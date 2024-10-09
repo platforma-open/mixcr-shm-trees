@@ -6,13 +6,16 @@ exec := import("@platforma-sdk/workflow-tengo:exec")
 
 json := import("json")
 
+// for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
     "trees", "treeNodes", "treeNodesWithClones",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport"
 )
 
+// import MiXCR as a software to use
 mixcrSw := assets.importSoftware("@milaboratory/mixcr:main")
+// env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
 
 self.body(func(inputs) {
@@ -25,6 +28,7 @@ self.body(func(inputs) {
         arg("findAlleles").
         arg("--report").arg("report.txt").
         saveFile("report.txt").
+        // template specifies where result files will be written
         arg("--output-template").arg("alleles/{file_name}.clns")
 
     toProcess := []
@@ -32,12 +36,12 @@ self.body(func(inputs) {
         key := json.decode(sKey)
         sampleId := key[0]
         clonotypingBlockId := key[1]
+        // file name should encode axis values. It will be parsed by xsv.importFileMap afterwards to restore axis for clones data
         fileName := sampleId + "___" + clonotypingBlockId + ".clns"
-        element := {
+        toProcess = append(toProcess, {
             "fileName": fileName,
             "input": inputFile
-        }
-        toProcess = append(toProcess, element)
+        })
     }
 
     for input in toProcess {
@@ -69,6 +73,7 @@ self.body(func(inputs) {
     shmTrees := shmTreesCmdBuilder.run()
 
 
+    // export trees without nodes
     shmTreeExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
         env("MI_PROGRESS_PREFIX", progressPrefix).
@@ -89,6 +94,7 @@ self.body(func(inputs) {
 
 
 
+    // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
         env("MI_PROGRESS_PREFIX", progressPrefix).
@@ -107,11 +113,15 @@ self.body(func(inputs) {
 
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
 
+   
+   
+    // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTreesWithNodes").
+        // don't export nodes that don't have clones
         arg("--only-observed")
 
     for arg in inputs.shmTreeNodesWithClonesTableOptions {

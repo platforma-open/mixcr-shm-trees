@@ -16,6 +16,7 @@ wf.body(func(args) {
 		ll.panic("No datasets to process")
 	}
 
+	// we could not use array as request for waiting (see below), so we store datasets in a dictionary
 	datasets := {}
 	for datasetRef in args.datasetColumns {
 		if is_undefined(datasetRef) {
@@ -26,6 +27,9 @@ wf.body(func(args) {
 
 	donorColumn := wf.resolve(args.donorColumn)
 
+	// The problem is that refs for data is not resolved. 
+	// To deal with it, we should call resolve resolve that will return feature.
+	// Then to resolve feature we should call another templete where we will describe what's to wait
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
 		donorColumn: donorColumn
@@ -40,6 +44,8 @@ wf.body(func(args) {
 			"allelesLogs": results.output("allelesLogs"),
 			"treesLogs": results.output("treesLogs"),
 
+			// files should be explicitly published, otherwise it will not be assesable from GUI
+			// TODO it should be automated
 			"allelesReports": pframes.exportColumnData(results.output("allelesReports")),
 			"treesReports": pframes.exportColumnData(results.output("treesReports"))
 		},

@@ -11,13 +11,16 @@ pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
 
+// this templete should run only after resolving of all inputs
 self.awaitState("datasets", { wildcard: "*" }, "ResourceReady")
 self.awaitState("donorColumn", "ResourceReady")
 
 self.body(func(inputs) {
+	// overall description of data that we have. 
     dataDescription := {
 		"hasUmiTags": false,
 		"hasCellTags": false,
+		// will be filled
 		"coveredFeatures": []
 	}
 
@@ -32,6 +35,7 @@ self.body(func(inputs) {
 			dataDescription["hasUmiTags"] = true
 		}
 		dataDescription["coveredFeatures"] = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
+		// check that assemblingFeature feature is the same. If so, coveredFeatures will be the same too
 		if (assemblingFeature == "") {
 			assemblingFeature = dataDescription["mixcr.com/assemblingFeature"]
 		} else if (assemblingFeature != dataDescription["mixcr.com/assemblingFeature"]) {
@@ -39,16 +43,22 @@ self.body(func(inputs) {
 		}
 	}
 
+	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
 
+	// collect params for running export commands and to parse result tsv files into pColumns
 	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
 	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription, false)
 	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn, false)
 
+	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
+		// files to iterate through
 		dataGroupedByDonorId["data"], 
+		// columns not to combine - sampleId and mixcrBlockId
 		[1, 2], 
 		reconstructShmTreesTpl,
+		// all the outputs that should be gethered
 		[
 			{
 				"name": "trees", 
@@ -74,6 +84,7 @@ self.body(func(inputs) {
 			}
 		],
 		false,
+		// inputs
 		{
 			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
 			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"],
@@ -81,36 +92,38 @@ self.body(func(inputs) {
 		}
 	)
 
+	// donorId axis is inherited from dataGroupedByDonorId and we should specify it explicitly (other axes will be supplied by pfconvParams)
+	additionalArgsForImportTsv := {
+		additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
+	}
+
 	trees := xsv.importFileMap(
         mixcrResults.output("trees"), 
         "tsv", 
         shmTreeTableOptions["pfconvParams"],
-        {
-            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
-        }
+        additionalArgsForImportTsv
     )
 
 	treeNodes := xsv.importFileMap(
         mixcrResults.output("treeNodes"), 
         "tsv", 
         shmTreeNodesTableOptions["pfconvParams"],
-        {
-            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
-        }
+        additionalArgsForImportTsv
     )
 
 	treeNodesWithClones := xsv.importFileMap(
         mixcrResults.output("treeNodesWithClones"), 
         "tsv", 
         shmTreeNodesWithClonesTableOptions["pfconvParams"],
-        {
-            additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
-        }
+        additionalArgsForImportTsv
     )
 
     return {
+		// combine columns into pFrame
         "trees": pframes.exportFrame(trees),
+        // combine columns into pFrame
         "treeNodes": pframes.exportFrame(treeNodes),
+        // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
         
 		"allelesLogs": mixcrResults.output("allelesLog"),

@@ -1,6 +1,15 @@
 ll := import("@platforma-sdk/workflow-tengo:ll")
 text := import("text")
 
+// ==============================================
+//
+// Every function in this file will return:
+//   pfconvParams - params to run xsv.importFileMap on exported files
+//   cmdArgs - additional args for MiXCR to specify what fields to extract
+// 
+// ==============================================
+
+// export of threes whithout nodes
 shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     // TODO add forChain if runWithSingleCell
 
@@ -211,6 +220,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     }
 }
 
+// export data that is uniq for node
 shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
     // TODO add forChain if runWithSingleCell
 
@@ -409,6 +419,8 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
     }
 }
 
+// export data that is unique for clones, but not unique for a node 
+// (different clones could be in the same topology node, for example, different time points)
 shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWithSingleCell) {
     // TODO add forChain if runWithSingleCell
     donorColumnSpec := donorColumn.get("spec").getDataAsJson()
@@ -643,6 +655,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWith
     }
 }
 
+// to use the file as a library, we should explicitly export functions
 export ll.toStrict({
 	shmTreeTableOptions: shmTreeTableOptions,
     shmTreeNodesTableOptions: shmTreeNodesTableOptions,
