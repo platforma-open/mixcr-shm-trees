@@ -22,6 +22,7 @@ wf.body(func(args) {
 		if is_undefined(datasetRef) {
 			ll.panic("Dataset is undefined")
 		}
+		// it's blockId of MiXCR, we suppose that it procuce only one clns column
 		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
 	}
 

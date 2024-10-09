@@ -24,8 +24,6 @@ groupDataByDonorId := func(donorColumn, datasets) {
     
     resultSpec := {
         // annotations and domain could differ between datasets
-        "annotations": {},
-        "domain": {},
         "axesSpec": [
             {
                 "annotations": donorColumnSpec["annotations"],
@@ -38,7 +36,6 @@ groupDataByDonorId := func(donorColumn, datasets) {
                 "annotations": {
                     "pl7.app/label": "Clonotyping block id"
                 },
-                "domain": {},
                 "name": "pl7.app/blockId",
                 "type": "String"
             }
