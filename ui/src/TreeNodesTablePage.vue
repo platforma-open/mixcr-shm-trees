@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
-import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { GraphMaker } from '@milaboratories/graph-maker'
 import { computed, reactive, watch } from 'vue';
 import { PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
@@ -25,7 +24,7 @@ const app = useApp();
 const pFrameDriver = platforma.pFrameDriver
 
 // TODO should be moved to model
-const uiState = app.createUiModel({}, () => ({
+app.createUiModel({}, () => ({
   treeSelectionForTreeNodesTable: {},
   reportSelection: {
     type: 'alleles'
@@ -39,7 +38,7 @@ const uiState = app.createUiModel({}, () => ({
 
 const state = reactive({} as State)
 
-watch(() => app.getOutputFieldOkOptional('treeNodes'), async (pframe) => {
+watch(() => app.model.outputs.treeNodes, async (pframe) => {
   if (pframe === undefined) return
   // columns will be used in other places too
   state.columns = await pFrameDriver.listColumns(pframe)
@@ -90,38 +89,38 @@ watch(() => app.getOutputFieldOkOptional('treeNodes'), async (pframe) => {
 // TODO replace donorProperty with watch after fix of rewriting of uistate
 const donorProperty = computed({
   get() { 
-    return uiState.model.treeSelectionForTreeNodesTable.donor 
+    return app.model.ui.treeSelectionForTreeNodesTable.donor 
   },
   set(donor) {
-    uiState.model.treeSelectionForTreeNodesTable.donor = donor
+    app.model.ui.treeSelectionForTreeNodesTable.donor = donor
     // clean up selection of tree on donor update (the same id could be not available for a new donor)
-    delete uiState.model.treeSelectionForTreeNodesTable.treeId
+    delete app.model.ui.treeSelectionForTreeNodesTable.treeId
   }
 })
 
 // TODO replace treeIdProperty with watch after fix of rewriting of uistate
 const treeIdProperty = computed({
   get() { 
-    return uiState.model.treeSelectionForTreeNodesTable.treeId
+    return app.model.ui.treeSelectionForTreeNodesTable.treeId
   },
   set(treeId) {
-    uiState.model.treeSelectionForTreeNodesTable.treeId = treeId
+    app.model.ui.treeSelectionForTreeNodesTable.treeId = treeId
     if (treeId === undefined || state.columns === undefined) {
       // clean up filters of graph maker
-      delete uiState.model.treeNodesGraphState.fixedOptions
+      delete app.model.ui.treeNodesGraphState.fixedOptions
     } else {
       const column = state.columns[0]
       // show default title
-      uiState.model.treeNodesGraphState.title = `${uiState.model.treeSelectionForTreeNodesTable.donor ?? ""}/${treeId}`
+      app.model.ui.treeNodesGraphState.title = `${app.model.ui.treeSelectionForTreeNodesTable.donor ?? ""}/${treeId}`
       // add filters to graph maker, so it will use data only for the selected tree
-      uiState.model.treeNodesGraphState.fixedOptions = [
+      app.model.ui.treeNodesGraphState.fixedOptions = [
         {
           inputName: 'filters',
           selectedSource: {
             type: 'axis',
             id: column.spec.axesSpec[0]
           },
-          selectedFilterValue: uiState.model.treeSelectionForTreeNodesTable.donor
+          selectedFilterValue: app.model.ui.treeSelectionForTreeNodesTable.donor
         },
         {
           inputName: 'filters',
@@ -148,7 +147,7 @@ const donorOptions = computed(() => {
 })
 
 const treesOptions = computed(() => {
-  const selectedDonor = uiState.model.treeSelectionForTreeNodesTable.donor
+  const selectedDonor = app.model.ui.treeSelectionForTreeNodesTable.donor
   if (state.donors === undefined || selectedDonor === undefined) {
     return []
   } 
@@ -172,8 +171,8 @@ const treesOptions = computed(() => {
       </PlRow>
       <GraphMaker 
         v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
-        !(uiState.model.treeSelectionForTreeNodesTable.donor === undefined || uiState.model.treeSelectionForTreeNodesTable.treeId === undefined)"
-        v-model=uiState.model.treeNodesGraphState
+        !(app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined)"
+        v-model=app.model.ui.treeNodesGraphState
         :p-frame-handle=app.outputs.treeNodes.value
         :p-frame-driver=platforma.pFrameDriver
         />

@@ -6,7 +6,8 @@ import {
   InferOutputsType,
   PlDataTableState,
   isPColumn,
-  isPColumnSpec
+  isPColumnSpec,
+  FutureRef
 } from '@platforma-sdk/model';
 import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
@@ -39,7 +40,7 @@ export type UiState = {
 export type ColumnOption = {
   ref: Ref;
   label: string;
-  spec: PColumnSpec;
+  assemblingFeature?: string;
 };
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
@@ -59,7 +60,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   // select metadata columns
   .output('donorColumnOptions', (ctx) =>
     ctx.resultPool
-      .getSpecsFromResultPool()
+      .getSpecs()
       .entries.filter((v) => isPColumnSpec(v.obj))
       .filter((v) => {
         const spec = v.obj as PColumnSpec;
@@ -74,6 +75,10 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
             }`
           } satisfies Option)
       )
+      .map((v) => ({
+        text: v.label,
+        value: v.ref,
+      }))
   )
 
   // selected all dataset options that have the same axis as selected metadata column
@@ -83,7 +88,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     }
     const donorColumn = ctx.args.donorColumn;
     const donorColumnSpec = ctx.resultPool
-      .getSpecsFromResultPool()
+      .getSpecs()
       .entries.find(
         (v) => v.ref.blockId === donorColumn.blockId && v.ref.name === donorColumn.name
       )?.obj;
@@ -93,7 +98,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     const toCompare = donorColumnSpec.axesSpec[0];
 
     return ctx.resultPool
-      .getSpecsFromResultPool()
+      .getSpecs()
       .entries.filter((v) => isPColumnSpec(v.obj))
       .filter((v) => {
         const spec = v.obj as PColumnSpec;
@@ -111,16 +116,20 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
         return true;
       })
       .map(
-        (v) =>
-          ({
+        (v) => {
+          const option = {
             ref: v.ref,
             // @todo info about what was run
             label: `${ctx.getBlockLabel(v.ref.blockId)} / ${
               v.obj.annotations?.['pl7.app/label'] ?? `unlabelled`
-            }`,
-            spec: v.obj as PColumnSpec
-          } as ColumnOption)
-      );
+            }`
+          } as ColumnOption
+          const spec = v.obj as PColumnSpec
+          if (!(spec.annotations === undefined || spec.annotations["mixcr.com/assemblingFeature"] === undefined)) {
+            option.assemblingFeature = spec.annotations["mixcr.com/assemblingFeature"]
+          }
+          return option
+      });
   })
 
   .output('trees', (ctx) => {
@@ -143,23 +152,50 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
     return ctx.createPFrame(treeNodesColumns.concat(treeNodesWithClonesColumns));
   })
 
-  .output('allelesReports', (ctx) =>
-    parseResourceMap(
+  .output('availableDonorIds', (ctx) => {
+    const alleleReports = ctx.outputs?.resolve({ field: 'allelesReports', assertFieldType: 'Input' })
+    if (alleleReports === undefined) return undefined
+    const reports = parseResourceMap( alleleReports, (acc) => acc.getFileContentAsString() )
+
+    const result = []
+    for (const data of reports.data) {
+      const donor = data.key[0] as string
+      result.push({
+        text: donor,
+        value: donor,
+      })
+    }
+    return result
+  })
+
+  .output('allelesReports', (ctx) => {
+    const reports = parseResourceMap(
       ctx.outputs?.resolve({ field: 'allelesReports', assertFieldType: 'Input' }),
       (acc) => acc.getFileContentAsString()
     )
-  )
 
-  .output('treesReports', (ctx) =>
-    parseResourceMap(
+    const result = {} as { [key: string]: FutureRef<string | undefined>}
+    for (const data of reports.data) {
+      result[data.key[0] as string] = data.value
+    }
+    return result
+  })
+
+  .output('treesReports', (ctx) => {
+    const reports = parseResourceMap(
       ctx.outputs?.resolve({ field: 'treesReports', assertFieldType: 'Input' }),
       (acc) => acc.getFileContentAsString()
     )
-  )
+
+    const result = {} as { [key: string]: FutureRef<string | undefined>}
+    for (const data of reports.data) {
+      result[data.key[0] as string] = data.value
+    }
+    return result
+  })
 
   .sections([
-    { type: 'link', href: '/', label: 'Settings' },
-    { type: 'link', href: '/reports', label: 'Reports' },
+    { type: 'link', href: '/', label: 'Main' },
     { type: 'link', href: '/trees', label: 'Trees Table' },
     { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' }
   ])

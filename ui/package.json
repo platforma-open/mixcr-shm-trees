@@ -15,7 +15,6 @@
     "@ag-grid-community/vue3": "catalog:",
     "@milaboratories/helpers": "catalog:",
     "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
-    "@milaboratories/uikit": "catalog:",
     "@platforma-sdk/model": "catalog:",
     "@platforma-sdk/ui-vue": "catalog:",
     "@milaboratories/graph-maker": "catalog:",

@@ -7,7 +7,7 @@ import { PlAgDataTable, PlBlockPage, PlDataTableSettings } from '@platforma-sdk/
 const app = useApp();
 
 // TODO should be moved to model
-const uiState = app.createUiModel({}, () => ({
+app.createUiModel({}, () => ({
   treeSelectionForTreeNodesTable: {},
   reportSelection: {
     type: 'alleles'
@@ -29,6 +29,6 @@ const tableSettings = computed<PlDataTableSettings>(() => ({
 
 <template>
   <PlBlockPage>
-    <PlAgDataTable v-model="uiState.model.treeTableState" :settings="tableSettings"></PlAgDataTable>
+    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings"></PlAgDataTable>
   </PlBlockPage>
 </template>
