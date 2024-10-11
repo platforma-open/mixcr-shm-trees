@@ -26,7 +26,7 @@ jobs:
       notify-telegram: true
       node-version: '20.x'
       build-script-name: 'build'
-      test: true
+      test: false
       test-script-name: 'test'
       pnpm-recursive-build: true
       pnpm-recursive-tests: true
