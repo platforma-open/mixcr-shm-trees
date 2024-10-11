@@ -30,9 +30,9 @@ catalogs:
     '@milaboratories/software-pframes-conv':
       specifier: ^1.5.6
       version: 1.5.6
-    '@milaboratory/mixcr':
-      specifier: 4.7.0-70-develop
-      version: 4.7.0-70-develop
+    '@platforma-open/milaboraotries.software-mixcr':
+      specifier: 4.7.0-109-develop
+      version: 4.7.0-109-develop
     '@platforma-sdk/block-tools':
       specifier: ^2.3.4
       version: 2.3.4
@@ -207,9 +207,9 @@ importers:
       '@milaboratories/software-pframes-conv':
         specifier: 'catalog:'
         version: 1.5.6
-      '@milaboratory/mixcr':
+      '@platforma-open/milaboraotries.software-mixcr':
         specifier: 'catalog:'
-        version: 4.7.0-70-develop
+        version: 4.7.0-109-develop
       '@platforma-sdk/tengo-builder':
         specifier: 'catalog:'
         version: 1.14.11
@@ -895,9 +895,6 @@ packages:
   '@milaboratories/uikit@1.2.17':
     resolution: {integrity: sha512-wIcBbyYbXiAYFd77ddmoIUk2GzAlYhV5jj5k7ANy720jXp0ebxLb5hVaY5vKtUZgOlnG7Ogykv0w6EADSRma+A==}
 
-  '@milaboratory/mixcr@4.7.0-70-develop':
-    resolution: {integrity: sha512-C/GGIzrrow07uQnx7Pqr3z+kF9jDLFUOKfHjZMwWQBhe+tN+0SoVLSh+TRGXgfD7SnS8CinKs/xz7yAKWx6+Mw==, tarball: https://npm.pkg.github.com/download/@milaboratory/mixcr/4.7.0-70-develop/26e2a7be5d49630243d7e32ae44925e17e07db41}
-
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -917,6 +914,9 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@platforma-open/milaboraotries.software-mixcr@4.7.0-109-develop':
+    resolution: {integrity: sha512-t5WpicUGLEFfNhHjKcB4NmftRIkkNXvyEUyCbjoIjM4SWlur0JwT4GniyWn28m2qUTxbf24yC1OBZT0aKrZGUA==}
 
   '@platforma-sdk/block-tools@2.3.4':
     resolution: {integrity: sha512-cIff6ERlFaHZ98Ojo59ZPYzK91Dck2AlBtYdb+YbAEaYLwv4toXaIs3AxTA21RIYoP8EuB0744o5c6XcTZ9h+A==}
@@ -5413,8 +5413,6 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@milaboratory/mixcr@4.7.0-70-develop': {}
-
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -5450,6 +5448,8 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@platforma-open/milaboraotries.software-mixcr@4.7.0-109-develop': {}
 
   '@platforma-sdk/block-tools@2.3.4':
     dependencies:

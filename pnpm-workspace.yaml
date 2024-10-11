@@ -18,7 +18,7 @@ catalog:
   '@platforma-sdk/workflow-tengo': ^1.2.8
   '@milaboratories/software-pframes-conv': ^1.5.6
 
-  '@milaboratory/mixcr': 4.7.0-70-develop
+  '@platforma-open/milaboraotries.software-mixcr': 4.7.0-109-develop
 
   '@milaboratories/helpers': ^1.6.2
 

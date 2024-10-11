@@ -15,7 +15,7 @@
     "@platforma-sdk/tengo-builder": "catalog:",
     "@platforma-sdk/workflow-tengo": "catalog:",
     "@milaboratories/software-pframes-conv": "catalog:",
-    "@milaboratory/mixcr": "catalog:",
+    "@platforma-open/milaboraotries.software-mixcr": "catalog:",
     "@platforma-sdk/test": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"
