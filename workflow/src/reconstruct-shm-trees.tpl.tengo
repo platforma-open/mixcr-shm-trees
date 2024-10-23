@@ -14,7 +14,7 @@ self.defineOutputs(
 )
 
 // import MiXCR as a software to use
-mixcrSw := assets.importSoftware("@milaboratory/mixcr:main")
+mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
 
@@ -50,7 +50,7 @@ self.body(func(inputs) {
             saveFile("alleles/" + input.fileName)
     }
 
-    alleles := allelesCmdBuilder.run()  
+    alleles := allelesCmdBuilder.run()
 
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -61,7 +61,7 @@ self.body(func(inputs) {
         saveFile("report.txt").
         // TODO support single cell trees
         arg("--dont-combine-tree-by-cells")
-    
+
     for input in toProcess {
         shmTreesCmdBuilder.
             addFile(input.fileName, alleles.getFile("alleles/" + input.fileName)).
@@ -79,7 +79,7 @@ self.body(func(inputs) {
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTrees")
-    
+
     for arg in inputs.shmTreeTableOptions {
         shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.arg(arg)
     }
@@ -113,8 +113,8 @@ self.body(func(inputs) {
 
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
 
-   
-   
+
+
     // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
