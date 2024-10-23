@@ -22,7 +22,7 @@ app.createUiModel({}, () => ({
 // TODO add default option to filter table by donor
 const tableSettings = computed<PlDataTableSettings>(() => ({
   sourceType: "ptable",
-  pTable: app.outputs.trees
+  pTable: app.model.outputs.trees
 }));
 
 </script>

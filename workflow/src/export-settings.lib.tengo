@@ -6,8 +6,11 @@ text := import("text")
 // Every function in this file will return:
 //   pfconvParams - params to run xsv.importFileMap on exported files
 //   cmdArgs - additional args for MiXCR to specify what fields to extract
-// 
+//
 // ==============================================
+
+// TODO: TMP
+allowNA := true
 
 // export of threes whithout nodes
 shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
@@ -50,7 +53,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "totalUniqueCellCountInTree",
             "id": "uniq-cell-count",
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/uniqueCellCount",
                 "valueType": "Long",
@@ -66,7 +69,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "totalUniqueMoleculeCountInTree",
             "id": "uniq-umi-count",
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/uniqueMoleculeCount",
                 "valueType": "Long",
@@ -81,7 +84,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "numberOfClonesInTree",
         "id": "number-of-clones-in-tree",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/numberOfClonesInTree",
             "valueType": "Long",
@@ -95,7 +98,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "numberOfNodesWithClones",
         "id": "number-of-nodes-with-clones",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/numberOfNodesWithClones",
             "valueType": "Long",
@@ -109,7 +112,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "totalReadsCountInTree",
         "id": "total-reads-count-in-tree",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/totalReadsCountInTree",
             "valueType": "Long",
@@ -123,7 +126,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "bestVHit",
         "id": "v-gene",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/geneHit",
             "valueType": "String",
@@ -141,7 +144,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "bestJHit",
         "id": "j-gene",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/geneHit",
             "valueType": "String",
@@ -159,7 +162,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "chains",
         "id": "chains",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "valueType": "String",
             "name": "pl7.app/vdj/chain",
@@ -174,7 +177,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "aaSeq" + feature + "OfMrca",
             "id": "aa-seq-" + feature + "-mrca",
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/sequence",
                 "valueType": "String",
@@ -193,7 +196,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "nSeq" + feature + "OfMrca",
             "id": "n-seq-" + feature + "-mrca",
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/sequence",
                 "valueType": "String",
@@ -240,7 +243,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             }
         }
     })
-    
+
     if runWithSingleCell && dataDescription["hasCellTags"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {
@@ -283,7 +286,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             }
         }
     })
-    
+
     cmdArgs = append(cmdArgs, "-parentId")
     columns = append(columns, {
         "column": "parentId",
@@ -298,7 +301,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             }
         }
     })
-    
+
     cmdArgs = append(cmdArgs, "-distance", "germline")
     columns = append(columns, {
         "column": "DistanceFromGermline",
@@ -313,12 +316,12 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             }
         }
     })
-    
+
     cmdArgs = append(cmdArgs, "-nMutationsRate")
     columns = append(columns, {
         "column": "nMutationsRate",
         "id": "n-mutations-rate",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/mutationsRate",
             "valueType": "Double",
@@ -336,7 +339,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "bestVHit",
         "id": "v-gene",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/geneHit",
             "valueType": "String",
@@ -354,7 +357,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
     columns = append(columns, {
         "column": "bestJHit",
         "id": "j-gene",
-        "allowNA": false,
+        "allowNA": allowNA,
         "spec": {
             "name": "pl7.app/vdj/geneHit",
             "valueType": "String",
@@ -373,7 +376,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "aaSeq" + feature,
             "id": "aa-seq-" + feature,
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/sequence",
                 "valueType": "String",
@@ -392,7 +395,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         columns = append(columns, {
             "column": "nSeq" + feature,
             "id": "n-seq-" + feature,
-            "allowNA": false,
+            "allowNA": allowNA,
             "spec": {
                 "name": "pl7.app/vdj/sequence",
                 "valueType": "String",
@@ -419,7 +422,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
     }
 }
 
-// export data that is unique for clones, but not unique for a node 
+// export data that is unique for clones, but not unique for a node
 // (different clones could be in the same topology node, for example, different time points)
 shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWithSingleCell) {
     // TODO add forChain if runWithSingleCell
@@ -441,7 +444,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWith
             }
         }
     })
-    
+
     if runWithSingleCell && dataDescription["hasCellTags"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {

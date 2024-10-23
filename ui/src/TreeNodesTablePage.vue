@@ -170,10 +170,10 @@ const treesOptions = computed(() => {
         <PlDropdown :options="treesOptions ?? []" v-model=treeIdProperty label="Tree" clearable />
       </PlRow>
       <GraphMaker 
-        v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
+        v-if="app.model.outputs.treeNodes && 
         !(app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined)"
         v-model=app.model.ui.treeNodesGraphState
-        :p-frame-handle=app.outputs.treeNodes.value
+        :p-frame=app.model.outputs.treeNodes
         :p-frame-driver=platforma.pFrameDriver
         />
     </PlBlockPage>

@@ -5,7 +5,6 @@ import {
   Option,
   InferOutputsType,
   PlDataTableState,
-  isPColumn,
   isPColumnSpec,
   FutureRef
 } from '@platforma-sdk/model';
@@ -17,7 +16,7 @@ import { parseResourceMap } from './helpers';
  */
 export type BlockArgs = {
   donorColumn?: Ref;
-  datasetColumns: (Ref | null)[];
+  datasetColumns: Ref[];
 };
 
 export type TreeSelection = {
@@ -25,15 +24,9 @@ export type TreeSelection = {
   treeId?: number;
 };
 
-export type ReportSelection = {
-  donor?: string;
-  type: 'alleles' | 'shmTrees';
-};
-
 export type UiState = {
   treeTableState?: PlDataTableState;
   treeSelectionForTreeNodesTable: TreeSelection;
-  reportSelection: ReportSelection;
   treeNodesGraphState: GraphMakerSettings
 };
 
@@ -46,7 +39,7 @@ export type ColumnOption = {
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 
   .initialArgs({
-    datasetColumns: [null]
+    datasetColumns: []
   })
   
   // for debuginf: specs for all available columns
