@@ -17,9 +17,10 @@ self.awaitState("datasets", { wildcard: "*" }, "data", "InputsLocked")
 // but we need spec already
 self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
 self.awaitState("donorColumn", "ResourceReady")
+self.awaitState("params", "ResourceReady")
 
 self.body(func(inputs) {
-	// overall description of data that we have. 
+	// overall description of data that we have.
     dataDescription := {
 		"hasUmiTags": false,
 		"hasCellTags": false,
@@ -30,7 +31,7 @@ self.body(func(inputs) {
 	assemblingFeature := ""
 	for _, dataset in inputs.datasets {
 		presetAnnotations := dataset.get("spec").getDataAsJson()["annotations"]
-	
+
 		if presetAnnotations["mixcr.com/cellTags"] != "" {
 			dataDescription["hasCellTags"] = true
 		}
@@ -57,32 +58,41 @@ self.body(func(inputs) {
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
 		// files to iterate through
-		dataGroupedByDonorId["data"], 
+		dataGroupedByDonorId["data"],
 		// columns not to combine - sampleId and mixcrBlockId
-		[1, 2], 
+		[1, 2],
 		reconstructShmTreesTpl,
 		// all the outputs that should be gethered
 		[
 			{
-				"name": "trees", 
+				"name": "trees",
 				"type": "Resource"
 			}, {
-				"name": "treeNodes", 
+				"name": "treeNodes",
 				"type": "Resource"
 			}, {
-				"name": "treeNodesWithClones", 
+				"name": "treeNodesWithClones",
 				"type": "Resource"
 			}, {
-				"name": "allelesLog", 
+				"name": "tsvs",
 				"type": "Resource"
 			}, {
-				"name": "treesLog", 
+				"name": "allelesLog",
 				"type": "Resource"
 			}, {
-				"name": "allelesReport", 
+				"name": "treesLog",
 				"type": "Resource"
 			}, {
-				"name": "treesReport", 
+				"name": "allelesReport",
+				"type": "Resource"
+			}, {
+				"name": "treesReport",
+				"type": "Resource"
+			}, {
+				"name": "allelesReportJson",
+				"type": "Resource"
+			}, {
+				"name": "treesReportJson",
 				"type": "Resource"
 			}
 		],
@@ -91,7 +101,8 @@ self.body(func(inputs) {
 		{
 			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
 			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"],
-			"shmTreeNodesWithClonesTableOptions": shmTreeNodesWithClonesTableOptions["cmdArgs"]
+			"shmTreeNodesWithClonesTableOptions": shmTreeNodesWithClonesTableOptions["cmdArgs"],
+			"globalParams": inputs.params
 		}
 	)
 
@@ -101,25 +112,27 @@ self.body(func(inputs) {
 	}
 
 	trees := xsv.importFileMap(
-        mixcrResults.output("trees"), 
-        "tsv", 
+        mixcrResults.output("trees"),
+        "tsv",
         shmTreeTableOptions["pfconvParams"],
         additionalArgsForImportTsv
     )
 
 	treeNodes := xsv.importFileMap(
-        mixcrResults.output("treeNodes"), 
-        "tsv", 
+        mixcrResults.output("treeNodes"),
+        "tsv",
         shmTreeNodesTableOptions["pfconvParams"],
         additionalArgsForImportTsv
     )
 
 	treeNodesWithClones := xsv.importFileMap(
-        mixcrResults.output("treeNodesWithClones"), 
-        "tsv", 
+        mixcrResults.output("treeNodesWithClones"),
+        "tsv",
         shmTreeNodesWithClonesTableOptions["pfconvParams"],
         additionalArgsForImportTsv
     )
+
+	tsvs := mixcrResults.output("tsvs")
 
     return {
 		// combine columns into pFrame
@@ -128,11 +141,15 @@ self.body(func(inputs) {
         "treeNodes": pframes.exportFrame(treeNodes),
         // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
-        
+
+        "tsvs": tsvs,
+
 		"allelesLogs": mixcrResults.output("allelesLog"),
         "treesLogs": mixcrResults.output("treesLog"),
 
 		"allelesReports": mixcrResults.output("allelesReport"),
-        "treesReports": mixcrResults.output("treesReport")
+        "treesReports": mixcrResults.output("treesReport"),
+		"allelesReportsJson": mixcrResults.output("allelesReportJson"),
+        "treesReportsJson": mixcrResults.output("treesReportJson")
 	}
 })

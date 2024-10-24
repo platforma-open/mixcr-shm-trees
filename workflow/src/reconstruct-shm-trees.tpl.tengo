@@ -9,27 +9,38 @@ json := import("json")
 // for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
     "trees", "treeNodes", "treeNodesWithClones",
+    "tsvs",
     "allelesLog", "treesLog",
-    "allelesReport", "treesReport"
+    "allelesReport", "treesReport",
+    "allelesReportJson", "treesReportJson"
 )
 
 // import MiXCR as a software to use
 mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
+
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
 
 self.body(func(inputs) {
 	inputData := inputs[pConstants.VALUE_FIELD_NAME]
+    globalParams := inputs.globalParams
 
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findAlleles").
         arg("--report").arg("report.txt").
         saveFile("report.txt").
+        arg("--json-report").arg("report.json").
+        saveFile("report.json").
         // template specifies where result files will be written
         arg("--output-template").arg("alleles/{file_name}.clns")
+
+    if !is_undefined(globalParams.seed) {
+        allelesCmdBuilder.env("SEED", globalParams.seed)
+    }
 
     toProcess := []
     for sKey, inputFile in inputData.inputs() {
@@ -54,13 +65,20 @@ self.body(func(inputs) {
 
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findShmTrees").
         arg("--report").arg("report.txt").
         saveFile("report.txt").
+        arg("--json-report").arg("report.json").
+        saveFile("report.json").
         // TODO support single cell trees
         arg("--dont-combine-tree-by-cells")
+
+    if !is_undefined(globalParams.seed) {
+        shmTreesCmdBuilder.env("SEED", globalParams.seed)
+    }
 
     for input in toProcess {
         shmTreesCmdBuilder.
@@ -76,6 +94,8 @@ self.body(func(inputs) {
     // export trees without nodes
     shmTreeExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        inLightQueue().
+        secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTrees")
@@ -93,10 +113,11 @@ self.body(func(inputs) {
     shmTreeExports := shmTreeExportsCmdBuilder.run()
 
 
-
     // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        inLightQueue().
+        secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTreesWithNodes")
@@ -118,6 +139,8 @@ self.body(func(inputs) {
     // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        inLightQueue().
+        secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTreesWithNodes").
@@ -141,10 +164,19 @@ self.body(func(inputs) {
         "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
         "treeNodesWithClones": shmTreeNodesWithClonesExports.getFile("output.tsv"),
 
+        "tsvs": {
+            "trees": shmTreeExports.getFile("output.tsv"),
+            "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
+            "treeNodesWithClones": shmTreeNodesWithClonesExports.getFile("output.tsv")
+        },
+
         "allelesLog": alleles.getStdoutStream(),
         "treesLog": shmTrees.getStdoutStream(),
 
         "allelesReport": alleles.getFile("report.txt"),
-        "treesReport": shmTrees.getFile("report.txt")
+        "treesReport": shmTrees.getFile("report.txt"),
+
+        "allelesReportJson": alleles.getFile("report.json"),
+        "treesReportJson": shmTrees.getFile("report.json")
     }
 })

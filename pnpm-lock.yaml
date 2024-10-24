@@ -85,6 +85,9 @@ catalogs:
       specifier: ^3.23.8
       version: 3.23.8
 
+overrides:
+  '@milaboratories/pl-model-common': /Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz
+
 importers:
 
   .:
@@ -887,8 +890,9 @@ packages:
 
   '@milaboratories/pframes-node@1.6.1':
     resolution: {integrity: sha512-Abc9UApwliFooicMVBX7Qgt2X51IaoIynYcx0cVODTHcxC7hBDNyNEcSa2xg9CdHyaMdLFXrEsTSjk+5ot+1PQ==}
+    version: 1.6.1
     peerDependencies:
-      '@milaboratories/pl-model-common': '*'
+      '@milaboratories/pl-model-common': /Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz
 
   '@milaboratories/pl-client@2.5.4':
     resolution: {integrity: sha512-GiGseTRQlIQpAByg2ZQUYVIN3bXzjYup8xOJQiIUbGjTL3BZOYm1bnXUjXJappGUxuINarHpGPReZemHr6jYoA==}
@@ -905,8 +909,9 @@ packages:
   '@milaboratories/pl-middle-layer@1.13.8':
     resolution: {integrity: sha512-fBFwNjkSUn2FMWDihvp9HTrzQXbWjIc75uCMRz46IziGQ4IEfroHuv2d8QFe2Toj7uT4yI8l5Kd9z4yGGYtKzA==}
 
-  '@milaboratories/pl-model-common@1.5.0':
-    resolution: {integrity: sha512-cJaU3KNz+7SXEsiVB20E5qb57+gufslCRARqXhQ3Zy7x5APtCqA1ijqRYh70yZUJPrLz5Dc8Y5BLNRhnT5q3rw==}
+  '@milaboratories/pl-model-common@file:../../core/platforma/lib/model/common/package.tgz':
+    resolution: {integrity: sha512-qSxuppXs2RlNTG+C+WBAJhyvhNPwa2AiqhwHjHdKe4fEaUPJLVDIwJWMNRV+uW0Avuu24ieR4vPEkv1pibV2NA==, tarball: file:../../core/platforma/lib/model/common/package.tgz}
+    version: 1.5.0
 
   '@milaboratories/pl-model-middle-layer@1.5.3':
     resolution: {integrity: sha512-K0vnwCDbtZoF5rPRPA+YG9NsQwZYkGNYfy6bhIsGvvxJqxba0EH5QvLzF3ek4tFLe2cVGg7Bug5S11IUSpX5EQ==}
@@ -5597,10 +5602,10 @@ snapshots:
       canonicalize: 2.0.0
       lodash: 4.17.21
 
-  '@milaboratories/pframes-node@1.6.1(@milaboratories/pl-model-common@1.5.0)':
+  '@milaboratories/pframes-node@1.6.1(@milaboratories/pl-model-common@file:../../core/platforma/lib/model/common/package.tgz)':
     dependencies:
       '@mapbox/node-pre-gyp': 1.0.11
-      '@milaboratories/pl-model-common': 1.5.0
+      '@milaboratories/pl-model-common': file:../../core/platforma/lib/model/common/package.tgz
       '@milaboratories/pl-model-middle-layer': 1.5.3
     transitivePeerDependencies:
       - encoding
@@ -5637,7 +5642,7 @@ snapshots:
       '@grpc/grpc-js': 1.12.2
       '@milaboratories/computable': 2.2.0
       '@milaboratories/pl-client': 2.5.4
-      '@milaboratories/pl-model-common': 1.5.0
+      '@milaboratories/pl-model-common': file:../../core/platforma/lib/model/common/package.tgz
       '@milaboratories/pl-tree': 1.4.5
       '@milaboratories/ts-helpers': 1.1.0
       '@protobuf-ts/grpc-transport': 2.9.4(@grpc/grpc-js@1.12.2)
@@ -5663,12 +5668,12 @@ snapshots:
   '@milaboratories/pl-middle-layer@1.13.8':
     dependencies:
       '@milaboratories/computable': 2.2.0
-      '@milaboratories/pframes-node': 1.6.1(@milaboratories/pl-model-common@1.5.0)
+      '@milaboratories/pframes-node': 1.6.1(@milaboratories/pl-model-common@file:../../core/platforma/lib/model/common/package.tgz)
       '@milaboratories/pl-client': 2.5.4
       '@milaboratories/pl-config': 1.3.0
       '@milaboratories/pl-drivers': 1.3.4
       '@milaboratories/pl-local': 1.4.3
-      '@milaboratories/pl-model-common': 1.5.0
+      '@milaboratories/pl-model-common': file:../../core/platforma/lib/model/common/package.tgz
       '@milaboratories/pl-model-middle-layer': 1.5.3
       '@milaboratories/pl-tree': 1.4.5
       '@milaboratories/resolve-helper': 1.0.1
@@ -5689,13 +5694,13 @@ snapshots:
       - encoding
       - supports-color
 
-  '@milaboratories/pl-model-common@1.5.0':
+  '@milaboratories/pl-model-common@file:../../core/platforma/lib/model/common/package.tgz':
     dependencies:
       zod: 3.23.8
 
   '@milaboratories/pl-model-middle-layer@1.5.3':
     dependencies:
-      '@milaboratories/pl-model-common': 1.5.0
+      '@milaboratories/pl-model-common': file:../../core/platforma/lib/model/common/package.tgz
       utility-types: 3.11.0
       zod: 3.23.8
 
@@ -5812,7 +5817,7 @@ snapshots:
 
   '@platforma-sdk/model@1.7.9':
     dependencies:
-      '@milaboratories/pl-model-common': 1.5.0
+      '@milaboratories/pl-model-common': file:../../core/platforma/lib/model/common/package.tgz
       utility-types: 3.11.0
       zod: 3.23.8
 

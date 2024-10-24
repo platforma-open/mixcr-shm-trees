@@ -30,7 +30,7 @@ app.createUiModel({}, () => ({
 
 // dataset options will be loaded with some delay. Copping it to state allow us to temporaly clean it up while loading
 watch(() => app.model.outputs.datasetColumnOptions, (options) => {
-  state.allDatasetColumns = options 
+  state.allDatasetColumns = options
 }, { immediate: true })
 
 watch(() => app.args.donorColumn, (donorNew, donorOld) => {
@@ -38,7 +38,7 @@ watch(() => app.args.donorColumn, (donorNew, donorOld) => {
     // that will show loading message for the user while retriving new options
     delete state.allDatasetColumns
     // cleanup all selection of datasets on change of donor column
-    app.args.datasetColumns[0] = null
+    // app.args.datasetColumns[0] = null
     app.args.datasetColumns.splice(1, app.args.datasetColumns.length - 1)
   }
 })
@@ -98,7 +98,7 @@ function datasetOptionsForRow(i: number) {
 }
 
 function onAdd() {
-  args.model.datasetColumns.push(null)
+  // args.model.datasetColumns.push(null)
 }
 
 function onRemove(i: number) {
@@ -133,7 +133,7 @@ const reportOptions = [
     </template>
 
 
-    <template v-if="app.model.outputs.availableDonorIds">
+    <!-- <template v-if="app.model.outputs.targetDonorIds">
       <PlDropdown v-model=app.model.ui.reportSelection.donor :options=app.model.outputs.availableDonorIds clearable>Show for donor</PlDropdown>
       <PlBtnGroup v-model=app.model.ui.reportSelection.type :options=reportOptions />
       <template v-if="app.model.ui.reportSelection.donor">
@@ -153,43 +153,37 @@ const reportOptions = [
     </template>
     <template v-else>
       Waiting for reports...
-    </template>
+    </template> -->
 
 
 
     <PlSlideModal v-model="settingsAreShown">
       <template v-if="app.model.outputs.donorColumnOptions">
-        <PlDropdown :options="app.model.outputs.donorColumnOptions" v-model="args.model.donorColumn" label="Select donor column" clearable />
+        <PlDropdown :options="app.model.outputs.donorColumnOptions" v-model="args.model.donorColumn"
+          label="Select donor column" clearable />
       </template>
       <template v-else>loading...</template>
 
-      <template v-if="!(args.model.donorColumn === undefined) && supportedDatasetColumns === undefined">loading...</template>
+      <template
+        v-if="!(args.model.donorColumn === undefined) && supportedDatasetColumns === undefined">loading...</template>
       <template v-else-if="!(args.model.donorColumn === undefined || supportedDatasetColumns === undefined)">
         <template v-if="supportedDatasetColumns.length > 0">
           <div v-for="(dataset, index) in args.model.datasetColumns" class="d-flex gap-8 align-center">
-            <PlDropdown 
-              :options=datasetOptionsForRow(index).value
-              v-model="args.model.datasetColumns[index]" 
-              label="Select dataset"
-            />
-            <PlBtnPrimary v-if="index !== 0"
-              icon="clear"
-              size="small"
-              @click=onRemove(index)
-            />
+            <PlDropdown :options=datasetOptionsForRow(index).value v-model="args.model.datasetColumns[index]"
+              label="Select dataset" />
+            <PlBtnPrimary v-if="index !== 0" icon="clear" size="small" @click=onRemove(index) />
           </div>
-          <div v-if="supportedDatasetColumns.length > args.model.datasetColumns.length && args.model.datasetColumns[args.model.datasetColumns.length - 1] !== null" class="d-flex gap-8 align-center">
-            <PlBtnPrimary
-              icon="add"
-              size="medium"
-              @click=onAdd
-            >
+          <div
+            v-if="supportedDatasetColumns.length > args.model.datasetColumns.length && args.model.datasetColumns[args.model.datasetColumns.length - 1] !== null"
+            class="d-flex gap-8 align-center">
+            <PlBtnPrimary icon="add" size="medium" @click=onAdd>
               Add dataset
             </PlBtnPrimary>
           </div>
         </template>
         <template v-else-if="state.allDatasetColumns!.length > 0">
-          Available datasets could not be used to build SHM trees. Clones should be covered the same feature and it should broaded then CDR3
+          Available datasets could not be used to build SHM trees. Clones should be covered the same feature and it
+          should broaded then CDR3
         </template>
         <template v-else>
           No datasets found

@@ -2,6 +2,7 @@
 import { watch } from 'vue';
 import { useApp } from './app';
 import MainPage from './MainPage.vue';
+import { TreeResultsFull } from './results';
 
 const app = useApp();
 
@@ -9,9 +10,6 @@ watch(() => app.model.ui, (ui) => {
     if (!ui)
         app.model.ui = {
             treeSelectionForTreeNodesTable: {},
-            reportSelection: {
-                type: 'alleles'
-            },
             treeNodesGraphState: {
                 title: "",
                 chartType: "dendro",
@@ -19,6 +17,10 @@ watch(() => app.model.ui, (ui) => {
             }
         }
 }, { immediate: true });
+
+watch(TreeResultsFull, v => {
+    console.dir(v);
+}, { immediate: true })
 </script>
 
 <template>
