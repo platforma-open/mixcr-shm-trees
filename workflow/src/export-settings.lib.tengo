@@ -416,7 +416,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
             "axes": axes,
             "columns": columns,
             "storageFormat": "Binary",
-            "partitionKeyLength": 1
+            "partitionKeyLength": 0
         },
         "cmdArgs": cmdArgs
     }
@@ -652,7 +652,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWith
             "axes": axes,
             "columns": columns,
             "storageFormat": "Binary",
-            "partitionKeyLength": 1
+            "partitionKeyLength": 0
         },
         "cmdArgs": cmdArgs
     }

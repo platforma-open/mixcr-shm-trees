@@ -1,11 +1,8 @@
 <script setup lang="ts">
 import { useApp } from './app';
-import { computed, reactive, watch, ref } from 'vue';
-import { PlBlockPage, PlDropdown, PlBtnPrimary, PlSlideModal, PlBtnGroup, PlTextArea, PlDropdownRef, ListOption, PlBtnGhost } from '@platforma-sdk/ui-vue';
-import { TreeResultsFull } from './results';
+import { PlDropdown, PlDropdownRef, ListOption } from '@platforma-sdk/ui-vue';
 import { retentive } from './retentive';
-import { Ref as ModelRef, Option } from '@platforma-sdk/model';
-import { Branded, notEmpty, range } from '@milaboratories/helpers';
+import { notEmpty, range } from '@milaboratories/helpers';
 import { fromRefString, RefString, toRefString } from './util';
 
 const { model } = useApp();
