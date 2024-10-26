@@ -17,10 +17,6 @@ watch(() => app.model.ui, (ui) => {
             }
         }
 }, { immediate: true });
-
-watch(TreeResultsFull, v => {
-    console.dir(v);
-}, { immediate: true })
 </script>
 
 <template>

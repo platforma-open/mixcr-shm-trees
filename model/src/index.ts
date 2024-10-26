@@ -6,11 +6,12 @@ import {
   InferOutputsType,
   PlDataTableState,
   isPColumnSpec,
-  FutureRef
+  getAxisId
 } from '@platforma-sdk/model';
 import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
 import { ProgressPrefix } from './progress';
+import { isPColumnSpecResult, matchAxesId } from './util';
 
 /**
  * Block arguments coming from the user interface
@@ -33,10 +34,10 @@ export type UiState = {
   treeNodesGraphState: GraphMakerSettings;
 };
 
-export type ColumnOption = {
+export type DatasetOption = {
   ref: Ref;
   label: string;
-  assemblingFeature?: string;
+  assemblingFeature: string;
 };
 
 export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
@@ -54,7 +55,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   // )
 
   // select metadata columns
-  .output('donorColumnOptions', (ctx) =>
+  .output('donorOptions', (ctx) =>
     ctx.resultPool
       .getSpecs()
       .entries.filter((v) => isPColumnSpec(v.obj))
@@ -71,64 +72,40 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
             }`
           } satisfies Option)
       )
-      .map((v) => ({
-        text: v.label,
-        value: v.ref
-      }))
   )
 
   // selected all dataset options that have the same axis as selected metadata column
-  .output('datasetColumnOptions', (ctx) => {
+  .output('datasetOptions', (ctx) => {
     if (ctx.args.donorColumn === undefined) return undefined;
 
     const donorColumn = ctx.args.donorColumn;
-    const donorColumnSpec = ctx.resultPool
-      .getSpecs()
-      .entries.find(
-        (v) => v.ref.blockId === donorColumn.blockId && v.ref.name === donorColumn.name
-      )?.obj;
-
+    const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
 
-    const toCompare = donorColumnSpec.axesSpec[0];
+    const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
 
     return ctx.resultPool
       .getSpecs()
-      .entries.filter((v) => isPColumnSpec(v.obj))
-      .filter((v) => {
-        const spec = v.obj as PColumnSpec;
-        // @todo there should be library call
-        // @todo compare all axes, not the first
-
-        if (spec.name !== 'mixcr.com/clns' || spec.axesSpec.length !== 1) return false;
-        const axisSpec = spec.axesSpec[0];
-        if (axisSpec.name !== toCompare.name) return false;
-        if (toCompare.domain === undefined || Object.keys(toCompare.domain).length === 0)
-          return true;
-        if (axisSpec.domain === undefined) return false;
-        for (const [domainName, domainValue] of Object.entries(toCompare.domain))
-          if (axisSpec.domain[domainName] !== domainValue) return false;
-        return true;
-      })
-      .map((v) => {
-        const option = {
-          ref: v.ref,
-          // @todo info about what was run
-          label: `${ctx.getBlockLabel(v.ref.blockId)} / ${
-            v.obj.annotations?.['pl7.app/label'] ?? `unlabelled`
-          }`
-        } as ColumnOption;
-        const spec = v.obj as PColumnSpec;
-        if (
-          !(
-            spec.annotations === undefined ||
-            spec.annotations['mixcr.com/assemblingFeature'] === undefined
-          )
-        ) {
-          option.assemblingFeature = spec.annotations['mixcr.com/assemblingFeature'];
-        }
-        return option;
-      });
+      .entries.filter(isPColumnSpecResult)
+      .filter(
+        ({ obj: spec }) =>
+          spec.name === 'mixcr.com/clns' &&
+          matchAxesId([sampleAxisId], spec.axesSpec) &&
+          spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
+          spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
+          spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]'
+      )
+      .map(
+        ({ ref, obj: spec }) =>
+          ({
+            ref: ref,
+            // @todo info about what was run
+            label: `${ctx.getBlockLabel(ref.blockId)} / ${
+              spec.annotations?.['pl7.app/label'] ?? `unlabelled`
+            }`,
+            assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
+          } as DatasetOption)
+      );
   })
 
   .output('trees', (ctx) => {
