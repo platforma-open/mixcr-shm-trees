@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
     "@ag-grid-community/client-side-row-model": "catalog:",
     "@ag-grid-community/core": "catalog:",
     "@ag-grid-community/styles": "catalog:",
     "@ag-grid-community/vue3": "catalog:",
     "@milaboratories/helpers": "catalog:",
-    "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
     "@platforma-sdk/model": "catalog:",
     "@platforma-sdk/ui-vue": "catalog:",
     "@milaboratories/graph-maker": "catalog:",

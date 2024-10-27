@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "scripts": {
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
-    "build": "rm -rf ./block-pack && block-tools pack"
+    "build": "rm -rf ./block-pack && block-tools pack",
+    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'"
   },
   "files": [
     "index.d.ts",
@@ -43,27 +44,10 @@
     "@changesets/cli": "catalog:"
   },
   "//": {
-    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'",
     "pnpm": {
       "overrides": {
-        "@milaboratory/pl-middle-layer": "file:/Volumes/Data/Projects/MiLaboratory/platforma/ts-pl-middle-layer/milaboratory-pl-middle-layer-1.9.30.tgz"
-      }
-    },
-    "pnpm1": {
-      "overrides": {
-        "@milaboratory/pl-middle-layer": "1.9.30",
-        "@platforma-sdk/workflow-tengo": "file:/Volumes/Data/Projects/MiLaboratory/blocks-beta/tengo-sdk/milaboratory-tengo-sdk-1.0.14.tgz",
-        "@platforma-sdk/tengo-builder": "file:/Volumes/Data/Projects/MiLaboratory/blocks-beta/tengo-template-builder"
-      }
-    },
-    "pnpm2": {
-      "overrides": {
-        "@platforma-sdk/workflow-tengo": "file:/Volumes/Data/Projects/MiLaboratory/blocks-beta/tengo-sdk",
-        "@milaboratory/pl-middle-layer": "file:/Volumes/Data/Projects/MiLaboratory/platforma/ts-pl-middle-layer",
-        "@platforma-sdk/model": "file:/Volumes/Data/Projects/MiLaboratory/platforma/ts-sdk-ui",
-        "@platforma-sdk/test": "file:/Volumes/Data/Projects/MiLaboratory/platforma/ts-sdk-test",
-        "@platforma-sdk/ui-vue": "file:/Volumes/Data/Projects/MiLaboratory/platforma/sdk-vue",
-        "@platforma-open/milaboratories.samples-and-data.workflow": "file:/Volumes/Data/Projects/MiLaboratory/blocks-beta/block-samples-and-data/workflow"
+        "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz",
+        "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
       }
     }
   },

@@ -28,12 +28,15 @@ wf.body(func(args) {
 
 	donorColumn := wf.resolve(args.donorColumn)
 
-	// The problem is that refs for data is not resolved. 
+	// The problem is that refs for data is not resolved.
 	// To deal with it, we should call resolve resolve that will return feature.
 	// Then to resolve feature we should call another templete where we will describe what's to wait
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
-		donorColumn: donorColumn
+		donorColumn: donorColumn,
+		params: {
+			seed: args.seed
+		}
 	})
 
 	return {
@@ -41,14 +44,17 @@ wf.body(func(args) {
 			"trees": results.output("trees"),
 			"treeNodes": results.output("treeNodes"),
 			"treeNodesWithClones": results.output("treeNodesWithClones"),
-			
+
+			"tsvs": results.output("tsvs"),
 			"allelesLogs": results.output("allelesLogs"),
 			"treesLogs": results.output("treesLogs"),
 
 			// files should be explicitly published, otherwise it will not be assesable from GUI
-			// TODO it should be automated
+			// that's why pframes.exportColumnData
 			"allelesReports": pframes.exportColumnData(results.output("allelesReports")),
-			"treesReports": pframes.exportColumnData(results.output("treesReports"))
+			"treesReports": pframes.exportColumnData(results.output("treesReports")),
+			"allelesReportsJson": pframes.exportColumnData(results.output("allelesReportsJson")),
+			"treesReportsJson": pframes.exportColumnData(results.output("treesReportsJson"))
 		},
 		exports: {}
 	}

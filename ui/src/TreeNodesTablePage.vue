@@ -23,19 +23,6 @@ type State = {
 const app = useApp();
 const pFrameDriver = platforma.pFrameDriver
 
-// TODO should be moved to model
-app.createUiModel({}, () => ({
-  treeSelectionForTreeNodesTable: {},
-  reportSelection: {
-    type: 'alleles'
-  },
-  treeNodesGraphState: {
-    title: "",
-    chartType: "dendro",
-    template: "dendro"
-  }
-}))
-
 const state = reactive({} as State)
 
 watch(() => app.model.outputs.treeNodes, async (pframe) => {
@@ -170,10 +157,10 @@ const treesOptions = computed(() => {
         <PlDropdown :options="treesOptions ?? []" v-model=treeIdProperty label="Tree" clearable />
       </PlRow>
       <GraphMaker 
-        v-if="app.outputs.treeNodes?.ok && app.outputs.treeNodes.value && 
+        v-if="app.model.outputs.treeNodes && 
         !(app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined)"
         v-model=app.model.ui.treeNodesGraphState
-        :p-frame-handle=app.outputs.treeNodes.value
+        :p-frame=app.model.outputs.treeNodes
         :p-frame-driver=platforma.pFrameDriver
         />
     </PlBlockPage>
