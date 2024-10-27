@@ -62,26 +62,26 @@ export const TreeResultsMap = computed(() => {
     resultMap.set(donor, result);
   }
 
-  integrateData(resultMap, app.outputValues.allelesLogs, (r, v) => (r.logHandle.alleles = v));
-  integrateData(resultMap, app.outputValues.treesLogs, (r, v) => (r.logHandle.trees = v));
+  integrateData(resultMap, app.model.outputs.allelesLogs, (r, v) => (r.logHandle.alleles = v));
+  integrateData(resultMap, app.model.outputs.treesLogs, (r, v) => (r.logHandle.trees = v));
 
   integrateData(
     resultMap,
-    app.outputValues.allelesReportsJson,
+    app.model.outputs.allelesReportsJson,
     (r, v) => (r.jsonReport.alleles = ReactiveFileContent.getContentJson(v.handle)?.value)
   );
   integrateData(
     resultMap,
-    app.outputValues.treesReportsJson,
+    app.model.outputs.treesReportsJson,
     (r, v) => (r.jsonReport.trees = ReactiveFileContent.getContentJson(v.handle)?.value)
   );
 
   integrateData(
     resultMap,
-    app.outputValues.allelesReports,
+    app.model.outputs.allelesReports,
     (r, v) => (r.txtReportHandle.alleles = v)
   );
-  integrateData(resultMap, app.outputValues.treesReports, (r, v) => (r.txtReportHandle.trees = v));
+  integrateData(resultMap, app.model.outputs.treesReports, (r, v) => (r.txtReportHandle.trees = v));
 
   return resultMap;
 });
@@ -90,13 +90,13 @@ export const TreeResultsMap = computed(() => {
 export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
   const app = useApp();
 
-  const allelesProgress = app.outputValues.allelesProgress;
+  const allelesProgress = app.model.outputs.allelesProgress;
   if (allelesProgress === undefined) return undefined;
 
-  const treesProgress = app.outputValues.treesProgress;
+  const treesProgress = app.model.outputs.treesProgress;
   if (treesProgress === undefined) return undefined;
 
-  const doneRaw = app.outputValues.done;
+  const doneRaw = app.model.outputs.done;
   if (doneRaw === undefined) return undefined;
   const done = new Set(doneRaw);
 
