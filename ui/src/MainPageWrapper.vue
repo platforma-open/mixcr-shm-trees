@@ -2,7 +2,6 @@
 import { watch } from 'vue';
 import { useApp } from './app';
 import MainPage from './MainPage.vue';
-import { TreeResultsFull } from './results';
 
 const app = useApp();
 

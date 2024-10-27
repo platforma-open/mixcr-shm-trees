@@ -5,7 +5,6 @@
   "description": "Block tests",
   "type": "module",
   "scripts": {
-    "test": "vitest"
   },
   "files": [],
   "keywords": [],
