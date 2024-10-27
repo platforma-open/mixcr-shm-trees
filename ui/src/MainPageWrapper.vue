@@ -7,13 +7,20 @@ import { TreeResultsFull } from './results';
 const app = useApp();
 
 watch(() => app.model.ui, (ui) => {
-    if (!ui)
+    if (!ui || Object.entries(ui).length === 0)
         app.model.ui = {
             treeSelectionForTreeNodesTable: {},
             treeNodesGraphState: {
                 title: "",
                 chartType: "dendro",
                 template: "dendro"
+            },
+            treeTableState: {
+                gridState: {},
+                pTableParams: {
+                    sorting: [],
+                    filters: []
+                }
             }
         }
 }, { immediate: true });

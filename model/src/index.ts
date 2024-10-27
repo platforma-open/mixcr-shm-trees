@@ -29,7 +29,7 @@ export type TreeSelection = {
 };
 
 export type UiState = {
-  treeTableState?: PlDataTableState;
+  treeTableState: PlDataTableState;
   treeSelectionForTreeNodesTable: TreeSelection;
   treeNodesGraphState: GraphMakerSettings;
 };
@@ -238,3 +238,4 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
 export type BlockOutputs = InferOutputsType<typeof platforma>;
 
 export * from './progress';
+export * from './helpers';

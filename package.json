@@ -3,7 +3,8 @@
   "version": "1.0.1",
   "scripts": {
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
-    "build": "rm -rf ./block-pack && block-tools pack"
+    "build": "rm -rf ./block-pack && block-tools pack",
+    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'"
   },
   "files": [
     "index.d.ts",
@@ -43,10 +44,10 @@
     "@changesets/cli": "catalog:"
   },
   "//": {
-    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'",
     "pnpm": {
       "overrides": {
-        "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz"
+        "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz",
+        "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
       }
     }
   },

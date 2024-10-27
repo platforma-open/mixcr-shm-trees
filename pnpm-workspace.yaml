@@ -10,12 +10,12 @@ catalog:
   '@platforma-sdk/block-tools': ^2.3.18
 
   "@platforma-sdk/model": ^1.7.16
-  "@platforma-sdk/ui-vue": ^1.7.16
+  "@platforma-sdk/ui-vue": ^1.7.17
 
   '@platforma-sdk/test': ^1.7.16
   "@milaboratories/graph-maker": ^1.0.15
 
-  '@platforma-sdk/workflow-tengo': ^1.6.2
+  '@platforma-sdk/workflow-tengo': ^1.6.3
 
   '@milaboratories/software-pframes-conv': ^1.6.3
   '@platforma-open/milaboratories.software-small-binaries': ^1.14.4
@@ -24,7 +24,7 @@ catalog:
   '@milaboratories/helpers': ^1.6.5
 
   'vue': ^3.5.12
-  'vue-tsc': ^2.1.6
+  'vue-tsc': ^2.1.8
   '@vueuse/core': ^11.1.0
 
   'zod': ^3.23.8

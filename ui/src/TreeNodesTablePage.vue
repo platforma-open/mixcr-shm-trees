@@ -23,19 +23,6 @@ type State = {
 const app = useApp();
 const pFrameDriver = platforma.pFrameDriver
 
-// TODO should be moved to model
-app.createUiModel({}, () => ({
-  treeSelectionForTreeNodesTable: {},
-  reportSelection: {
-    type: 'alleles'
-  },
-  treeNodesGraphState: {
-    title: "",
-    chartType: "dendro",
-    template: "dendro"
-  }
-}))
-
 const state = reactive({} as State)
 
 watch(() => app.model.outputs.treeNodes, async (pframe) => {

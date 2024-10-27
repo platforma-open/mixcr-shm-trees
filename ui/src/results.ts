@@ -1,21 +1,39 @@
-import { AnyLogHandle, isLiveLog } from '@platforma-sdk/model';
+import { AnyLogHandle, BlobHandleAndSize, isLiveLog } from '@platforma-sdk/model';
 import { ReactiveFileContent } from '@platforma-sdk/ui-vue';
 import { computed } from 'vue';
 import { useApp } from './app';
-import { ProgressPrefix } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import {
+  PColumnResourceMapData,
+  ProgressPrefix
+} from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { ByStepIdRecord, Steps } from './types';
 
 export type TreeResult = {
   donor: string;
 
-  allelesProgress: string;
-  treesProgress: string;
+  progress: ByStepIdRecord<string>;
 
-  allelesLogHandle?: AnyLogHandle;
-  treesLogHandle?: AnyLogHandle;
+  logHandle: ByStepIdRecord<AnyLogHandle | undefined>;
 
-  allelesReport?: any;
-  treesReport?: any;
+  jsonReport: ByStepIdRecord<any | undefined>;
+
+  txtReportHandle: ByStepIdRecord<BlobHandleAndSize | undefined>;
 };
+
+function integrateData<T>(
+  resultMap: Map<string, TreeResult>,
+  data: PColumnResourceMapData<T> | undefined,
+  integrator: (result: TreeResult, data: NonNullable<T>) => void
+) {
+  if (data)
+    for (const d of data.data) {
+      if (d.key.length !== 1 || typeof d.key[0] !== 'string') throw new Error('assertion error');
+      const donor = d.key[0];
+      const result = resultMap.get(donor);
+      if (!result) throw new Error(`No result for key: ${donor}`);
+      if (d.value) integrator(result, d.value);
+    }
+}
 
 /** Relatively rarely changing part of the results */
 export const TreeResultsMap = computed(() => {
@@ -33,45 +51,37 @@ export const TreeResultsMap = computed(() => {
   for (const donor of targetDonorIds) {
     const result: TreeResult = {
       donor,
-      allelesProgress: 'Queued',
-      treesProgress: 'Queued'
+      progress: {
+        alleles: 'Queued',
+        trees: 'Queued'
+      },
+      jsonReport: { alleles: undefined, trees: undefined },
+      txtReportHandle: { alleles: undefined, trees: undefined },
+      logHandle: { alleles: undefined, trees: undefined }
     };
     resultMap.set(donor, result);
   }
 
-  const allelesLogs = app.outputValues.allelesLogs;
-  if (allelesLogs)
-    for (const logData of allelesLogs.data) {
-      const donor = logData.key[0] as string;
-      resultMap.get(donor)!.allelesLogHandle = logData.value;
-    }
+  integrateData(resultMap, app.outputValues.allelesLogs, (r, v) => (r.logHandle.alleles = v));
+  integrateData(resultMap, app.outputValues.treesLogs, (r, v) => (r.logHandle.trees = v));
 
-  const treesLogs = app.outputValues.treesLogs;
-  if (treesLogs)
-    for (const logData of treesLogs.data) {
-      const donor = logData.key[0] as string;
-      resultMap.get(donor)!.treesLogHandle = logData.value;
-    }
+  integrateData(
+    resultMap,
+    app.outputValues.allelesReportsJson,
+    (r, v) => (r.jsonReport.alleles = ReactiveFileContent.getContentJson(v.handle)?.value)
+  );
+  integrateData(
+    resultMap,
+    app.outputValues.treesReportsJson,
+    (r, v) => (r.jsonReport.trees = ReactiveFileContent.getContentJson(v.handle)?.value)
+  );
 
-  const allelesReportsJson = app.outputValues.allelesReportsJson;
-  if (allelesReportsJson)
-    for (const report of allelesReportsJson.data) {
-      if (report.value === undefined) continue;
-      const donor = report.key[0] as string;
-      resultMap.get(donor)!.allelesReport = ReactiveFileContent.getContentJson(
-        report.value.handle
-      )?.value;
-    }
-
-  const treesReportsJson = app.outputValues.treesReportsJson;
-  if (treesReportsJson)
-    for (const report of treesReportsJson.data) {
-      if (report.value === undefined) continue;
-      const donor = report.key[0] as string;
-      resultMap.get(donor)!.treesReport = ReactiveFileContent.getContentJson(
-        report.value.handle
-      )?.value;
-    }
+  integrateData(
+    resultMap,
+    app.outputValues.allelesReports,
+    (r, v) => (r.txtReportHandle.alleles = v)
+  );
+  integrateData(resultMap, app.outputValues.treesReports, (r, v) => (r.txtReportHandle.trees = v));
 
   return resultMap;
 });
@@ -96,29 +106,15 @@ export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
   // shellow cloning the map and it's values
   const resultMap = new Map([...rawMap].map((v) => [v[0], { ...v[1] }]));
 
-  // adding alleles progress information
-  for (const p of allelesProgress.data) {
-    const donor = p.key[0] as string;
-    const result = resultMap.get(donor)!;
-    if (p?.value)
-      result.allelesProgress = isLiveLog(result.allelesLogHandle)
-        ? p.value.replace(ProgressPrefix, '')
-        : result.allelesLogHandle
+  // adding alleles and trees progress information
+  for (const step of Steps)
+    integrateData(resultMap, step === 'alleles' ? allelesProgress : treesProgress, (r, v) => {
+      r.progress[step] = isLiveLog(r.logHandle[step])
+        ? v.replace(ProgressPrefix, '')
+        : r.logHandle[step]
         ? 'Done'
         : 'Queued';
-  }
-
-  // adding alleles progress information
-  for (const p of treesProgress.data) {
-    const donor = p.key[0] as string;
-    const result = resultMap.get(donor)!;
-    if (p?.value)
-      result.treesProgress = isLiveLog(result.treesLogHandle)
-        ? p.value.replace(ProgressPrefix, '')
-        : result.treesLogHandle
-        ? 'Done'
-        : 'Queued';
-  }
+    });
 
   return [...resultMap.values()];
 });
