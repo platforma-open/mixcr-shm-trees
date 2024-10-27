@@ -29,7 +29,6 @@ const tabOptions: SimpleOption<TabId>[] = [
 </script>
 
 <template>
-  <h3>Analysis summary for {{ selectedDonor }}</h3>
   <PlBtnGroup :options="tabOptions" v-model="data.currentTab" />
   <div v-if="selectedDonor !== undefined && donorData !== undefined" class="pl-scrollable">
     <RunReportPanelLogs v-if="data.currentTab === 'logs'" :donerResult="donorData" />

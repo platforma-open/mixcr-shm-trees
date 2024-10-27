@@ -85,10 +85,12 @@ const gridOptions: GridOptions<TreeResult> = {
     </div>
 
     <PlSlideModal v-model="data.settingsOpen">
+      <template #title>Settings</template>
       <SettingsPanel />
     </PlSlideModal>
 
     <PlSlideModal v-model="data.donorReportOpen" width="80%">
+      <template #title>Analysis summary for {{ data.selectedDonor }}</template>
       <RunReportPanel v-model="data.selectedDonor" />
     </PlSlideModal>
   </PlBlockPage>
