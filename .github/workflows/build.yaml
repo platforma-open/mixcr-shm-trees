@@ -31,15 +31,6 @@ jobs:
       pnpm-recursive-build: true
       pnpm-recursive-tests: true
       publish-to-public: 'false'
-      npmrc-config: |
-        {
-          "registries": {
-            "https://npm.pkg.github.com/": {
-              "scopes": ["platforma-open"],
-              "tokenVar": "NODE_AUTH_TOKEN"
-            }
-          }
-        }
     secrets:
       env: |
         {
