@@ -13,9 +13,7 @@ text := import("text")
 allowNA := true
 
 // export of threes whithout nodes
-shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
-    // TODO add forChain if runWithSingleCell
-
+shmTreeTableOptions := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -33,7 +31,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
 
-    if runWithSingleCell && dataDescription["hasCellTags"] {
+    if dataDescription["cellsAssembled"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {
             "column": "subtreeId",
@@ -224,9 +222,7 @@ shmTreeTableOptions := func(dataDescription, runWithSingleCell) {
 }
 
 // export data that is uniq for node
-shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
-    // TODO add forChain if runWithSingleCell
-
+shmTreeNodesTableOptions := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -244,7 +240,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
         }
     })
 
-    if runWithSingleCell && dataDescription["hasCellTags"] {
+    if dataDescription["cellsAssembled"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {
             "column": "subtreeId",
@@ -424,8 +420,7 @@ shmTreeNodesTableOptions := func(dataDescription, runWithSingleCell) {
 
 // export data that is unique for clones, but not unique for a node
 // (different clones could be in the same topology node, for example, different time points)
-shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWithSingleCell) {
-    // TODO add forChain if runWithSingleCell
+shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     donorColumnSpec := donorColumn.get("spec").getDataAsJson()
 
     axes := []
@@ -445,7 +440,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWith
         }
     })
 
-    if runWithSingleCell && dataDescription["hasCellTags"] {
+    if dataDescription["cellsAssembled"] {
         cmdArgs = append(cmdArgs, "-subtreeId")
         axes = append(axes, {
             "column": "subtreeId",
@@ -476,6 +471,8 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn, runWith
     cmdArgs = append(cmdArgs, "-fileName")
     axes = append(axes, {
         "column": "fileName",
+        // in case of single cell trees, not all subtrees will be filled for nodes with observed
+        "allowNA": true,
         "preProcess": [
             {
                 "type": "regexpReplace",

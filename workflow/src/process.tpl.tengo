@@ -25,7 +25,8 @@ self.body(func(inputs) {
 		"hasUmiTags": false,
 		"hasCellTags": false,
 		// will be filled
-		"coveredFeatures": []
+		"coveredFeatures": [],
+		"cellsAssembled": false
 	}
 
 	assemblingFeature := ""
@@ -37,6 +38,9 @@ self.body(func(inputs) {
 		}
 		if presetAnnotations["mixcr.com/umiTags"] != "" {
 			dataDescription["hasUmiTags"] = true
+		}
+		if presetAnnotations["mixcr.com/cellsAssembled"] == "true" {
+			dataDescription["cellsAssembled"] = true
 		}
 		dataDescription["coveredFeatures"] = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
 		// check that assemblingFeature feature is the same. If so, coveredFeatures will be the same too
@@ -51,9 +55,9 @@ self.body(func(inputs) {
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
 
 	// collect params for running export commands and to parse result tsv files into pColumns
-	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription, false)
-	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription, false)
-	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn, false)
+	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription)
+	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription)
+	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn)
 
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(

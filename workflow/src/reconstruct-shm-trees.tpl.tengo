@@ -72,9 +72,7 @@ self.body(func(inputs) {
         arg("--report").arg("report.txt").
         saveFile("report.txt").
         arg("--json-report").arg("report.json").
-        saveFile("report.json").
-        // TODO support single cell trees
-        arg("--dont-combine-tree-by-cells")
+        saveFile("report.json")
 
     if !is_undefined(globalParams.seed) {
         shmTreesCmdBuilder.env("SEED", globalParams.seed)
