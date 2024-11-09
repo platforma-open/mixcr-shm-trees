@@ -487,6 +487,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     axes = append(axes, {
         "column": "cloneId",
         "id": "clone-id",
+        "allowNA": true,
         "spec": {
             "name": "pl7.app/vdj/cloneId",
             "type": "Long",

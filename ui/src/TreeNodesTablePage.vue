@@ -3,7 +3,7 @@ import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model'
 import { useApp } from './app';
 import { GraphMaker } from '@milaboratories/graph-maker'
 import { computed, reactive, watch } from 'vue';
-import { ListOption, PlBlockPage, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
+import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
 
 import "@milaboratories/graph-maker/dist/style.css";
 import { PColumnIdAndSpec } from '@platforma-sdk/model';
@@ -304,7 +304,7 @@ function dontShowGraphMaker() {
         <template v-if="state.hasSubtree">
           <PlSpacer/>
           <template v-if="state.subtreeOptions">
-            <PlDropdown :options=state.subtreeOptions v-model=subTreeIdProperty label="Subtree" clearable/>
+            <PlBtnGroup :options=state.subtreeOptions v-model="subTreeIdProperty"/>
           </template>
         </template>
       </PlRow>
