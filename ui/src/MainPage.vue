@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useApp } from './app';
 import { reactive, } from 'vue';
-import { PlBlockPage, PlSlideModal, PlBtnGhost, PlAgOverlayLoading, PlAgOverlayNoRows } from '@platforma-sdk/ui-vue';
+import { AgGridTheme, PlBlockPage, PlSlideModal, PlBtnGhost, PlAgOverlayLoading, PlAgOverlayNoRows } from '@platforma-sdk/ui-vue';
 import { TreeResult, TreeResultsFull } from './results';
 import SettingsPanel from './SettingsPanel.vue';
 import { refDebounced } from '@vueuse/core';
@@ -79,9 +79,9 @@ const gridOptions: GridOptions<TreeResult> = {
     </template>
 
     <div :style="{ flex: 1 }">
-      <AgGridVue :style="{ height: '100%' }" :rowData="result" :columnDefs="columnDefs" :grid-options="gridOptions"
-        :loadingOverlayComponentParams="{ notReady: true }" :loadingOverlayComponent=PlAgOverlayLoading
-        :noRowsOverlayComponent=PlAgOverlayNoRows />
+      <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :columnDefs="columnDefs"
+        :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true }"
+        :loadingOverlayComponent=PlAgOverlayLoading :noRowsOverlayComponent=PlAgOverlayNoRows />
     </div>
 
     <PlSlideModal v-model="data.settingsOpen">

@@ -4,7 +4,7 @@ import TreeTablePage from './TreeTablePage.vue';
 import TreeNodesTablePage from './TreeNodesTablePage.vue';
 import MainPageWrapper from './MainPageWrapper.vue';
 
-export const sdkPlugin = defineApp(platforma, () => {
+export const sdkPlugin = defineApp(platforma, (): any => {
   return {
     routes: {
       '/': MainPageWrapper,

@@ -26,6 +26,7 @@ export type BlockArgs = {
 export type TreeSelection = {
   donor?: string;
   treeId?: number;
+  subtreeId?: number;
 };
 
 export type UiState = {
