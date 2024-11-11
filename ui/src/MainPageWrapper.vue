@@ -5,10 +5,11 @@ import MainPage from './MainPage.vue';
 
 const app = useApp();
 
+// migration code goes here before we have appropriate place for it
 watch(() => app.model.ui, (ui) => {
     if (!ui || Object.entries(ui).length === 0)
         app.model.ui = {
-            treeSelectionForTreeNodesTable: {},
+            treeSelectionForTreeVisualization: {},
             treeNodesGraphState: {
                 title: "",
                 chartType: "dendro",
@@ -22,6 +23,10 @@ watch(() => app.model.ui, (ui) => {
                 }
             }
         }
+    else if ((ui as any).treeSelectionForTreeNodesTable) {
+        app.model.ui.treeSelectionForTreeVisualization = (app.model.ui as any).treeSelectionForTreeNodesTable;
+        delete (app.model.ui as any).treeSelectionForTreeNodesTable;
+    }
 }, { immediate: true });
 </script>
 

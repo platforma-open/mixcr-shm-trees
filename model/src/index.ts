@@ -17,8 +17,6 @@ import { isPColumnSpecResult, matchAxesId } from './util';
  * Block arguments coming from the user interface
  */
 export type BlockArgs = {
-  // @todo, remove, used for testing
-  seed?: string;
   donorColumn?: Ref;
   datasetColumns: Ref[];
 };
@@ -31,7 +29,7 @@ export type TreeSelection = {
 
 export type UiState = {
   treeTableState: PlDataTableState;
-  treeSelectionForTreeNodesTable: TreeSelection;
+  treeSelectionForTreeVisualization: TreeSelection;
   treeNodesGraphState: GraphMakerSettings;
 };
 
@@ -231,7 +229,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   .sections([
     { type: 'link', href: '/', label: 'Main' },
     { type: 'link', href: '/trees', label: 'Trees Table' },
-    { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' }
+    { type: 'link', href: '/treeNodes', label: 'Tree Visualization' }
   ])
 
   .done();

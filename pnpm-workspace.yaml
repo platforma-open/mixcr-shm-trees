@@ -7,13 +7,13 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^1.16.1
-  '@platforma-sdk/block-tools': ^2.3.21
+  '@platforma-sdk/block-tools': ^2.3.22
 
-  "@platforma-sdk/model": ^1.7.20
-  "@platforma-sdk/ui-vue": ^1.7.51
+  "@platforma-sdk/model": ^1.7.53
+  "@platforma-sdk/ui-vue": ^1.7.53
 
-  '@platforma-sdk/test': ^1.7.52
-  "@milaboratories/graph-maker": ^1.0.20
+  '@platforma-sdk/test': ^1.7.53
+  "@milaboratories/graph-maker": ^1.0.21
 
   '@platforma-sdk/workflow-tengo': ^1.7.5
 
@@ -35,7 +35,7 @@ catalog:
 
   'vite': ^5.4.10
   'vitest': ^2.1.4
-  '@vitejs/plugin-vue': ^5.1.4
+  '@vitejs/plugin-vue': ^5.1.5
 
   '@ag-grid-community/core': &ag-grid ^32.3.2
   '@ag-grid-community/client-side-row-model': *ag-grid
