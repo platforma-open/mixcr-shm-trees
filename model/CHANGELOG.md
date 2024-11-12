@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 2.1.1
+
+### Patch Changes
+
+- 0f396c8: SDK upgrade; GraphMaker table fix
+
 ## 2.1.0
 
 ### Minor Changes
