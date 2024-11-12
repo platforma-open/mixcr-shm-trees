@@ -231,7 +231,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   .sections([
     { type: 'link', href: '/', label: 'Main' },
     { type: 'link', href: '/trees', label: 'Trees Table' },
-    { type: 'link', href: '/treeNodes', label: 'Tree Nodes Table' }
+    { type: 'link', href: '/treeNodes', label: 'Tree Visualization' }
   ])
 
   .done();
