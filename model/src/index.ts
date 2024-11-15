@@ -62,7 +62,9 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
       .entries.filter((v) => isPColumnSpec(v.obj))
       .filter((v) => {
         const spec = v.obj as PColumnSpec;
-        return spec.name === 'pl7.app/metadata';
+        if(spec.name === 'pl7.app/metadata')
+          return true;
+        return spec.name === 'pl7.app/label' && spec.axesSpec.length === 1 && spec.axesSpec[0].name === "pl7.app/sampleId"
       })
       .map(
         (v) =>
