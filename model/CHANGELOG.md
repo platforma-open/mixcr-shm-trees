@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 2.2.0
+
+### Minor Changes
+
+- 38ea872: Now "Sample Name" can be used as donor id
+
 ## 2.1.1
 
 ### Patch Changes
