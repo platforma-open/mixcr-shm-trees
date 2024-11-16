@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ICellRendererParams } from '@ag-grid-community/core';
+import { ProgressPattern } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { computed, unref } from 'vue';
 import { TreeResult } from './results';
-import { ProgressPattern } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 
 const props = defineProps<{
     params: ICellRendererParams<TreeResult, string>;
@@ -87,7 +87,7 @@ const parsed = computed<Parsed>(() => {
     height: 100%;
     transition: width 0.4s ease-in-out;
     /* background: linear-gradient(90deg, #FFF 0%, #D8FAC8 100%); */
-    background: linear-gradient(180deg, #a1e59c 0%, #d0f5b0 100%);
+    background: linear-gradient(90deg, #FFF 0%, #D8FAC8 100%);
 }
 
 .progress-cell__body {

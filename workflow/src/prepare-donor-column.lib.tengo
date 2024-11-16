@@ -22,12 +22,16 @@ groupDataByDonorId := func(donorColumn, datasets) {
 
     donorColumnSpec := donorColumn.get("spec").getDataAsJson()
     
+    domain := {}
+    if !is_undefined(donorColumnSpec["domain"]) {
+            domain = donorColumnSpec["domain"]
+    }
     resultSpec := {
         // annotations and domain could differ between datasets
         "axesSpec": [
             {
                 "annotations": donorColumnSpec["annotations"],
-                "domain": donorColumnSpec["domain"],
+                "domain": domain,
                 "name": donorColumnSpec["name"],
                 "type": donorColumnSpec["valueType"]
             },

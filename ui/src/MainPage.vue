@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useApp } from './app';
-import { reactive, } from 'vue';
-import { AgGridTheme, PlBlockPage, PlSlideModal, PlBtnGhost, PlAgOverlayLoading, PlAgOverlayNoRows } from '@platforma-sdk/ui-vue';
-import { TreeResult, TreeResultsFull } from './results';
-import SettingsPanel from './SettingsPanel.vue';
-import { refDebounced } from '@vueuse/core';
 import { ColDef, GridOptions } from '@ag-grid-community/core';
-import ProgressCell from './ProgressCell.vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
+import { AgGridTheme, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
+import { refDebounced } from '@vueuse/core';
+import { reactive, } from 'vue';
+import { useApp } from './app';
+import ProgressCell from './ProgressCell.vue';
+import { TreeResult, TreeResultsFull } from './results';
 import RunReportPanel from './RunReportPanel.vue';
+import SettingsPanel from './SettingsPanel.vue';
 
 const { model } = useApp();
 
@@ -26,6 +26,10 @@ const result = refDebounced(TreeResultsFull, 100, {
   maxWait: 200
 });
 
+const defaultColDef: ColDef = {
+  suppressHeaderMenuButton: true
+}
+
 const columnDefs: ColDef<TreeResult>[] = [
   {
     colId: 'donor',
@@ -36,20 +40,20 @@ const columnDefs: ColDef<TreeResult>[] = [
     colId: 'allelesProgress',
     valueGetter: (d) => d.data?.progress.alleles,
     cellRenderer: 'ProgressCell',
-    headerName: "Allele Reconstruction Progress",
+    headerName: "Allele inference",
     cellStyle: {
-      '--ag-cell-horizontal-padding': '2px',
-      '--ag-cell-vertical-padding': '2px'
+      '--ag-cell-horizontal-padding': '0px',
+      '--ag-cell-vertical-padding': '0px'
     }
   },
   {
     colId: 'treesProgress',
     valueGetter: (d) => d.data?.progress.trees,
     cellRenderer: 'ProgressCell',
-    headerName: "Tree Reconstruction Progress",
+    headerName: "Trees reconstruction",
     cellStyle: {
-      '--ag-cell-horizontal-padding': '2px',
-      '--ag-cell-vertical-padding': '2px'
+      '--ag-cell-horizontal-padding': '0px',
+      '--ag-cell-vertical-padding': '0px'
     }
   }
 ];
@@ -75,12 +79,16 @@ const gridOptions: GridOptions<TreeResult> = {
   <PlBlockPage>
     <template #title>Overview</template>
     <template #append>
-      <PlBtnGhost :icon="'settings-2'" @click.stop="() => data.settingsOpen = true">Settings</PlBtnGhost>
+      <PlBtnGhost @click.stop="() => data.settingsOpen = true">Settings
+        <template #append>
+          <PlMaskIcon24 name="settings" />
+        </template>
+      </PlBtnGhost>
     </template>
 
     <div :style="{ flex: 1 }">
-      <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :columnDefs="columnDefs"
-        :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true }"
+      <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :defaultColDef="defaultColDef"
+        :columnDefs="columnDefs" :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true }"
         :loadingOverlayComponent=PlAgOverlayLoading :noRowsOverlayComponent=PlAgOverlayNoRows />
     </div>
 
