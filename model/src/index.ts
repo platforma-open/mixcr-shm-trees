@@ -41,10 +41,26 @@ export type DatasetOption = {
   assemblingFeature: string;
 };
 
-export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
+export const platforma = BlockModel.create('Heavy')
 
-  .initialArgs({
+  .withArgs<BlockArgs>({
     datasetColumns: []
+  })
+
+  .withUiState<UiState>({
+    treeSelectionForTreeNodesTable: {},
+    treeNodesGraphState: {
+      title: '',
+      chartType: 'dendro',
+      template: 'dendro'
+    },
+    treeTableState: {
+      gridState: {},
+      pTableParams: {
+        sorting: [],
+        filters: []
+      }
+    }
   })
 
   // for debuginf: specs for all available columns
@@ -56,15 +72,18 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   // )
 
   // select metadata columns
-  .output('donorOptions', (ctx) =>
+  .retentiveOutput('donorOptions', (ctx) =>
     ctx.resultPool
       .getSpecs()
       .entries.filter((v) => isPColumnSpec(v.obj))
       .filter((v) => {
         const spec = v.obj as PColumnSpec;
-        if(spec.name === 'pl7.app/metadata')
-          return true;
-        return spec.name === 'pl7.app/label' && spec.axesSpec.length === 1 && spec.axesSpec[0].name === "pl7.app/sampleId"
+        if (spec.name === 'pl7.app/metadata') return true;
+        return (
+          spec.name === 'pl7.app/label' &&
+          spec.axesSpec.length === 1 &&
+          spec.axesSpec[0].name === 'pl7.app/sampleId'
+        );
       })
       .map(
         (v) =>
@@ -78,7 +97,7 @@ export const platforma = BlockModel.create<BlockArgs, UiState>('Heavy')
   )
 
   // selected all dataset options that have the same axis as selected metadata column
-  .output('datasetOptions', (ctx) => {
+  .retentiveOutput('datasetOptions', (ctx) => {
     if (ctx.args.donorColumn === undefined) return undefined;
 
     const donorColumn = ctx.args.donorColumn;
