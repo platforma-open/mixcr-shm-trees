@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 2.2.0
+
+### Minor Changes
+
+- 898579f: Major SDK upgrade, minor UX fixes.
+
 ## 2.1.1
 
 ### Patch Changes
