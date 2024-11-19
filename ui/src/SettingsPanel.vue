@@ -68,12 +68,12 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
 </script>
 
 <template>
-  <PlDropdownRef :options="app.model.outputs.donorOptions ?? []" v-model="app.model.args.donorColumn"
+  <PlDropdownRef :options="app.model.outputs.donorOptions" v-model="app.model.args.donorColumn"
     label="Select donor column" clearable />
 
   <template v-if="app.model.args.donorColumn !== undefined">
     <template v-for="dsIdx in range(0, app.model.args.datasetColumns.length + 1)">
-      <PlDropdown v-if="getDatasetOptions(dsIdx)?.length !== 0" :options="getDatasetOptions(dsIdx) ?? []"
+      <PlDropdown v-if="getDatasetOptions(dsIdx)?.length !== 0" :options="getDatasetOptions(dsIdx)"
         :model-value="getDatasetValue(dsIdx)" @update:model-value="(v) => datasetValueSetter(dsIdx, v)"
         :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`" />
     </template>
