@@ -1,6 +1,6 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees",
-  "version": "2.1.2",
+  "version": "2.2.0",
   "scripts": {
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
     "build": "rm -rf ./block-pack && block-tools pack",
@@ -52,9 +52,15 @@
       "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz"
     }
   },
+  "pnpm": {
+    "overrides": {}
+  },
   "//": {
     "pnpm": {
       "overrides": {
+        "@platforma-sdk/model": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/model/package.tgz",
+        "@platforma-sdk/workflow-tengo": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/workflow-tengo/package.tgz",
+        "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz",
         "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz",
         "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
       }
