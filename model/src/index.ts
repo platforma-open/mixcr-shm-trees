@@ -6,7 +6,8 @@ import {
   InferOutputsType,
   PlDataTableState,
   isPColumnSpec,
-  getAxisId
+  getAxisId,
+  type PlTableFiltersModel,
 } from '@platforma-sdk/model';
 import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
@@ -31,6 +32,8 @@ export type TreeSelection = {
 
 export type UiState = {
   treeTableState: PlDataTableState;
+  filtersOpen: boolean;
+  filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
   treeNodesGraphState: GraphMakerSettings;
 };
@@ -60,7 +63,9 @@ export const platforma = BlockModel.create('Heavy')
         sorting: [],
         filters: []
       }
-    }
+    },
+    filtersOpen: false,
+    filterModel: {},
   })
 
   // for debuginf: specs for all available columns
@@ -135,7 +140,10 @@ export const platforma = BlockModel.create('Heavy')
     if (pCols === undefined) return undefined;
     return ctx.createPTable({
       columns: pCols,
-      filters: ctx.uiState?.treeTableState?.pTableParams?.filters ?? [],
+      filters: [
+        ...(ctx.uiState?.treeTableState?.pTableParams?.filters ?? []),
+        ...(ctx.uiState?.filterModel.filters ?? [])
+      ],
       sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
     });
   })
