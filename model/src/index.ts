@@ -142,7 +142,7 @@ export const platforma = BlockModel.create('Heavy')
       columns: pCols,
       filters: [
         ...(ctx.uiState?.treeTableState?.pTableParams?.filters ?? []),
-        ...(ctx.uiState?.filterModel.filters ?? [])
+        ...(ctx.uiState?.filterModel?.filters ?? [])
       ],
       sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
     });
