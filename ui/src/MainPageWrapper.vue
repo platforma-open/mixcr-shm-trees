@@ -20,7 +20,9 @@ watch(() => app.model.ui, (ui) => {
                     sorting: [],
                     filters: []
                 }
-            }
+            },
+            filtersOpen: false,
+            filterModel: {},
         }
 }, { immediate: true });
 </script>
