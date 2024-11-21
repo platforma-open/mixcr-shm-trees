@@ -1,7 +1,7 @@
 <script setup lang="ts">
 // import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import {
   PlBlockPage,
   PlBtnGhost,
@@ -14,6 +14,11 @@ import {
 import { PTableColumnSpec } from '@platforma-sdk/model';
 
 const app = useApp();
+
+(() => {
+  if (app.model.ui.filtersOpen === undefined) app.model.ui.filtersOpen = false;
+  if (app.model.ui.filterModel === undefined) app.model.ui.filterModel = {};
+})();
 
 // TODO add default option to filter table by donor
 const tableSettings = computed<PlDataTableSettings>(() => ({
