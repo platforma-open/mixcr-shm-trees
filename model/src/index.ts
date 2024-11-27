@@ -7,12 +7,14 @@ import {
   PlDataTableState,
   isPColumnSpec,
   getAxisId,
-  type PlTableFiltersModel
+  type PlTableFiltersModel,
+  isPColumnSpecResult,
+  deriveLabels
 } from '@platforma-sdk/model';
 import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
 import { ProgressPrefix } from './progress';
-import { isPColumnSpecResult, matchAxesId } from './util';
+import { matchAxesId } from './util';
 
 /**
  * Block arguments coming from the user interface
@@ -78,27 +80,15 @@ export const platforma = BlockModel.create('Heavy')
 
   // select metadata columns
   .retentiveOutput('donorOptions', (ctx) =>
-    ctx.resultPool
-      .getSpecs()
-      .entries.filter((v) => isPColumnSpec(v.obj))
-      .filter((v) => {
-        const spec = v.obj as PColumnSpec;
-        if (spec.name === 'pl7.app/metadata') return true;
-        return (
-          spec.name === 'pl7.app/label' &&
-          spec.axesSpec.length === 1 &&
-          spec.axesSpec[0].name === 'pl7.app/sampleId'
-        );
-      })
-      .map(
-        (v) =>
-          ({
-            ref: v.ref,
-            label: `${ctx.getBlockLabel(v.ref.blockId)} / ${
-              v.obj.annotations?.['pl7.app/label'] ?? `unlabelled`
-            }`
-          } satisfies Option)
-      )
+    ctx.resultPool.getOptions((spec) => {
+      if (!isPColumnSpec(spec)) return false;
+      if (spec.name === 'pl7.app/metadata') return true;
+      return (
+        spec.name === 'pl7.app/label' &&
+        spec.axesSpec.length === 1 &&
+        spec.axesSpec[0].name === 'pl7.app/sampleId'
+      );
+    })
   )
 
   // selected all dataset options that have the same axis as selected metadata column
@@ -111,28 +101,28 @@ export const platforma = BlockModel.create('Heavy')
 
     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
 
-    return ctx.resultPool
-      .getSpecs()
-      .entries.filter(isPColumnSpecResult)
-      .filter(
-        ({ obj: spec }) =>
-          spec.name === 'mixcr.com/clns' &&
-          matchAxesId([sampleAxisId], spec.axesSpec) &&
-          spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
-          spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
-          spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]'
-      )
-      .map(
-        ({ ref, obj: spec }) =>
-          ({
-            ref: ref,
-            // @todo info about what was run
-            label: `${ctx.getBlockLabel(ref.blockId)} / ${
-              spec.annotations?.['pl7.app/label'] ?? `unlabelled`
-            }`,
-            assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
-          } as DatasetOption)
-      );
+    return deriveLabels(
+      ctx.resultPool
+        .getSpecs()
+        .entries.filter(isPColumnSpecResult)
+        .filter(
+          ({ obj: spec }) =>
+            spec.name === 'mixcr.com/clns' &&
+            matchAxesId([sampleAxisId], spec.axesSpec) &&
+            spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
+            spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
+            spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]'
+        ),
+      (v) => v.obj,
+      { addLabelAsSuffix: true, includeNativeLabel: true }
+    ).map(
+      ({ value: { ref, obj: spec }, label }) =>
+        ({
+          ref,
+          label,
+          assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
+        } as DatasetOption)
+    );
   })
 
   .output('trees', (ctx) => {

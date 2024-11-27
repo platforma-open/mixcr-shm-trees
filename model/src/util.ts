@@ -9,13 +9,6 @@ import {
   ResultPoolEntry
 } from '@platforma-sdk/model';
 
-/** @deprecated */
-export function isPColumnSpecResult(
-  r: ResultPoolEntry<PObjectSpec>
-): r is ResultPoolEntry<PColumnSpec> {
-  return isPColumnSpec(r.obj);
-}
-
 export function domainsEqual(
   domain1: Record<string, string> | undefined,
   domain2: Record<string, string> | undefined
