@@ -1,5 +1,21 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.2.1
+
+### Patch Changes
+
+- d2e86d6: Added filters support
+- 2aa5c02: PlAgDataTable export CSV
+- 814a127: Added ui state upgrader
+- 1df7ad5: fix filter button state
+- c9035d8: update graph-maker - fix for table styles
+- be95662: Correct loading state for Donor and Dataset dropdowns
+- 41004f8: Updated styles for progress-cell
+- Updated dependencies [d2e86d6]
+- Updated dependencies [0b9fe13]
+- Updated dependencies [814a127]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.3.1
+
 ## 2.2.0
 
 ### Minor Changes

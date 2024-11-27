@@ -1,5 +1,25 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 2.2.1
+
+### Patch Changes
+
+- d2e86d6: Added filters support
+- 2aa5c02: PlAgDataTable export CSV
+- 1df7ad5: fix filter button state
+- 68bc7a3: PlTableFilters fixes
+- 41004f8: Updated styles for progress-cell
+- Updated dependencies [d2e86d6]
+- Updated dependencies [0b9fe13]
+- Updated dependencies [2aa5c02]
+- Updated dependencies [814a127]
+- Updated dependencies [1df7ad5]
+- Updated dependencies [c9035d8]
+- Updated dependencies [be95662]
+- Updated dependencies [41004f8]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.3.1
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@2.2.1
+
 ## 2.2.0
 
 ### Minor Changes
