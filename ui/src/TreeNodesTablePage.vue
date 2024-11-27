@@ -4,8 +4,7 @@ import { useApp } from './app';
 import { GraphMaker } from '@milaboratories/graph-maker'
 import { computed, reactive, watch } from 'vue';
 import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
-
-import "@milaboratories/graph-maker/dist/style.css";
+import '@milaboratories/graph-maker/styles';
 import { PColumnIdAndSpec } from '@platforma-sdk/model';
 import { deepClone } from '@milaboratories/helpers';
 
@@ -312,7 +311,6 @@ function dontShowGraphMaker() {
         v-if=!dontShowGraphMaker()
         v-model=app.model.ui.treeNodesGraphState
         :p-frame=app.model.outputs.treeNodes
-        :p-frame-driver=platforma.pFrameDriver
         />
     </PlBlockPage>
   </template>
