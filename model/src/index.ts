@@ -7,7 +7,7 @@ import {
   PlDataTableState,
   isPColumnSpec,
   getAxisId,
-  type PlTableFiltersModel,
+  type PlTableFiltersModel
 } from '@platforma-sdk/model';
 import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
@@ -65,7 +65,7 @@ export const platforma = BlockModel.create('Heavy')
       }
     },
     filtersOpen: false,
-    filterModel: {},
+    filterModel: {}
   })
 
   // for debuginf: specs for all available columns
@@ -262,6 +262,8 @@ export const platforma = BlockModel.create('Heavy')
     { type: 'link', href: '/trees', label: 'Trees Table' },
     { type: 'link', href: '/treeNodes', label: 'Tree Visualization' }
   ])
+
+  .argsValid((ctx) => ctx.args.donorColumn !== undefined && ctx.args.datasetColumns.length > 0)
 
   .done();
 
