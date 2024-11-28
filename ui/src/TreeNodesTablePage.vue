@@ -2,8 +2,8 @@
 import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
 import { GraphMaker } from '@milaboratories/graph-maker'
-import { computed, reactive, watch } from 'vue';
-import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
+import { computed, reactive, ref, watch } from 'vue';
+import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer, PlToggleSwitch } from '@platforma-sdk/ui-vue';
 import '@milaboratories/graph-maker/styles';
 import { PColumnIdAndSpec } from '@platforma-sdk/model';
 import { deepClone } from '@milaboratories/helpers';
@@ -159,12 +159,12 @@ function updateGraphMaker() {
   } else {
     if (donorId === undefined || treeId === undefined || state.column === undefined) {
       // clean up filters of graph maker
-      delete app.model.ui.treeNodesGraphState.fixedOptions
+      delete app.model.ui.graphFixedOptions
     } else {
       // show default title
       app.model.ui.treeNodesGraphState.title = `${donorId}/${treeId}`
       // add filters to graph maker, so it will use data only for the selected tree
-      app.model.ui.treeNodesGraphState.fixedOptions = [
+      app.model.ui.graphFixedOptions = [
         {
           inputName: 'filters',
           selectedSource: {
@@ -291,6 +291,25 @@ function dontShowGraphMaker() {
   }
 }
 
+// to check full columns list
+// watch(() => app.model.outputs.treeNodes, async (handle) => {
+//   const list = await platforma.pFrameDriver.listColumns(handle!);
+//   console.log(list, 'list')
+// }, {immediate: true})
+
+const showTable = computed<boolean>({
+  get: () => {
+    return app.model.ui.treeNodesGraphState.layersSettings?.dendro.showTable ?? false;
+  },
+  set: (v) => {
+    if (app.model.ui.treeNodesGraphState.layersSettings?.dendro) {
+      console.log('state', app.model.ui.treeNodesGraphState)
+      app.model.ui.treeNodesGraphState.layersSettings.dendro.showTable = v;
+    }
+  }
+})
+
+// delete app.model.ui.treeNodesGraphState.optionsState //- to be sure that default options work, they are applied only with empty options state
 </script>
 
 <template>
@@ -311,7 +330,94 @@ function dontShowGraphMaker() {
         v-if=!dontShowGraphMaker()
         v-model=app.model.ui.treeNodesGraphState
         :p-frame=app.model.outputs.treeNodes
-        />
+        chart-type="dendro"
+        :fixed-options="app.model.ui.graphFixedOptions"
+        :default-options="[{
+          inputName: 'value',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/dendrogram/topology',
+            valueType: 'Long',
+            axesSpec: []
+          }
+        }, {
+          inputName: 'height',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/dendrogram/distance',
+            valueType: 'Double',
+            axesSpec: []
+          },
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/vdj/sequence',
+            valueType: 'String',
+            annotations: {
+              'pl7.app/label': 'CDR1 aa',
+            },
+            axesSpec: []
+          }
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/vdj/sequence',
+            valueType: 'String',
+            annotations: {
+              'pl7.app/label': 'CDR2 aa',
+            },
+            axesSpec: []
+          }
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/vdj/sequence',
+            valueType: 'String',
+            annotations: {
+              'pl7.app/label': 'CDR3 aa',
+            },
+            axesSpec: []
+          }
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/vdj/sequence',
+            valueType: 'String',
+            annotations: {
+              'pl7.app/label': 'Clonal sequences',
+            },
+            axesSpec: []
+          }
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/dendrogram/isObserved',
+            valueType: 'String',
+            axesSpec: []
+          }
+        }, {
+          inputName: 'tableContent',
+          selectedSource: {
+            kind: 'PColumn',
+            name: 'pl7.app/vdj/mutationsRate',
+            valueType: 'Double',
+            axesSpec: []
+          }
+        }]"
+      >
+        <template v-slot:titleLineSlot>
+          <PlToggleSwitch
+            :style="{marginLeft: '16px'}"
+            v-model="showTable"
+            label="Show table"
+          />
+        </template>
+      </GraphMaker>
     </PlBlockPage>
   </template>
   <template v-else>loading...</template>

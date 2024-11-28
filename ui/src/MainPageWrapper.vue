@@ -11,9 +11,9 @@ watch(() => app.model.ui, (ui) => {
             treeSelectionForTreeNodesTable: {},
             treeNodesGraphState: {
                 title: "",
-                chartType: "dendro",
                 template: "dendro"
             },
+            graphFixedOptions: [],
             treeTableState: {
                 gridState: {},
                 pTableParams: {

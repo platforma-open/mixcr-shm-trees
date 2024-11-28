@@ -9,7 +9,7 @@ import {
   getAxisId,
   type PlTableFiltersModel
 } from '@platforma-sdk/model';
-import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
+import { GraphMakerProps, GraphMakerState } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import { parseResourceMap } from './helpers';
 import { ProgressPrefix } from './progress';
 import { isPColumnSpecResult, matchAxesId } from './util';
@@ -35,7 +35,8 @@ export type UiState = {
   filtersOpen: boolean;
   filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
-  treeNodesGraphState: GraphMakerSettings;
+  treeNodesGraphState: GraphMakerState;
+  graphFixedOptions: GraphMakerProps['fixedOptions']
 };
 
 export type DatasetOption = {
@@ -54,9 +55,9 @@ export const platforma = BlockModel.create('Heavy')
     treeSelectionForTreeNodesTable: {},
     treeNodesGraphState: {
       title: '',
-      chartType: 'dendro',
       template: 'dendro'
     },
+    graphFixedOptions: [],
     treeTableState: {
       gridState: {},
       pTableParams: {
