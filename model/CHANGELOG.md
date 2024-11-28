@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 2.3.1
+
+### Patch Changes
+
+- d2e86d6: Added filters support
+- 0b9fe13: Prevent block execution with unselected donor
+- 814a127: Added ui state upgrader
+
 ## 2.3.0
 
 ### Minor Changes
