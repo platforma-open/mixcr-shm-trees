@@ -10,7 +10,8 @@ import {
   type PlDataTableSettings,
   type PlAgDataTableController,
   PlAgDataTable,
-  PlTableFilters
+  PlTableFilters,
+  PlAgDataTableToolsPanel
 } from '@platforma-sdk/ui-vue';
 import { PTableColumnSpec } from '@platforma-sdk/model';
 
@@ -43,6 +44,7 @@ const tableInstance = ref<PlAgDataTableController>();
   <PlBlockPage>
     <template #title>Trees Table</template>
     <template #append>
+      <PlAgDataTableToolsPanel />
       <PlBtnGhost @click.stop="() => tableInstance?.exportCsv()">
         Export
         <template #append>
@@ -59,6 +61,7 @@ const tableInstance = ref<PlAgDataTableController>();
     <PlAgDataTable
       v-model="app.model.ui.treeTableState"
       :settings="tableSettings"
+      show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)"
       ref="tableInstance"
     />
