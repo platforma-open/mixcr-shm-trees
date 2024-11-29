@@ -28,10 +28,19 @@
       "url": "https://github.com/milaboratory/block-mixcr-shm-trees",
       "docs": "https://github.com/milaboratory/block-mixcr-shm-trees/docs",
       "support": "mailto:support@milaboratories.com",
-      "description": "Extract TCR / BCR Clonotypes from next generation sequencing data",
+      "description": "Generate somatic hypermutation (SHM) trees from your B-cell immune repertoires.",
       "longDescription": "file:./docs/description.md",
       "changelog": "file:CHANGELOG.md",
-      "tags": [],
+      "tags": [
+        "SHM",
+        "lineage",
+        "immunology",
+        "repertoire",
+        "VDJ",
+        "tree",
+        "track",
+        "immunization"
+      ],
       "organization": {
         "name": "MiLaboratories Inc",
         "url": "https://milaboratories.com/",
