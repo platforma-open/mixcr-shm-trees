@@ -14,6 +14,7 @@ export async function addDendrogram(
   label: string,
   donorId: string,
   treeId: number,
+  subtreeId: string | undefined,
   vGene: string,
   jGene: string
 ): Promise<DendrogramState | undefined> {
@@ -25,8 +26,9 @@ export async function addDendrogram(
 
   const dendro: DendrogramState = {
     id: nextId(),
-    donorId: donorId,
-    treeId: treeId,
+    donorId,
+    treeId,
+    subtreeId,
     state: {
       title: label,
       template: 'dendro'

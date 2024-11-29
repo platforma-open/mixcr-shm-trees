@@ -10,7 +10,7 @@ export const sdkPlugin = defineApp(model, () => {
     routes: {
       '/': () => MainPage,
       '/trees': () => TreeTablePage,
-      '/treeNodes': () => TreeNodesTablePage,
+      // '/treeNodes': () => TreeNodesTablePage,
       '/dendrogram': () => DendrogramPage
     }
   };

@@ -41,7 +41,8 @@ const filterIconColor = computed(() =>
 const onRowDoubleClicked = (keys: any[]) => {
   const donorId = keys[0];
   const treeId = Number(keys[1] as bigint);
-  addDendrogram('Tree/' + donorId + "/" + treeId, donorId, treeId, "X", "Y");
+  const subtreeId = keys.length > 2 ? (keys[2] as bigint).toString() : undefined;
+  addDendrogram('Tree / ' + donorId + " / " + treeId, donorId, treeId,subtreeId,  "X", "Y");
 }
 
 const tableInstance = ref<PlAgDataTableController>();

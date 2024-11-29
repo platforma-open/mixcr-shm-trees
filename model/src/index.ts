@@ -37,6 +37,7 @@ export type DendrogramState = {
   id: string;
   donorId: string;
   treeId: number;
+  subtreeId: string | undefined;
   state: GraphMakerState;
   fixedOps: GraphMakerProps['fixedOptions'];
   defaultOps: GraphMakerProps['defaultOptions'];
@@ -280,9 +281,9 @@ export const model = BlockModel.create()
       label: gs.state.title
     }));
     return [
-      { type: 'link', href: '/', label: 'Main' },
+      { type: 'link', href: '/', label: 'Analysis Overview' },
       { type: 'link', href: '/trees', label: 'Trees Table' },
-      { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
+      // { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
       ...dendroRoutes
     ];
   })
