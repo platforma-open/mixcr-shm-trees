@@ -2,11 +2,7 @@ import {
   AxesId,
   AxesSpec,
   AxisId,
-  AxisSpec,
-  isPColumnSpec,
-  PColumnSpec,
-  PObjectSpec,
-  ResultPoolEntry
+  AxisSpec
 } from '@platforma-sdk/model';
 
 export function domainsEqual(

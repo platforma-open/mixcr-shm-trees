@@ -4,11 +4,11 @@ import { AgGridVue } from '@ag-grid-community/vue3';
 import { AgGridTheme, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
 import { reactive, } from 'vue';
-import { useApp } from './app';
-import ProgressCell from './ProgressCell.vue';
-import { TreeResult, TreeResultsFull } from './results';
-import RunReportPanel from './RunReportPanel.vue';
-import SettingsPanel from './SettingsPanel.vue';
+import { useApp } from '../app';
+import { TreeResult, TreeResultsFull } from '../results';
+import ProgressCell from './components/ProgressCell.vue';
+import RunReportPanel from './components/RunReportPanel.vue';
+import SettingsPanel from './components/SettingsPanel.vue';
 
 const { model } = useApp();
 

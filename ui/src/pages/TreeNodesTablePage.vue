@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { useApp } from './app';
-import { GraphMaker } from '@milaboratories/graph-maker'
-import { computed, reactive, watch } from 'vue';
-import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
+import { GraphMaker } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
-import { PColumnIdAndSpec } from '@platforma-sdk/model';
 import { deepClone } from '@milaboratories/helpers';
+import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { PColumnIdAndSpec } from '@platforma-sdk/model';
+import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
+import { computed, reactive, watch } from 'vue';
+import { useApp } from '../app';
 
 // all available donor-treeId pairs
 type DonorOptions = { 
@@ -22,7 +22,7 @@ type State = {
 }
 
 const app = useApp();
-const pFrameDriver = platforma.pFrameDriver
+const pFrameDriver = model.pFrameDriver
 
 const state = reactive({
   hasSubtree: false

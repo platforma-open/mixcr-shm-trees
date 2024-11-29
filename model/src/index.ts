@@ -1,18 +1,16 @@
+import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import {
   BlockModel,
-  PColumnSpec,
-  Ref,
-  Option,
   InferOutputsType,
   PlDataTableState,
-  isPColumnSpec,
+  PlRef,
+  deriveLabels,
   getAxisId,
-  type PlTableFiltersModel,
+  isPColumnSpec,
   isPColumnSpecResult,
-  deriveLabels
+  parseResourceMap,
+  type PlTableFiltersModel
 } from '@platforma-sdk/model';
-import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
-import { parseResourceMap } from './helpers';
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
 
@@ -22,8 +20,8 @@ import { matchAxesId } from './util';
 export type BlockArgs = {
   // @todo, remove, used for testing
   seed?: string;
-  donorColumn?: Ref;
-  datasetColumns: Ref[];
+  donorColumn?: PlRef;
+  datasetColumns: PlRef[];
 };
 
 export type TreeSelection = {
@@ -32,21 +30,25 @@ export type TreeSelection = {
   subtreeId?: number;
 };
 
+export type GraphState = { id: string; settings: GraphMakerSettings };
+
 export type UiState = {
   treeTableState: PlDataTableState;
   filtersOpen: boolean;
   filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
+
   treeNodesGraphState: GraphMakerSettings;
+  graphs: GraphState[];
 };
 
 export type DatasetOption = {
-  ref: Ref;
+  ref: PlRef;
   label: string;
   assemblingFeature: string;
 };
 
-export const platforma = BlockModel.create('Heavy')
+export const model = BlockModel.create()
 
   .withArgs<BlockArgs>({
     datasetColumns: []
@@ -67,7 +69,8 @@ export const platforma = BlockModel.create('Heavy')
       }
     },
     filtersOpen: false,
-    filterModel: {}
+    filterModel: {},
+    graphs: []
   })
 
   // for debuginf: specs for all available columns
@@ -138,6 +141,12 @@ export const platforma = BlockModel.create('Heavy')
     });
   })
 
+  .output('treeColumnSpec', (ctx) => {
+    const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
+    if (pCols === undefined || pCols.length === 0) return undefined;
+    return pCols[0].spec;
+  })
+
   .output('treeNodes', (ctx) => {
     const treeNodesColumns = ctx.outputs?.resolve('treeNodes')?.getPColumns();
     if (treeNodesColumns === undefined) return undefined;
@@ -148,7 +157,7 @@ export const platforma = BlockModel.create('Heavy')
     return ctx.createPFrame(treeNodesColumns.concat(treeNodesWithClonesColumns));
   })
 
-  /** Donot ids for which we have at least one dataset to analyze */
+  /** Donor ids for which we have at least one dataset to analyze */
   .output('targetDonorIds', (ctx) => {
     const alleleReports = ctx.outputs?.resolve({
       field: 'allelesReports',
@@ -247,17 +256,24 @@ export const platforma = BlockModel.create('Heavy')
       : undefined;
   })
 
-  .sections([
-    { type: 'link', href: '/', label: 'Main' },
-    { type: 'link', href: '/trees', label: 'Trees Table' },
-    { type: 'link', href: '/treeNodes', label: 'Tree Visualization' }
-  ])
+  .sections((ctx) => {
+    const graphRoutes = (ctx.uiState?.graphs ?? []).map((gs) => ({
+      type: 'link' as const,
+      href: `/graph?id=${gs.id}` as const,
+      label: gs.settings.title
+    }));
+    return [
+      { type: 'link', href: '/', label: 'Main' },
+      { type: 'link', href: '/trees', label: 'Trees Table' },
+      { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
+      ...graphRoutes
+    ];
+  })
 
   .argsValid((ctx) => ctx.args.donorColumn !== undefined && ctx.args.datasetColumns.length > 0)
 
   .done();
 
-export type BlockOutputs = InferOutputsType<typeof platforma>;
+export type BlockOutputs = InferOutputsType<typeof model>;
 
 export * from './progress';
-export * from './helpers';
