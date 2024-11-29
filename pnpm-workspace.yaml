@@ -10,10 +10,10 @@ catalog:
   '@platforma-sdk/block-tools': ^2.3.27
 
   "@platforma-sdk/model": ^1.13.5
-  "@platforma-sdk/ui-vue": ^1.13.10
+  "@platforma-sdk/ui-vue": ^1.13.15
 
   '@platforma-sdk/test': ^1.13.5
-  "@milaboratories/graph-maker": ^1.1.0
+  "@milaboratories/graph-maker": ^1.1.2
 
   '@platforma-sdk/workflow-tengo': ^2.3.0
 

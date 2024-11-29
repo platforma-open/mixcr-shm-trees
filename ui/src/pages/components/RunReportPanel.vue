@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue';
-import { debouncedRef } from '@vueuse/core';
 import { PlBtnGroup, SimpleOption } from '@platforma-sdk/ui-vue';
-import RunReportPanelReports from './RunReportPanelReports.vue';
+import { debouncedRef } from '@vueuse/core';
+import { computed, reactive } from 'vue';
+import { TreeResultsMap } from '../../results';
 import RunReportPanelLogs from './RunReportPanelLogs.vue';
-import { TreeResultsMap } from './results';
+import RunReportPanelReports from './RunReportPanelReports.vue';
 
 const selectedDonor = defineModel<string | undefined>()
 
@@ -31,8 +31,8 @@ const tabOptions: SimpleOption<TabId>[] = [
 <template>
   <PlBtnGroup :options="tabOptions" v-model="data.currentTab" />
   <div v-if="selectedDonor !== undefined && donorData !== undefined" class="pl-scrollable">
-    <RunReportPanelLogs v-if="data.currentTab === 'logs'" :donerResult="donorData" />
-    <RunReportPanelReports v-else :donerResult="donorData" />
+    <RunReportPanelLogs v-if="data.currentTab === 'logs'" :donorResult="donorData" />
+    <RunReportPanelReports v-else :donorResult="donorData" />
   </div>
   <div v-else>No sample selected</div>
 </template>

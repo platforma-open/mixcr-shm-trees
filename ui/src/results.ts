@@ -1,11 +1,13 @@
-import { AnyLogHandle, BlobHandleAndSize, isLiveLog } from '@platforma-sdk/model';
+import { ProgressPrefix } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import {
+  AnyLogHandle,
+  BlobHandleAndSize,
+  isLiveLog,
+  PColumnResourceMapData
+} from '@platforma-sdk/model';
 import { ReactiveFileContent } from '@platforma-sdk/ui-vue';
 import { computed } from 'vue';
 import { useApp } from './app';
-import {
-  PColumnResourceMapData,
-  ProgressPrefix
-} from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { ByStepIdRecord, Steps } from './types';
 
 export type TreeResult = {

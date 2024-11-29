@@ -1,15 +1,17 @@
-import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { defineApp } from '@platforma-sdk/ui-vue';
-import TreeTablePage from './TreeTablePage.vue';
-import TreeNodesTablePage from './TreeNodesTablePage.vue';
-import MainPageWrapper from './MainPageWrapper.vue';
+import MainPage from './pages/MainPage.vue';
+import DendrogramPage from './pages/DendrogramPage.vue';
+import TreeNodesTablePage from './pages/TreeNodesTablePage.vue';
+import TreeTablePage from './pages/TreeTablePage.vue';
 
-export const sdkPlugin = defineApp(platforma, (): any => {
+export const sdkPlugin = defineApp(model, () => {
   return {
     routes: {
-      '/': MainPageWrapper,
-      '/trees': TreeTablePage,
-      '/treeNodes': TreeNodesTablePage
+      '/': () => MainPage,
+      '/trees': () => TreeTablePage,
+      // '/treeNodes': () => TreeNodesTablePage,
+      '/dendrogram': () => DendrogramPage
     }
   };
 });

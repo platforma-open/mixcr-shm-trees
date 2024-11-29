@@ -1,16 +1,15 @@
-<script setup lang="ts">
-import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { useApp } from './app';
-import { GraphMaker } from '@milaboratories/graph-maker'
-import { computed, reactive, ref, watch } from 'vue';
-import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer, PlToggleSwitch } from '@platforma-sdk/ui-vue';
+<!-- <script setup lang="ts">
 import '@milaboratories/graph-maker/styles';
-import { PColumnIdAndSpec } from '@platforma-sdk/model';
 import { deepClone } from '@milaboratories/helpers';
+import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { PColumnIdAndSpec } from '@platforma-sdk/model';
+import { ListOption, PlBlockPage, PlBtnGroup, PlDropdown, PlRow, PlSpacer } from '@platforma-sdk/ui-vue';
+import { computed, reactive, watch } from 'vue';
+import { useApp } from '../app';
 
 // all available donor-treeId pairs
-type DonorOptions = { 
-  [index: string]: number[] 
+type DonorOptions = {
+  [index: string]: number[]
 }
 
 type State = {
@@ -22,7 +21,7 @@ type State = {
 }
 
 const app = useApp();
-const pFrameDriver = platforma.pFrameDriver
+const pFrameDriver = model.pFrameDriver
 
 const state = reactive({
   hasSubtree: false
@@ -32,13 +31,13 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
   if (pframe === undefined) return
   // columns will be used in other places too
   const columns = await pFrameDriver.listColumns(pframe)
-  
+
   const column = columns[0]
   state.column = column
 
   // check if there is subtreeId in axes
   state.hasSubtree = column.spec.axesSpec[2].name === "pl7.app/dendrogram/subtreeId"
-  
+
   // TODO remove deepClone after fix of API
   // fetch all available donors 
   const donors = await pFrameDriver.getUniqueValues(pframe, deepClone({
@@ -66,7 +65,7 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
             operator: 'Equal',
             reference: donor as string
           }
-       }
+        }
       ],
       limit: Number.MAX_SAFE_INTEGER
     }))
@@ -78,12 +77,12 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
   }
 
   state.donors = posibleValues
-}, { immediate: true})
+}, { immediate: true })
 
 // TODO replace donorProperty with watch after fix of rewriting of uistate
 const donorProperty = computed({
-  get() { 
-    return app.model.ui.treeSelectionForTreeNodesTable.donor 
+  get() {
+    return app.model.ui.treeSelectionForTreeNodesTable.donor
   },
   set(donor) {
     app.model.ui.treeSelectionForTreeNodesTable.donor = donor
@@ -94,7 +93,7 @@ const donorProperty = computed({
 
 // TODO replace treeIdProperty with watch after fix of rewriting of uistate
 const treeIdProperty = computed({
-  get() { 
+  get() {
     return app.model.ui.treeSelectionForTreeNodesTable.treeId
   },
   set(treeId) {
@@ -107,7 +106,7 @@ const treeIdProperty = computed({
 
 // TODO replace subTreeIdProperty with watch after fix of rewriting of uistate
 const subTreeIdProperty = computed({
-  get() { 
+  get() {
     return app.model.ui.treeSelectionForTreeNodesTable.subtreeId
   },
   set(subtreeId) {
@@ -242,7 +241,7 @@ watch(() => [app.model.ui.treeSelectionForTreeNodesTable.donor, app.model.ui.tre
       for (var subtreeId of subtreeIds.values.data) {
         subtreeId = Number(subtreeId as bigint)
         // TODO get good labels for subtrees from somewhere. It should be like `IGHV3-3/IGHJ6-1`
-        options.push({ value: subtreeId, text: subtreeId.toString()})
+        options.push({ value: subtreeId, text: subtreeId.toString() })
       }
       state.subtreeOptions = options
       if (app.model.ui.treeSelectionForTreeNodesTable.subtreeId === undefined) {
@@ -251,7 +250,7 @@ watch(() => [app.model.ui.treeSelectionForTreeNodesTable.donor, app.model.ui.tre
       }
     }
   }
-}, { immediate: true})
+}, { immediate: true })
 
 const donorOptions = computed(() => {
   if (state.donors === undefined) {
@@ -268,7 +267,7 @@ const treesOptions = computed(() => {
   const selectedDonor = app.model.ui.treeSelectionForTreeNodesTable.donor
   if (state.donors === undefined || selectedDonor === undefined) {
     return []
-  } 
+  }
   const treeIds = state.donors[selectedDonor] ?? []
   const result = []
   for (const treeId of treeIds) {
@@ -282,11 +281,11 @@ function dontShowGraphMaker() {
     return true
   }
   if (state.hasSubtree) {
-    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || 
-      app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined || 
+    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined ||
+      app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined ||
       app.model.ui.treeSelectionForTreeNodesTable.subtreeId === undefined
   } else {
-    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || 
+    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined ||
       app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined
   }
 }
@@ -317,108 +316,20 @@ const showTable = computed<boolean>({
     <PlBlockPage>
       <PlRow>
         <PlDropdown :options="donorOptions ?? []" v-model=donorProperty label="Donor" clearable />
-        <PlSpacer/>
+        <PlSpacer />
         <PlDropdown :options="treesOptions ?? []" v-model=treeIdProperty label="Tree" clearable />
         <template v-if="state.hasSubtree">
-          <PlSpacer/>
+          <PlSpacer />
           <template v-if="state.subtreeOptions">
-            <PlBtnGroup :options=state.subtreeOptions v-model="subTreeIdProperty"/>
+            <PlBtnGroup :options=state.subtreeOptions v-model="subTreeIdProperty" />
           </template>
         </template>
       </PlRow>
-      <GraphMaker 
-        v-if=!dontShowGraphMaker()
-        v-model=app.model.ui.treeNodesGraphState
-        :p-frame=app.model.outputs.treeNodes
-        chart-type="dendro"
-        :fixed-options="app.model.ui.graphFixedOptions"
-        :default-options="[{
-          inputName: 'value',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/dendrogram/topology',
-            valueType: 'Long',
-            axesSpec: []
-          }
-        }, {
-          inputName: 'height',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/dendrogram/distance',
-            valueType: 'Double',
-            axesSpec: []
-          },
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/vdj/sequence',
-            valueType: 'String',
-            annotations: {
-              'pl7.app/label': 'CDR1 aa',
-            },
-            axesSpec: []
-          }
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/vdj/sequence',
-            valueType: 'String',
-            annotations: {
-              'pl7.app/label': 'CDR2 aa',
-            },
-            axesSpec: []
-          }
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/vdj/sequence',
-            valueType: 'String',
-            annotations: {
-              'pl7.app/label': 'CDR3 aa',
-            },
-            axesSpec: []
-          }
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/vdj/sequence',
-            valueType: 'String',
-            annotations: {
-              'pl7.app/label': 'Clonal sequences',
-            },
-            axesSpec: []
-          }
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/dendrogram/isObserved',
-            valueType: 'String',
-            axesSpec: []
-          }
-        }, {
-          inputName: 'tableContent',
-          selectedSource: {
-            kind: 'PColumn',
-            name: 'pl7.app/vdj/mutationsRate',
-            valueType: 'Double',
-            axesSpec: []
-          }
-        }]"
-      >
-        <template v-slot:titleLineSlot>
-          <PlToggleSwitch
-            :style="{marginLeft: '16px'}"
-            v-model="showTable"
-            label="Show table"
-          />
-        </template>
+      <template v-slot:titleLineSlot>
+        <PlToggleSwitch :style="{ marginLeft: '16px' }" v-model="showTable" label="Show table" />
+      </template>
       </GraphMaker>
     </PlBlockPage>
   </template>
   <template v-else>loading...</template>
-</template>
+</template> -->

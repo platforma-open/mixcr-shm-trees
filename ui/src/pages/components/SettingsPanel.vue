@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { useApp } from './app';
-import { PlDropdown, PlDropdownRef, ListOption, PlContainer } from '@platforma-sdk/ui-vue';
-import { retentive } from './retentive';
 import { notEmpty, range } from '@milaboratories/helpers';
-import { fromRefString, RefString, toRefString } from './util';
+import { ListOption, PlDropdown, PlDropdownRef } from '@platforma-sdk/ui-vue';
+import { computed } from 'vue';
+import { useApp } from '../../app';
+import { fromRefString, RefString, toRefString } from '../../util';
 
 const app = useApp();
 
-const datasetOptionsMap = retentive(() => {
+const datasetOptionsMap = computed(() => {
   const options = app.model.outputs.datasetOptions;
   if (options === undefined)
     return undefined;

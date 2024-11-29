@@ -58,6 +58,7 @@
   "//": {
     "pnpm": {
       "overrides": {
+        "@milaboratories/graph-maker" :"/Users/poslavskysv/Projects/milab/platforma/graph-maker/milaboratories-graph-maker-1.1.0.tgz",
         "@platforma-sdk/model": "file:/Users/dbolotin/milab/core/platforma/sdk/model/package.tgz",
         "@platforma-sdk/workflow-tengo": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/workflow-tengo/package.tgz",
         "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz",

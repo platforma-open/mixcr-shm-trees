@@ -1,19 +1,20 @@
 <script setup lang="ts">
 // import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { useApp } from './app';
-import { computed, ref, watch } from 'vue';
+import { PTableColumnSpec } from '@platforma-sdk/model';
 import {
+  PlAgDataTable,
+  PlAgDataTableToolsPanel,
   PlBlockPage,
   PlBtnGhost,
   PlMaskIcon24,
   PlSlideModal,
-  type PlDataTableSettings,
-  type PlAgDataTableController,
-  PlAgDataTable,
   PlTableFilters,
-  PlAgDataTableToolsPanel
+  type PlAgDataTableController,
+  type PlDataTableSettings
 } from '@platforma-sdk/ui-vue';
-import { PTableColumnSpec } from '@platforma-sdk/model';
+import { computed, ref } from 'vue';
+import { addDendrogram } from '../addDendrogram';
+import { useApp } from '../app';
 
 const app = useApp();
 
@@ -37,6 +38,13 @@ const filterIconColor = computed(() =>
   hasFilters.value ? { backgroundColor: 'var(--border-color-focus)' } : undefined
 );
 
+const onRowDoubleClicked = (keys: any[]) => {
+  const donorId = keys[0];
+  const treeId = Number(keys[1] as bigint);
+  const subtreeId = keys.length > 2 ? (keys[2] as bigint).toString() : undefined;
+  addDendrogram('Tree / ' + donorId + " / " + treeId, donorId, treeId,subtreeId,  "X", "Y");
+}
+
 const tableInstance = ref<PlAgDataTableController>();
 </script>
 
@@ -58,13 +66,9 @@ const tableInstance = ref<PlAgDataTableController>();
         </template>
       </PlBtnGhost>
     </template>
-    <PlAgDataTable
-      v-model="app.model.ui.treeTableState"
-      :settings="tableSettings"
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
-      ref="tableInstance"
-    />
+    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings" show-columns-panel
+      @columns-changed="(newColumns) => (columns = newColumns)" @onRowDoubleClicked="onRowDoubleClicked"
+      ref="tableInstance" />
   </PlBlockPage>
   <PlSlideModal v-model="app.model.ui.filtersOpen" :shadow="true" :close-on-outside-click="true">
     <template #title>Filters</template>
