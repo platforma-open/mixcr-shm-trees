@@ -48,9 +48,7 @@ export type UiState = {
   filtersOpen: boolean;
   filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
-
   treeNodesGraphState: GraphMakerState;
-
   dendrograms: DendrogramState[];
 };
 

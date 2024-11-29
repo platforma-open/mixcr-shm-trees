@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<!-- <script setup lang="ts">
 import '@milaboratories/graph-maker/styles';
 import { deepClone } from '@milaboratories/helpers';
 import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
@@ -8,8 +8,8 @@ import { computed, reactive, watch } from 'vue';
 import { useApp } from '../app';
 
 // all available donor-treeId pairs
-type DonorOptions = { 
-  [index: string]: number[] 
+type DonorOptions = {
+  [index: string]: number[]
 }
 
 type State = {
@@ -31,13 +31,13 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
   if (pframe === undefined) return
   // columns will be used in other places too
   const columns = await pFrameDriver.listColumns(pframe)
-  
+
   const column = columns[0]
   state.column = column
 
   // check if there is subtreeId in axes
   state.hasSubtree = column.spec.axesSpec[2].name === "pl7.app/dendrogram/subtreeId"
-  
+
   // TODO remove deepClone after fix of API
   // fetch all available donors 
   const donors = await pFrameDriver.getUniqueValues(pframe, deepClone({
@@ -65,7 +65,7 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
             operator: 'Equal',
             reference: donor as string
           }
-       }
+        }
       ],
       limit: Number.MAX_SAFE_INTEGER
     }))
@@ -77,12 +77,12 @@ watch(() => app.model.outputs.treeNodes, async (pframe) => {
   }
 
   state.donors = posibleValues
-}, { immediate: true})
+}, { immediate: true })
 
 // TODO replace donorProperty with watch after fix of rewriting of uistate
 const donorProperty = computed({
-  get() { 
-    return app.model.ui.treeSelectionForTreeNodesTable.donor 
+  get() {
+    return app.model.ui.treeSelectionForTreeNodesTable.donor
   },
   set(donor) {
     app.model.ui.treeSelectionForTreeNodesTable.donor = donor
@@ -93,7 +93,7 @@ const donorProperty = computed({
 
 // TODO replace treeIdProperty with watch after fix of rewriting of uistate
 const treeIdProperty = computed({
-  get() { 
+  get() {
     return app.model.ui.treeSelectionForTreeNodesTable.treeId
   },
   set(treeId) {
@@ -106,7 +106,7 @@ const treeIdProperty = computed({
 
 // TODO replace subTreeIdProperty with watch after fix of rewriting of uistate
 const subTreeIdProperty = computed({
-  get() { 
+  get() {
     return app.model.ui.treeSelectionForTreeNodesTable.subtreeId
   },
   set(subtreeId) {
@@ -158,12 +158,12 @@ function updateGraphMaker() {
   } else {
     if (donorId === undefined || treeId === undefined || state.column === undefined) {
       // clean up filters of graph maker
-      delete app.model.ui.treeNodesGraphState.fixedOptions
+      delete app.model.ui.graphFixedOptions
     } else {
       // show default title
       app.model.ui.treeNodesGraphState.title = `${donorId}/${treeId}`
       // add filters to graph maker, so it will use data only for the selected tree
-      app.model.ui.treeNodesGraphState.fixedOptions = [
+      app.model.ui.graphFixedOptions = [
         {
           inputName: 'filters',
           selectedSource: {
@@ -241,7 +241,7 @@ watch(() => [app.model.ui.treeSelectionForTreeNodesTable.donor, app.model.ui.tre
       for (var subtreeId of subtreeIds.values.data) {
         subtreeId = Number(subtreeId as bigint)
         // TODO get good labels for subtrees from somewhere. It should be like `IGHV3-3/IGHJ6-1`
-        options.push({ value: subtreeId, text: subtreeId.toString()})
+        options.push({ value: subtreeId, text: subtreeId.toString() })
       }
       state.subtreeOptions = options
       if (app.model.ui.treeSelectionForTreeNodesTable.subtreeId === undefined) {
@@ -250,7 +250,7 @@ watch(() => [app.model.ui.treeSelectionForTreeNodesTable.donor, app.model.ui.tre
       }
     }
   }
-}, { immediate: true})
+}, { immediate: true })
 
 const donorOptions = computed(() => {
   if (state.donors === undefined) {
@@ -267,7 +267,7 @@ const treesOptions = computed(() => {
   const selectedDonor = app.model.ui.treeSelectionForTreeNodesTable.donor
   if (state.donors === undefined || selectedDonor === undefined) {
     return []
-  } 
+  }
   const treeIds = state.donors[selectedDonor] ?? []
   const result = []
   for (const treeId of treeIds) {
@@ -281,15 +281,34 @@ function dontShowGraphMaker() {
     return true
   }
   if (state.hasSubtree) {
-    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || 
-      app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined || 
+    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined ||
+      app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined ||
       app.model.ui.treeSelectionForTreeNodesTable.subtreeId === undefined
   } else {
-    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined || 
+    return app.model.ui.treeSelectionForTreeNodesTable.donor === undefined ||
       app.model.ui.treeSelectionForTreeNodesTable.treeId === undefined
   }
 }
 
+// to check full columns list
+// watch(() => app.model.outputs.treeNodes, async (handle) => {
+//   const list = await platforma.pFrameDriver.listColumns(handle!);
+//   console.log(list, 'list')
+// }, {immediate: true})
+
+const showTable = computed<boolean>({
+  get: () => {
+    return app.model.ui.treeNodesGraphState.layersSettings?.dendro.showTable ?? false;
+  },
+  set: (v) => {
+    if (app.model.ui.treeNodesGraphState.layersSettings?.dendro) {
+      console.log('state', app.model.ui.treeNodesGraphState)
+      app.model.ui.treeNodesGraphState.layersSettings.dendro.showTable = v;
+    }
+  }
+})
+
+// delete app.model.ui.treeNodesGraphState.optionsState //- to be sure that default options work, they are applied only with empty options state
 </script>
 
 <template>
@@ -297,21 +316,20 @@ function dontShowGraphMaker() {
     <PlBlockPage>
       <PlRow>
         <PlDropdown :options="donorOptions ?? []" v-model=donorProperty label="Donor" clearable />
-        <PlSpacer/>
+        <PlSpacer />
         <PlDropdown :options="treesOptions ?? []" v-model=treeIdProperty label="Tree" clearable />
         <template v-if="state.hasSubtree">
-          <PlSpacer/>
+          <PlSpacer />
           <template v-if="state.subtreeOptions">
-            <PlBtnGroup :options=state.subtreeOptions v-model="subTreeIdProperty"/>
+            <PlBtnGroup :options=state.subtreeOptions v-model="subTreeIdProperty" />
           </template>
         </template>
       </PlRow>
-      <!-- <GraphMaker 
-        v-if=!dontShowGraphMaker()
-        v-model=app.model.ui.treeNodesGraphState
-        :p-frame=app.model.outputs.treeNodes
-        /> -->
+      <template v-slot:titleLineSlot>
+        <PlToggleSwitch :style="{ marginLeft: '16px' }" v-model="showTable" label="Show table" />
+      </template>
+      </GraphMaker>
     </PlBlockPage>
   </template>
   <template v-else>loading...</template>
-</template>
+</template> -->
