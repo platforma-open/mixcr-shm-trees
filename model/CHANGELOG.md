@@ -1,5 +1,12 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 2.3.2
+
+### Patch Changes
+
+- 9c556b0: Multiple tree views + subtree Id support
+- 4a72f81: default options for graph, new graph-maker interface
+
 ## 2.3.1
 
 ### Patch Changes
