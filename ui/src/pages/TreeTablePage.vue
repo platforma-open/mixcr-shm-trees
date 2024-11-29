@@ -13,7 +13,7 @@ import {
   type PlDataTableSettings
 } from '@platforma-sdk/ui-vue';
 import { computed, ref } from 'vue';
-import { addGraph } from '../addGraph';
+import { addDendrogram } from '../addDendrogram';
 import { useApp } from '../app';
 
 const app = useApp();
@@ -41,11 +41,7 @@ const filterIconColor = computed(() =>
 const onRowDoubleClicked = (keys: any[]) => {
   const donorId = keys[0];
   const treeId = Number(keys[1] as bigint);
-
-
-  console.log(keys);
-  addGraph('Tree/' + donorId + "/" + treeId, donorId, treeId, "hui", "pizda");
-
+  addDendrogram('Tree/' + donorId + "/" + treeId, donorId, treeId, "X", "Y");
 }
 
 const tableInstance = ref<PlAgDataTableController>();

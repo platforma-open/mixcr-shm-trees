@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { GraphMaker } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
 import { deepClone } from '@milaboratories/helpers';
 import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
@@ -307,11 +306,11 @@ function dontShowGraphMaker() {
           </template>
         </template>
       </PlRow>
-      <GraphMaker 
+      <!-- <GraphMaker 
         v-if=!dontShowGraphMaker()
         v-model=app.model.ui.treeNodesGraphState
         :p-frame=app.model.outputs.treeNodes
-        />
+        /> -->
     </PlBlockPage>
   </template>
   <template v-else>loading...</template>

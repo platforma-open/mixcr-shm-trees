@@ -1,4 +1,7 @@
-import { GraphMakerSettings } from '@milaboratories/graph-maker/dist/GraphMaker/types';
+import {
+  GraphMakerProps,
+  GraphMakerState
+} from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import {
   BlockModel,
   InferOutputsType,
@@ -30,7 +33,14 @@ export type TreeSelection = {
   subtreeId?: number;
 };
 
-export type GraphState = { id: string; settings: GraphMakerSettings };
+export type DendrogramState = {
+  id: string;
+  donorId: string;
+  treeId: number;
+  state: GraphMakerState;
+  fixedOps: GraphMakerProps['fixedOptions'];
+  defaultOps: GraphMakerProps['defaultOptions'];
+};
 
 export type UiState = {
   treeTableState: PlDataTableState;
@@ -38,8 +48,9 @@ export type UiState = {
   filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
 
-  treeNodesGraphState: GraphMakerSettings;
-  graphs: GraphState[];
+  treeNodesGraphState: GraphMakerState;
+
+  dendrograms: DendrogramState[];
 };
 
 export type DatasetOption = {
@@ -58,7 +69,6 @@ export const model = BlockModel.create()
     treeSelectionForTreeNodesTable: {},
     treeNodesGraphState: {
       title: '',
-      chartType: 'dendro',
       template: 'dendro'
     },
     treeTableState: {
@@ -70,7 +80,7 @@ export const model = BlockModel.create()
     },
     filtersOpen: false,
     filterModel: {},
-    graphs: []
+    dendrograms: []
   })
 
   // for debuginf: specs for all available columns
@@ -242,6 +252,13 @@ export const model = BlockModel.create()
       : undefined;
   })
 
+  .output('vjColumns', (ctx) => {
+    const cols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+    if (cols === undefined) return undefined;
+
+    return cols.filter((col) => col.spec.name === 'pl7.app/vdj/geneHit').map((col) => col.id);
+  })
+
   .output('started', (ctx) => ctx.outputs !== undefined)
 
   .output('done', (ctx) => {
@@ -257,16 +274,16 @@ export const model = BlockModel.create()
   })
 
   .sections((ctx) => {
-    const graphRoutes = (ctx.uiState?.graphs ?? []).map((gs) => ({
+    const dendroRoutes = (ctx.uiState?.dendrograms ?? []).map((gs) => ({
       type: 'link' as const,
-      href: `/graph?id=${gs.id}` as const,
-      label: gs.settings.title
+      href: `/dendrogram?id=${gs.id}` as const,
+      label: gs.state.title
     }));
     return [
       { type: 'link', href: '/', label: 'Main' },
       { type: 'link', href: '/trees', label: 'Trees Table' },
       { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
-      ...graphRoutes
+      ...dendroRoutes
     ];
   })
 
