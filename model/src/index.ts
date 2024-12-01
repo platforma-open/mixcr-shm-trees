@@ -45,7 +45,6 @@ export type DendrogramState = {
 
 export type UiState = {
   treeTableState: PlDataTableState;
-  filtersOpen: boolean;
   filterModel: PlTableFiltersModel;
   treeSelectionForTreeNodesTable: TreeSelection;
   treeNodesGraphState: GraphMakerState;
@@ -77,7 +76,6 @@ export const model = BlockModel.create()
         filters: []
       }
     },
-    filtersOpen: false,
     filterModel: {},
     dendrograms: []
   })
