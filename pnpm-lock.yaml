@@ -49,8 +49,8 @@ catalogs:
       specifier: ^1.14.1
       version: 1.14.1
     '@platforma-sdk/ui-vue':
-      specifier: ^1.14.1
-      version: 1.14.1
+      specifier: ^1.14.2
+      version: 1.14.2
     '@platforma-sdk/workflow-tengo':
       specifier: ^2.5.0
       version: 2.5.0
@@ -178,7 +178,7 @@ importers:
         version: 1.14.1
       '@platforma-sdk/ui-vue':
         specifier: 'catalog:'
-        version: 1.14.1(typescript@5.6.3)
+        version: 1.14.2(typescript@5.6.3)
       '@vueuse/core':
         specifier: 'catalog:'
         version: 11.3.0(vue@3.5.13(typescript@5.6.3))
@@ -901,8 +901,8 @@ packages:
   '@platforma-sdk/ui-vue@1.13.15':
     resolution: {integrity: sha512-VlKfzmxW9hQuw9QbObl4SZE0R66wK5uGogh4pLYPVIzl86OJy+9+mM2p++u1E25Mafz/58v4A3P/LiTvPtEi8A==}
 
-  '@platforma-sdk/ui-vue@1.14.1':
-    resolution: {integrity: sha512-C/APgWxCf/xiYjdwOwZz5s4i5YA+WTkB/GViNQI150TmnZMafyTkKy111zd61WK6+EeBPQR7idyEA6TYjKhxzg==}
+  '@platforma-sdk/ui-vue@1.14.2':
+    resolution: {integrity: sha512-F/LdKkufi8tcdNGF5ThqZJXoEi0jDRFE1FPAnyTGbFfAyh3Y76QqIBQGC9IJgWozZlNh6sNz3VFYih6MiMInxg==}
 
   '@platforma-sdk/workflow-tengo@2.5.0':
     resolution: {integrity: sha512-iKF4Xz6V+t/rW37AgShdEPyVOB9qc2enK9Z0JTecbO0BOni6M27n3BD/UKWCmm+dJvhJTU+LkKP88qzerD33xg==}
@@ -5679,7 +5679,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@platforma-sdk/ui-vue@1.14.1(typescript@5.6.3)':
+  '@platforma-sdk/ui-vue@1.14.2(typescript@5.6.3)':
     dependencies:
       '@ag-grid-community/client-side-row-model': 32.3.3
       '@ag-grid-community/core': 32.3.3
