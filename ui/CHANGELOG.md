@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.2.3
+
+### Patch Changes
+
+- 0318146: Table filters redesign
+- Updated dependencies [0318146]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.3.3
+
 ## 2.2.2
 
 ### Patch Changes
