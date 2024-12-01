@@ -32,7 +32,7 @@ const subtreeOptions = computedAsync(async () => {
       },
       filters: [
         {
-          type: 'bySingleColumn',
+          type: 'bySingleColumnV2',
           column: {
             type: 'axis',
             id: app.model.outputs.treeColumnSpec.axesSpec[0]
@@ -43,7 +43,7 @@ const subtreeOptions = computedAsync(async () => {
           }
         },
         {
-          type: 'bySingleColumn',
+          type: 'bySingleColumnV2',
           column: {
             type: 'axis',
             id: app.model.outputs.treeColumnSpec.axesSpec[1]
