@@ -21,8 +21,6 @@ import { matchAxesId } from './util';
  * Block arguments coming from the user interface
  */
 export type BlockArgs = {
-  // @todo, remove, used for testing
-  seed?: string;
   donorColumn?: PlRef;
   datasetColumns: PlRef[];
 };

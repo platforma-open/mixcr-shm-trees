@@ -22,11 +22,11 @@ self.awaitState("params", "ResourceReady")
 self.body(func(inputs) {
 	// overall description of data that we have.
     dataDescription := {
-		"hasUmiTags": false,
-		"hasCellTags": false,
+		hasUmiTags: false,
+		hasCellTags: false,
 		// will be filled
-		"coveredFeatures": [],
-		"cellsAssembled": false
+		coveredFeatures: [],
+		cellsAssembled: false
 	}
 
 	assemblingFeature := ""
@@ -34,20 +34,20 @@ self.body(func(inputs) {
 		presetAnnotations := dataset.get("spec").getDataAsJson()["annotations"]
 
 		if presetAnnotations["mixcr.com/cellTags"] != "" {
-			dataDescription["hasCellTags"] = true
+			dataDescription.hasCellTags = true
 		}
 		if presetAnnotations["mixcr.com/umiTags"] != "" {
-			dataDescription["hasUmiTags"] = true
+			dataDescription.hasUmiTags = true
 		}
 		if presetAnnotations["mixcr.com/cellsAssembled"] == "true" {
-			dataDescription["cellsAssembled"] = true
+			dataDescription.cellsAssembled = true
 		}
-		dataDescription["coveredFeatures"] = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
+		dataDescription.coveredFeatures = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
 		// check that assemblingFeature feature is the same. If so, coveredFeatures will be the same too
 		if (assemblingFeature == "") {
 			assemblingFeature = dataDescription["mixcr.com/assemblingFeature"]
 		} else if (assemblingFeature != dataDescription["mixcr.com/assemblingFeature"]) {
-			ll.panic("Assmble features should be the same for process tress. Got " + assemblingFeature + " and " + dataDescription["mixcr.com/assemblingFeature"])
+			ll.panic("Assmble features should be the same to process tress. Got " + assemblingFeature + " and " + dataDescription["mixcr.com/assemblingFeature"])
 		}
 	}
 
@@ -62,7 +62,7 @@ self.body(func(inputs) {
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
 		// files to iterate through
-		dataGroupedByDonorId["data"],
+		dataGroupedByDonorId.data,
 		// columns not to combine - sampleId and mixcrBlockId
 		[1, 2],
 		reconstructShmTreesTpl,

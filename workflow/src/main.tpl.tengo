@@ -34,9 +34,7 @@ wf.body(func(args) {
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
 		donorColumn: donorColumn,
-		params: {
-			seed: args.seed
-		}
+		params: {}
 	})
 
 	return {

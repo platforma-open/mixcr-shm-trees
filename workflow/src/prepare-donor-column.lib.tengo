@@ -9,7 +9,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
     // we need to form a pColumn with two axes:
 	//    axes[0]: donorId
 	//    axes[1]: sampleId
-	//    axes[2]: mixcrBlockId
+	//    axes[2]: mixcrclonotypingBlockId
 	//      value: fileRef resource
 
 	// we have:
@@ -21,34 +21,33 @@ groupDataByDonorId := func(donorColumn, datasets) {
 	//          value: fileRef resource
 
     donorColumnSpec := donorColumn.get("spec").getDataAsJson()
-    
-    domain := {}
-    if !is_undefined(donorColumnSpec["domain"]) {
-            domain = donorColumnSpec["domain"]
-    }
+
+    sampleIdAxis = donorColumnSpec.axesSpec[0]
+
     resultSpec := {
+        kind: "PColumn",
+        name: "mixcr.com/clns",
+        valueType: "File"
         // annotations and domain could differ between datasets
-        "axesSpec": [
+        axesSpec: [
             {
-                "annotations": donorColumnSpec["annotations"],
-                "domain": domain,
-                "name": donorColumnSpec["name"],
-                "type": donorColumnSpec["valueType"]
+                name: donorColumnSpec.name,
+                type: donorColumnSpec.valueType,
+                domain: donorColumnSpec.domain,
+                annotations: donorColumnSpec.annotations
             },
-            donorColumnSpec["axesSpec"][0],
+            sampleIdAxis,
             {
-                "annotations": {
+                name: "pl7.app/block",
+                type: "String"
+                annotations: {
                     "pl7.app/label": "Clonotyping block id"
-                },
-                "name": "pl7.app/blockId",
-                "type": "String"
+                }
             }
-        ],
-        "kind": "PColumn",
-        "name": "mixcr.com/clns",
-        "valueType": "File"
+        ]
     }
-    
+
+    // creating sample to donor map
 
     sampleToDonor := {}
 
@@ -62,11 +61,11 @@ groupDataByDonorId := func(donorColumn, datasets) {
     dataBuilder := smart.structBuilder(_P_COLUMN_DATA_RESOURCE_MAP, json.encode({ keyLength: 3 }))
 
     // collect all the clns files that we have into pColumn
-	for blockId, dataset in datasets {
+	for clonotypingBlockId, dataset in datasets {
 		for sKey, fileRef in dataset.get("data").inputs() {
             sampleId := json.decode(sKey)[0]
             donor := sampleToDonor[sampleId]
-            dataBuilder.createInputField(json.encode([donor, sampleId, blockId])).set(fileRef)
+            dataBuilder.createInputField(json.encode([donor, sampleId, clonotypingBlockId])).set(fileRef)
 		}
     }
 
