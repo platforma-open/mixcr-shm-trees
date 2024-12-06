@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { PTableColumnSpec } from '@platforma-sdk/model';
+import { isPValue, PTableColumnSpec, PValue, safeConvertToPValue, toJsonSafePValue } from '@platforma-sdk/model';
 import {
   PlAgDataTable,
   PlAgDataTableToolsPanel,
@@ -29,11 +29,15 @@ const tableSettings = computed<PlDataTableSettings>(() => ({
 }));
 const columns = ref<PTableColumnSpec[]>([]);
 
-const onRowDoubleClicked = (keys: any[]) => {
-  const donorId = keys[0];
+const onRowDoubleClickedU = (keys: unknown[]) =>
+  onRowDoubleClicked(keys.map(v => safeConvertToPValue(v)));
+
+const onRowDoubleClicked = (keys: PValue[]) => {
+  if (!isPValue(keys[1], 'Long')) throw new Error(`Unexpected key type ${typeof keys[1]}`)
+  const donorId = toJsonSafePValue(keys[0]);
   const treeId = Number(keys[1] as bigint);
   const subtreeId = keys.length > 2 ? (keys[2] as bigint).toString() : undefined;
-  addDendrogram('Tree / ' + donorId + " / " + treeId, donorId, treeId,subtreeId,  "X", "Y");
+  addDendrogram('Tree / ' + String(keys[0]) + ' / ' + treeId, donorId, treeId, subtreeId, 'X', 'Y');
 }
 
 const tableInstance = ref<PlAgDataTableController>();
@@ -54,8 +58,7 @@ const tableInstance = ref<PlAgDataTableController>();
       </PlBtnGhost>
     </template>
     <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings" show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)" 
-      @on-row-double-clicked="onRowDoubleClicked"
+      @columns-changed="(newColumns) => (columns = newColumns)" @on-row-double-clicked="onRowDoubleClickedU"
       ref="tableInstance" />
   </PlBlockPage>
 </template>

@@ -1,21 +1,17 @@
 import { Branded } from '@milaboratories/helpers';
-import { Ref } from '@platforma-sdk/model';
-
-export function refsEqual(ref1: Ref, ref2: Ref): boolean {
-  return ref1.blockId === ref2.blockId && ref1.name === ref2.name;
-}
+import { PlRef } from '@platforma-sdk/model';
 
 export type RefString = Branded<string, 'ModelRef'>;
 
-export function toRefString(ref: Ref): RefString;
-export function toRefString(ref: Ref | undefined): RefString | undefined;
-export function toRefString(ref: Ref | undefined): RefString | undefined {
+export function toRefString(ref: PlRef): RefString;
+export function toRefString(ref: PlRef | undefined): RefString | undefined;
+export function toRefString(ref: PlRef | undefined): RefString | undefined {
   return ref === undefined ? undefined : (`${ref.blockId}@@${ref.name}` as RefString);
 }
 
-export function fromRefString(ref: RefString): Ref;
-export function fromRefString(ref: RefString | undefined): Ref | undefined;
-export function fromRefString(ref: RefString | undefined): Ref | undefined {
+export function fromRefString(ref: RefString): PlRef;
+export function fromRefString(ref: RefString | undefined): PlRef | undefined;
+export function fromRefString(ref: RefString | undefined): PlRef | undefined {
   if (ref === undefined) return undefined;
   const split = ref.split('@@', 2);
   if (split.length !== 2) throw new Error('Wrong split length');

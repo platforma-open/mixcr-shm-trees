@@ -62,7 +62,9 @@
     }
   },
   "pnpm": {
-    "overrides": {}
+    "overrides": {
+      "@milaboratories/pl-model-common": "file:/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz"
+    }
   },
   "//": {
     "pnpm": {

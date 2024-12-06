@@ -1,5 +1,6 @@
 import { DendrogramState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
+import { PValueJsonSafe, pValueToStringOrNumber, safeConvertToPValue } from '@platforma-sdk/model';
 
 const nextId = () => {
   const app = useApp();
@@ -12,7 +13,7 @@ const nextId = () => {
 
 export async function addDendrogram(
   label: string,
-  donorId: string,
+  donorId: PValueJsonSafe,
   treeId: number,
   subtreeId: string | undefined,
   vGene: string,
@@ -40,7 +41,7 @@ export async function addDendrogram(
           type: 'axis',
           id: app.model.outputs.treeColumnSpec.axesSpec[0]
         },
-        selectedFilterValue: donorId
+        selectedFilterValue: pValueToStringOrNumber(donorId)
       },
       {
         inputName: 'filters',

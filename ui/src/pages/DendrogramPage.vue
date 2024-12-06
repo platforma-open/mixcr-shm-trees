@@ -2,7 +2,7 @@
 import { GraphMaker, GraphMakerProps } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
 import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
+import { pValueToStringOrNumber, PVectorDataLong, PVectorDataString, safeConvertToPValue } from '@platforma-sdk/model';
 import { PlDropdown, PlToggleSwitch } from '@platforma-sdk/ui-vue';
 import { computedAsync, ElementOf } from '@vueuse/core';
 import { computed, ref } from 'vue';
@@ -39,7 +39,7 @@ const subtreeOptions = computedAsync(async () => {
           },
           predicate: {
             operator: 'Equal',
-            reference: dendro.value.donorId
+            reference: pValueToStringOrNumber(dendro.value.donorId)
           }
         },
         {

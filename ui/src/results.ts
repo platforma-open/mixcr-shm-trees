@@ -3,6 +3,8 @@ import {
   AnyLogHandle,
   BlobHandleAndSize,
   isLiveLog,
+  isNotNAPValue,
+  NotNAPValue,
   PColumnResourceMapData
 } from '@platforma-sdk/model';
 import { ReactiveFileContent } from '@platforma-sdk/ui-vue';
@@ -11,7 +13,7 @@ import { useApp } from './app';
 import { ByStepIdRecord, Steps } from './types';
 
 export type TreeResult = {
-  donor: string;
+  donor: NotNAPValue;
 
   progress: ByStepIdRecord<string>;
 
@@ -23,13 +25,14 @@ export type TreeResult = {
 };
 
 function integrateData<T>(
-  resultMap: Map<string, TreeResult>,
+  resultMap: Map<NotNAPValue, TreeResult>,
   data: PColumnResourceMapData<T> | undefined,
   integrator: (result: TreeResult, data: NonNullable<T>) => void
 ) {
   if (data)
     for (const d of data.data) {
-      if (d.key.length !== 1 || typeof d.key[0] !== 'string') throw new Error('assertion error');
+      if (d.key.length !== 1 || !isNotNAPValue(d.key[0]))
+        throw new Error(`assertion error, key = ${d.key[0]}}`);
       const donor = d.key[0];
       const result = resultMap.get(donor);
       if (!result) throw new Error(`No result for key: ${donor}`);
@@ -46,7 +49,7 @@ export const TreeResultsMap = computed(() => {
   let targetDonorIds = app.model.outputs.targetDonorIds;
   if (targetDonorIds === undefined) return undefined;
 
-  const resultMap = new Map<string, TreeResult>();
+  const resultMap = new Map<NotNAPValue, TreeResult>();
 
   targetDonorIds = [...targetDonorIds];
   targetDonorIds.sort();
