@@ -41,8 +41,8 @@ export type DendrogramState = {
   treeId: number;
   subtreeId: string | undefined;
   state: GraphMakerState;
-  fixedOps: GraphMakerProps['fixedOptions'];
-  defaultOps: GraphMakerProps['defaultOptions'];
+  // fixedOps: GraphMakerProps['fixedOptions'];
+  // defaultOps: GraphMakerProps['defaultOptions'];
 };
 
 export type UiState = {
