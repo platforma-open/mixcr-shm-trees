@@ -1,5 +1,19 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 2.2.4
+
+### Patch Changes
+
+- c55f8cf: sdk model version bump
+- a8ab89f: PlAgDataTable update
+- Updated dependencies [125682f]
+- Updated dependencies [61c4b6b]
+- Updated dependencies [a8ab89f]
+- Updated dependencies [34af50b]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.4.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@2.3.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@2.3.0
+
 ## 2.2.3
 
 ### Patch Changes

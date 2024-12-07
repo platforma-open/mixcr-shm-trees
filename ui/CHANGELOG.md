@@ -1,5 +1,22 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.3.0
+
+### Minor Changes
+
+- 125682f: Fixes errors if integer donor id is used
+- 34af50b: Optional dowsampling of clonesets before building SHM trees
+
+### Patch Changes
+
+- 61c4b6b: SDK upgrade
+- a8ab89f: PlAgDataTable update
+- Updated dependencies [125682f]
+- Updated dependencies [61c4b6b]
+- Updated dependencies [a8ab89f]
+- Updated dependencies [34af50b]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.4.0
+
 ## 2.2.3
 
 ### Patch Changes
