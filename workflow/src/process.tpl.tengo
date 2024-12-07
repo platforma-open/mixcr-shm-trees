@@ -2,6 +2,7 @@ self := import("@platforma-sdk/workflow-tengo:tpl")
 
 llPFrames := import("@platforma-sdk/workflow-tengo:pframes.ll")
 ll := import("@platforma-sdk/workflow-tengo:ll")
+maps := import("@platforma-sdk/workflow-tengo:maps")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 text := import("text")
@@ -29,9 +30,14 @@ self.body(func(inputs) {
 		cellsAssembled: false
 	}
 
+	// clonotypingBlockId -> "bulk" | "sc"
+	datasetTypes := {}
+
 	assemblingFeature := ""
-	for _, dataset in inputs.datasets {
+	for clonotypingBlockId, dataset in inputs.datasets {
 		presetAnnotations := dataset.get("spec").getDataAsJson()["annotations"]
+
+		datasetTypes[clonotypingBlockId] = "bulk"
 
 		if presetAnnotations["mixcr.com/cellTags"] != "" {
 			dataDescription.hasCellTags = true
@@ -41,6 +47,7 @@ self.body(func(inputs) {
 		}
 		if presetAnnotations["mixcr.com/cellsAssembled"] == "true" {
 			dataDescription.cellsAssembled = true
+			datasetTypes[clonotypingBlockId] = "sc"
 		}
 		dataDescription.coveredFeatures = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
 		// check that assemblingFeature feature is the same. If so, coveredFeatures will be the same too
@@ -106,7 +113,10 @@ self.body(func(inputs) {
 			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
 			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"],
 			"shmTreeNodesWithClonesTableOptions": shmTreeNodesWithClonesTableOptions["cmdArgs"],
-			"globalParams": inputs.params
+			"globalParams": maps.merge(
+				inputs.params,
+				{ datasetTypes: datasetTypes }
+			)
 		}
 	)
 

@@ -34,7 +34,9 @@ wf.body(func(args) {
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
 		donorColumn: donorColumn,
-		params: {}
+		params: {
+			downsampling: args.downsampling
+		}
 	})
 
 	return {

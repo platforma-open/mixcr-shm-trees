@@ -24,6 +24,13 @@ progressPrefix := "[==PROGRESS==]"
 self.body(func(inputs) {
 	inputData := inputs[pConstants.VALUE_FIELD_NAME]
     globalParams := inputs.globalParams
+    datasetTypes := globalParams.datasetTypes
+    downsampling := globalParams.downsampling
+
+    ll.print("__THE_LOG__ " + json.encode(datasetTypes))
+    ll.print("__THE_LOG__ " + json.encode(downsampling))
+
+    ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -50,8 +57,10 @@ self.body(func(inputs) {
         // file name should encode axis values. It will be parsed by xsv.importFileMap afterwards to restore axis for clones data
         fileName := sampleId + "___" + clonotypingBlockId + ".clns"
         toProcess = append(toProcess, {
-            "fileName": fileName,
-            "input": inputFile
+            clonotypingBlockId: clonotypingBlockId,
+            sampleId: sampleId,
+            fileName: fileName,
+            input: inputFile
         })
     }
 
@@ -62,6 +71,49 @@ self.body(func(inputs) {
     }
 
     alleles := allelesCmdBuilder.run()
+
+    for input in toProcess {
+        input.alleles = alleles.getFile("alleles/" + input.fileName)
+    }
+
+    if !is_undefined(downsampling) {
+        downsamplingParam := ""
+        if downsampling.type == "CountReadsFixed" {
+            downsamplingParam = "count-reads-fixed-" + string(downsampling.number)
+        } else if downsampling.type == "CountMoleculesFixed" {
+            downsamplingParam = "count-molecule-fixed-" + string(downsampling.number)
+        } else if downsampling.type == "TopClonotypesByReads" {
+            downsamplingParam = "top-reads-" + string(downsampling.number)
+        } else if downsampling.type == "TopClonotypesByMolecules" {
+            downsamplingParam = "top-molecule-" + string(downsampling.number)
+        } else if downsampling.type == "CumulativeTopClonotypesByReads" {
+            downsamplingParam = "cumtop-reads-" + string(downsampling.percent)
+        } else if downsampling.type == "CumulativeTopClonotypesByMolecules" {
+            downsamplingParam = "cumtop-molecule-" + string(downsampling.percent)
+        } else {
+            ll.panic("Unknown downsampling type: " + downsampling.type)
+        }
+
+        ll.print("__THE_LOG__ " + downsamplingParam)
+
+        for input in toProcess {
+            if datasetTypes[input.clonotypingBlockId] == "bulk" {
+                downsamplingCmd := exec.builder().
+                    printErrStreamToStdout().
+                    secret("MI_LICENSE", "MI_LICENSE").
+                    env("MI_PROGRESS_PREFIX", progressPrefix).
+                    software(mixcrSw).
+                    arg("downsample").
+                    arg("--downsampling").
+                    arg(downsamplingParam).
+                    arg("clones.clns").
+                    addFile("clones.clns", input.alleles).
+                    saveFile("clones.downsampled.clns").
+                    run()
+                input.alleles = downsamplingCmd.getFile("clones.downsampled.clns")
+            }
+        }
+    }
 
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -80,7 +132,7 @@ self.body(func(inputs) {
 
     for input in toProcess {
         shmTreesCmdBuilder.
-            addFile(input.fileName, alleles.getFile("alleles/" + input.fileName)).
+            addFile(input.fileName, input.alleles).
             arg(input.fileName)
     }
 
