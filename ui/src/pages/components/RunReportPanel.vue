@@ -5,8 +5,9 @@ import { computed, reactive } from 'vue';
 import { TreeResultsMap } from '../../results';
 import RunReportPanelLogs from './RunReportPanelLogs.vue';
 import RunReportPanelReports from './RunReportPanelReports.vue';
+import { NotNAPValue } from '@platforma-sdk/model';
 
-const selectedDonor = defineModel<string | undefined>()
+const selectedDonor = defineModel<NotNAPValue | undefined>()
 
 const resultMap = debouncedRef(TreeResultsMap, 300);
 const donorData = computed(() => {

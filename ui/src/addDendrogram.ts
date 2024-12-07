@@ -1,5 +1,6 @@
 import { DendrogramState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
+import { PValueJsonSafe, pValueToStringOrNumber, safeConvertToPValue } from '@platforma-sdk/model';
 
 const nextId = () => {
   const app = useApp();
@@ -12,7 +13,7 @@ const nextId = () => {
 
 export async function addDendrogram(
   label: string,
-  donorId: string,
+  donorId: PValueJsonSafe,
   treeId: number,
   subtreeId: string | undefined,
   vGene: string,
@@ -32,111 +33,7 @@ export async function addDendrogram(
     state: {
       title: label,
       template: 'dendro'
-    },
-    fixedOps: [
-      {
-        inputName: 'filters',
-        selectedSource: {
-          type: 'axis',
-          id: app.model.outputs.treeColumnSpec.axesSpec[0]
-        },
-        selectedFilterValue: donorId
-      },
-      {
-        inputName: 'filters',
-        selectedSource: {
-          type: 'axis',
-          id: app.model.outputs.treeColumnSpec.axesSpec[1]
-        },
-        selectedFilterValue: treeId
-      }
-    ],
-    defaultOps: [
-      {
-        inputName: 'value',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/dendrogram/topology',
-          valueType: 'Long',
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'height',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/dendrogram/distance',
-          valueType: 'Double',
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/vdj/sequence',
-          valueType: 'String',
-          annotations: {
-            'pl7.app/label': 'CDR1 aa'
-          },
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/vdj/sequence',
-          valueType: 'String',
-          annotations: {
-            'pl7.app/label': 'CDR2 aa'
-          },
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/vdj/sequence',
-          valueType: 'String',
-          annotations: {
-            'pl7.app/label': 'CDR3 aa'
-          },
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/vdj/sequence',
-          valueType: 'String',
-          annotations: {
-            'pl7.app/label': 'Clonal sequences'
-          },
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/dendrogram/isObserved',
-          valueType: 'String',
-          axesSpec: []
-        }
-      },
-      {
-        inputName: 'tableContent',
-        selectedSource: {
-          kind: 'PColumn',
-          name: 'pl7.app/vdj/mutationsRate',
-          valueType: 'Double',
-          axesSpec: []
-        }
-      }
-    ]
+    }
   };
 
   await app.updateUiState((ui) => {

@@ -9,13 +9,14 @@ import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
 import RunReportPanel from './components/RunReportPanel.vue';
 import SettingsPanel from './components/SettingsPanel.vue';
+import { NotNAPValue } from '@platforma-sdk/model';
 
 const { model } = useApp();
 
 const data = reactive<{
   settingsOpen: boolean,
   donorReportOpen: boolean,
-  selectedDonor: string | undefined
+  selectedDonor: NotNAPValue | undefined
 }>({
   settingsOpen: model.args.donorColumn === undefined || model.args.datasetColumns.length === 0,
   donorReportOpen: false,
@@ -63,7 +64,7 @@ const columnDefs: ColDef<TreeResult>[] = [
 // }, { immediate: true })
 
 const gridOptions: GridOptions<TreeResult> = {
-  getRowId: (row) => row.data.donor,
+  getRowId: (row) => String(row.data.donor),
   onRowDoubleClicked: (e) => {
     data.selectedDonor = e.data?.donor
     data.donorReportOpen = data.selectedDonor !== undefined;
