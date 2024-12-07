@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { notEmpty, range } from '@milaboratories/helpers';
-import { ListOption, PlDropdown, PlDropdownRef } from '@platforma-sdk/ui-vue';
+import { ListOption, PlAccordionSection, PlDropdown, PlDropdownRef } from '@platforma-sdk/ui-vue';
 import { computed } from 'vue';
 import { useApp } from '../../app';
 import { fromRefString, RefString, toRefString } from '../../util';
+import DownsamplingSettings from './DownsamplingSettings.vue';
 
 const app = useApp();
 
@@ -78,4 +79,8 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
         :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`" />
     </template>
   </template>
+
+  <PlAccordionSection label="Advanced Settings">
+    <DownsamplingSettings v-model="app.model.args.downsampling" />
+  </PlAccordionSection>
 </template>

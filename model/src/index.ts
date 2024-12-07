@@ -1,7 +1,4 @@
-import {
-  GraphMakerProps,
-  GraphMakerState
-} from '@milaboratories/graph-maker/dist/GraphMaker/types';
+import { GraphMakerState } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import {
   BlockModel,
   InferOutputsType,
@@ -19,12 +16,33 @@ import {
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
 
+export type DownsamplingByCount = {
+  type: 'CountReadsFixed' | 'CountMoleculesFixed';
+  number: number;
+};
+
+export type DownsamplingByTop = {
+  type: 'TopClonotypesByReads' | 'TopClonotypesByMolecules';
+  number: number;
+};
+
+export type DownsamplingByCumulativeTop = {
+  type: 'CumulativeTopClonotypesByReads' | 'CumulativeTopClonotypesByMolecules';
+  percent: number;
+};
+
+export type DownsamplingSettings =
+  | DownsamplingByCount
+  | DownsamplingByTop
+  | DownsamplingByCumulativeTop;
+
 /**
  * Block arguments coming from the user interface
  */
 export type BlockArgs = {
   donorColumn?: PlRef;
   datasetColumns: PlRef[];
+  downsampling?: DownsamplingSettings;
 };
 
 export type DendrogramState = {
