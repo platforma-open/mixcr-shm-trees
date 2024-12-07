@@ -1,6 +1,6 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees.model",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "Block model",
   "type": "module",
   "main": "dist/index.cjs",

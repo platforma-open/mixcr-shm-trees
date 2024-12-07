@@ -1,5 +1,15 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 2.3.0
+
+### Minor Changes
+
+- 34af50b: Optional dowsampling of clonesets before building SHM trees
+
+### Patch Changes
+
+- 61c4b6b: SDK upgrade
+
 ## 2.2.0
 
 ### Minor Changes
