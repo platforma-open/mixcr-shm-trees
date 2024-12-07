@@ -22,12 +22,13 @@ groupDataByDonorId := func(donorColumn, datasets) {
 
     donorColumnSpec := donorColumn.get("spec").getDataAsJson()
 
-    sampleIdAxis = donorColumnSpec.axesSpec[0]
+    sampleIdAxis := donorColumnSpec.axesSpec[0]
 
     resultSpec := {
         kind: "PColumn",
         name: "mixcr.com/clns",
-        valueType: "File"
+        valueType: "File",
+
         // annotations and domain could differ between datasets
         axesSpec: [
             {
@@ -39,7 +40,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
             sampleIdAxis,
             {
                 name: "pl7.app/block",
-                type: "String"
+                type: "String",
                 annotations: {
                     "pl7.app/label": "Clonotyping block id"
                 }

@@ -27,26 +27,19 @@ export type BlockArgs = {
   datasetColumns: PlRef[];
 };
 
-export type TreeSelection = {
-  donor?: string;
-  treeId?: number;
-  subtreeId?: number;
-};
-
 export type DendrogramState = {
   id: string;
+
   donorId: PValueJsonSafe;
   treeId: number;
   subtreeId: string | undefined;
+
   state: GraphMakerState;
-  // fixedOps: GraphMakerProps['fixedOptions'];
-  // defaultOps: GraphMakerProps['defaultOptions'];
 };
 
 export type UiState = {
   treeTableState: PlDataTableState;
   filterModel: PlTableFiltersModel;
-  treeSelectionForTreeNodesTable: TreeSelection;
   treeNodesGraphState: GraphMakerState;
   dendrograms: DendrogramState[];
 };
@@ -64,7 +57,6 @@ export const model = BlockModel.create()
   })
 
   .withUiState<UiState>({
-    treeSelectionForTreeNodesTable: {},
     treeNodesGraphState: {
       title: '',
       template: 'dendro'
