@@ -23,10 +23,14 @@ const app = useApp();
 })();
 
 // TODO add default option to filter table by donor
-const tableSettings = computed<PlDataTableSettings>(() => ({
-  sourceType: 'ptable',
-  pTable: app.model.outputs.trees
-}));
+const tableSettings = computed<PlDataTableSettings | undefined>(() =>
+  app.model.outputs.treeColumnSpec
+    ? {
+        sourceType: 'ptable',
+        pTable: app.model.outputs.trees
+      }
+    : undefined
+);
 const columns = ref<PTableColumnSpec[]>([]);
 
 const onRowDoubleClickedU = (keys: unknown[]) =>
