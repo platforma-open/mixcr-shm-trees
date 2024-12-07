@@ -130,12 +130,14 @@ export const model = BlockModel.create()
   .output('trees', (ctx) => {
     const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
     if (pCols === undefined) return undefined;
+
+    // wait until sheet filters are set
+    const sheetFilters = ctx.uiState?.treeTableState.pTableParams?.filters;
+    if (!sheetFilters) return undefined;
+
     return ctx.createPTable({
       columns: pCols,
-      filters: [
-        ...(ctx.uiState?.treeTableState?.pTableParams?.filters ?? []),
-        ...(ctx.uiState?.filterModel?.filters ?? [])
-      ],
+      filters: [...sheetFilters, ...(ctx.uiState?.filterModel?.filters ?? [])],
       sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
     });
   })
