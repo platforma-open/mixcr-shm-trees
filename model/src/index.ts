@@ -1,7 +1,4 @@
-import {
-  GraphMakerProps,
-  GraphMakerState
-} from '@milaboratories/graph-maker/dist/GraphMaker/types';
+import { GraphMakerState } from '@milaboratories/graph-maker/dist/GraphMaker/types';
 import {
   BlockModel,
   InferOutputsType,
@@ -19,36 +16,48 @@ import {
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
 
+export type DownsamplingByCount = {
+  type: 'CountReadsFixed' | 'CountMoleculesFixed';
+  number: number;
+};
+
+export type DownsamplingByTop = {
+  type: 'TopClonotypesByReads' | 'TopClonotypesByMolecules';
+  number: number;
+};
+
+export type DownsamplingByCumulativeTop = {
+  type: 'CumulativeTopClonotypesByReads' | 'CumulativeTopClonotypesByMolecules';
+  percent: number;
+};
+
+export type DownsamplingSettings =
+  | DownsamplingByCount
+  | DownsamplingByTop
+  | DownsamplingByCumulativeTop;
+
 /**
  * Block arguments coming from the user interface
  */
 export type BlockArgs = {
-  // @todo, remove, used for testing
-  seed?: string;
   donorColumn?: PlRef;
   datasetColumns: PlRef[];
-};
-
-export type TreeSelection = {
-  donor?: string;
-  treeId?: number;
-  subtreeId?: number;
+  downsampling?: DownsamplingSettings;
 };
 
 export type DendrogramState = {
   id: string;
+
   donorId: PValueJsonSafe;
   treeId: number;
   subtreeId: string | undefined;
+
   state: GraphMakerState;
-  // fixedOps: GraphMakerProps['fixedOptions'];
-  // defaultOps: GraphMakerProps['defaultOptions'];
 };
 
 export type UiState = {
   treeTableState: PlDataTableState;
   filterModel: PlTableFiltersModel;
-  treeSelectionForTreeNodesTable: TreeSelection;
   treeNodesGraphState: GraphMakerState;
   dendrograms: DendrogramState[];
 };
@@ -66,7 +75,6 @@ export const model = BlockModel.create()
   })
 
   .withUiState<UiState>({
-    treeSelectionForTreeNodesTable: {},
     treeNodesGraphState: {
       title: '',
       template: 'dendro'

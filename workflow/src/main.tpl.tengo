@@ -35,7 +35,7 @@ wf.body(func(args) {
 		datasets: datasets,
 		donorColumn: donorColumn,
 		params: {
-			seed: args.seed
+			downsampling: args.downsampling
 		}
 	})
 
