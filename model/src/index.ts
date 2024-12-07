@@ -5,6 +5,8 @@ import {
 import {
   BlockModel,
   InferOutputsType,
+  NotNAPValue,
+  PValueJsonSafe,
   PlDataTableState,
   PlRef,
   deriveLabels,
@@ -33,12 +35,12 @@ export type TreeSelection = {
 
 export type DendrogramState = {
   id: string;
-  donorId: string;
+  donorId: PValueJsonSafe;
   treeId: number;
   subtreeId: string | undefined;
   state: GraphMakerState;
-  fixedOps: GraphMakerProps['fixedOptions'];
-  defaultOps: GraphMakerProps['defaultOptions'];
+  // fixedOps: GraphMakerProps['fixedOptions'];
+  // defaultOps: GraphMakerProps['defaultOptions'];
 };
 
 export type UiState = {
@@ -171,7 +173,7 @@ export const model = BlockModel.create()
     if (alleleReports === undefined) return undefined;
     const reports = parseResourceMap(alleleReports, (acc) => acc.getFileContentAsString(), true);
 
-    const resultSet = new Set<string>(reports.data.map((r) => r.key[0] as string));
+    const resultSet = new Set<NotNAPValue>(reports.data.map((r) => r.key[0] as string));
     return [...resultSet];
   })
 
