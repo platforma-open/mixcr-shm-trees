@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.3.1
+
+### Patch Changes
+
+- 2d2ae5e: Better label for downsampling options
+
 ## 2.3.0
 
 ### Minor Changes
