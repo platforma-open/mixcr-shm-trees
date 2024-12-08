@@ -80,7 +80,7 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
     </template>
   </template>
 
-  <PlAccordionSection label="Advanced Settings">
+  <PlAccordionSection label="Downsampling (Bulk Datasets Only)">
     <DownsamplingSettings v-model="app.model.args.downsampling" />
   </PlAccordionSection>
 </template>
