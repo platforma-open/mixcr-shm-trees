@@ -1,5 +1,15 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.3.1
+
+### Patch Changes
+
+- 2d2ae5e: Better label for downsampling options
+- 1edb8af: - Fix for column name "Number of clones" -> "Number of nodes"
+  - Added "Distance to parent" column
+  - "Distance to parent" column is now used as distance measure for tree visualization by default
+  - Assembling feature (i.e. VDJRegion) is added as individual export column
+
 ## 2.3.0
 
 ### Minor Changes
