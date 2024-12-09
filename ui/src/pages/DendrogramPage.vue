@@ -156,6 +156,9 @@ const defaultOptions = computed(() => [
       kind: 'PColumn',
       name: 'pl7.app/dendrogram/distance',
       valueType: 'Double',
+      annotations: {
+        'pl7.app/dendrogram/distance/from': 'parent'
+      },
       axesSpec: []
     }
   },

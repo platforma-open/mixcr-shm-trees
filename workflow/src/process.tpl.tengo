@@ -52,11 +52,14 @@ self.body(func(inputs) {
 		dataDescription.coveredFeatures = text.re_split(',', presetAnnotations["mixcr.com/coveredFeaturesOnExport"])
 		// check that assemblingFeature feature is the same. If so, coveredFeatures will be the same too
 		if (assemblingFeature == "") {
-			assemblingFeature = dataDescription["mixcr.com/assemblingFeature"]
-		} else if (assemblingFeature != dataDescription["mixcr.com/assemblingFeature"]) {
-			ll.panic("Assmble features should be the same to process tress. Got " + assemblingFeature + " and " + dataDescription["mixcr.com/assemblingFeature"])
+			assemblingFeature = presetAnnotations["mixcr.com/assemblingFeature"]
+		} else if (assemblingFeature != presetAnnotations["mixcr.com/assemblingFeature"]) {
+			ll.panic("Assmble features should be the same to process tress. Got " + assemblingFeature + " and " + presetAnnotations["mixcr.com/assemblingFeature"])
 		}
 	}
+
+	// adding assembling feature to the list of covered features
+	dataDescription.coveredFeatures = append(dataDescription.coveredFeatures, assemblingFeature)
 
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)

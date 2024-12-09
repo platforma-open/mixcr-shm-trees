@@ -101,7 +101,7 @@ shmTreeTableOptions := func(dataDescription) {
             "name": "pl7.app/vdj/numberOfNodesWithClones",
             "valueType": "Long",
             "annotations": {
-                "pl7.app/label": "Number of clones"
+                "pl7.app/label": "Number of nodes"
             }
         }
     })
@@ -306,8 +306,31 @@ shmTreeNodesTableOptions := func(dataDescription) {
         "spec": {
             "name": "pl7.app/dendrogram/distance",
             "valueType": "Double",
+            "domain": {
+                "pl7.app/dendrogram/distance/from": "germline"
+            },
             "annotations": {
                 "pl7.app/label": "Distanse from germline",
+                "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-distance", "parent")
+    columns = append(columns, {
+        "column": "DistanceFromParent",
+        "id": "distance-from-parent",
+        "allowNA": true,
+        "spec": {
+            "name": "pl7.app/dendrogram/distance",
+            "valueType": "Double",
+            "domain": {
+                "pl7.app/dendrogram/distance/from": "parent"
+            },
+            "annotations": {
+                "pl7.app/label": "Distanse from parent",
+                "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
                 "pl7.app/dendrogram/isDistance": "true"
             }
         }
