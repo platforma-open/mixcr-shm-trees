@@ -8,7 +8,7 @@ import { useApp } from '../app';
 import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
 import RunReportPanel from './components/RunReportPanel.vue';
-import SettingsPanel from './components/SettingsPanel.vue';
+import MainSettingsPanel from './components/MainSettingsPanel.vue';
 import { NotNAPValue } from '@platforma-sdk/model';
 
 const { model } = useApp();
@@ -95,7 +95,7 @@ const gridOptions: GridOptions<TreeResult> = {
 
     <PlSlideModal v-model="data.settingsOpen">
       <template #title>Settings</template>
-      <SettingsPanel />
+      <MainSettingsPanel />
     </PlSlideModal>
 
     <PlSlideModal v-model="data.donorReportOpen" width="80%">

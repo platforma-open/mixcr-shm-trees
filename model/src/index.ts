@@ -15,6 +15,7 @@ import {
 } from '@platforma-sdk/model';
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
+import { SOIList } from './soi';
 
 export type DownsamplingByCount = {
   type: 'CountReadsFixed' | 'CountMoleculesFixed';
@@ -43,6 +44,7 @@ export type BlockArgs = {
   donorColumn?: PlRef;
   datasetColumns: PlRef[];
   downsampling?: DownsamplingSettings;
+  sequencesOfInterest?: SOIList[];
 };
 
 export type DendrogramState = {
@@ -290,6 +292,7 @@ export const model = BlockModel.create()
     }));
     return [
       { type: 'link', href: '/', label: 'Analysis Overview' },
+      { type: 'link', href: '/soi', label: 'Sequence Search' },
       { type: 'link', href: '/trees', label: 'Trees Table' },
       // { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
       ...dendroRoutes
