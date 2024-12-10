@@ -1,0 +1,57 @@
+{
+  "name": "@platforma-open/milaboratories.mixcr-shm-trees",
+  "version": "2.2.7",
+  "scripts": {
+    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
+    "build": "rm -rf ./block-pack && block-tools pack",
+    "mark-stable": "block-tools mark-stable -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'",
+    "prepublishOnly": "block-tools pack && block-tools publish -r 's3://milab-euce1-prod-pkgs-s3-block-registry/pub/releases/?region=eu-central-1'"
+  },
+  "files": [
+    "index.d.ts",
+    "index.js"
+  ],
+  "dependencies": {
+    "@platforma-sdk/model": "catalog:",
+    "@platforma-open/milaboratories.mixcr-shm-trees.workflow": "workspace:*",
+    "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
+    "@platforma-open/milaboratories.mixcr-shm-trees.ui": "workspace:*"
+  },
+  "block": {
+    "components": {
+      "workflow": "@platforma-open/milaboratories.mixcr-shm-trees.workflow/dist/tengo/tpl/main.plj.gz",
+      "model": "@platforma-open/milaboratories.mixcr-shm-trees.model/dist/model.json",
+      "ui": "@platforma-open/milaboratories.mixcr-shm-trees.ui/dist"
+    },
+    "meta": {
+      "title": "MiXCR SHM trees",
+      "logo": "file:../logos/block-logo.png",
+      "url": "https://github.com/milaboratory/block-mixcr-shm-trees",
+      "docs": "https://github.com/milaboratory/block-mixcr-shm-trees/docs",
+      "support": "mailto:support@milaboratories.com",
+      "description": "Generate somatic hypermutation (SHM) trees from your B-cell immune repertoires.",
+      "longDescription": "file:../docs/description.md",
+      "changelog": "file:../CHANGELOG.md",
+      "tags": [
+        "SHM",
+        "lineage",
+        "immunology",
+        "repertoire",
+        "VDJ",
+        "tree",
+        "track",
+        "immunization"
+      ],
+      "organization": {
+        "name": "MiLaboratories Inc",
+        "url": "https://milaboratories.com/",
+        "logo": "file:../logos/organization-logo.png"
+      },
+      "marketplaceRanking": 10000
+    }
+  },
+  "devDependencies": {
+    "@platforma-sdk/block-tools": "catalog:"
+  },
+  "packageManager": "pnpm@9.12.0"
+}
