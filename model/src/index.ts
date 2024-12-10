@@ -303,3 +303,5 @@ export const model = BlockModel.create()
 export type BlockOutputs = InferOutputsType<typeof model>;
 
 export * from './progress';
+export * from './soi';
+export * from './helpers';
