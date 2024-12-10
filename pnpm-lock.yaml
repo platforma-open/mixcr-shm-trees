@@ -49,8 +49,8 @@ catalogs:
       specifier: ^1.17.0
       version: 1.17.0
     '@platforma-sdk/ui-vue':
-      specifier: ^1.17.0
-      version: 1.17.0
+      specifier: ^1.17.3
+      version: 1.17.3
     '@platforma-sdk/workflow-tengo':
       specifier: ^2.6.0
       version: 2.6.0
@@ -178,7 +178,7 @@ importers:
         version: 1.17.0
       '@platforma-sdk/ui-vue':
         specifier: 'catalog:'
-        version: 1.17.0(typescript@5.6.3)
+        version: 1.17.3(typescript@5.6.3)
       '@vueuse/core':
         specifier: 'catalog:'
         version: 12.0.0(typescript@5.6.3)
@@ -999,6 +999,9 @@ packages:
   '@milaboratories/uikit@2.2.26':
     resolution: {integrity: sha512-QtKM7v2Sz6WeLeOs7em+1S34gmguw/Otm7BhS8yq21sn+1lBufX77ub2QSmTVRb4RkYn9919EwiBWgV/d2E+bQ==}
 
+  '@milaboratories/uikit@2.2.28':
+    resolution: {integrity: sha512-Un2sFh8/640Kz8cwM8BjVSs8OfMjjnNNCc1+6qN7HOT/e9XcyZUnB9oAuhVAokdlDymqJUAsr2rYEa3zBAsihA==}
+
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
     engines: {node: '>= 8'}
@@ -1046,8 +1049,8 @@ packages:
   '@platforma-sdk/ui-vue@1.15.4':
     resolution: {integrity: sha512-mCTk74S8AEPMSm9dKZqUr1l3mhoUc1uADcgnMEc4w04qVaKurI200uSpSERzjZbYyvoAwEsSqNcgbOC5dnTU3A==}
 
-  '@platforma-sdk/ui-vue@1.17.0':
-    resolution: {integrity: sha512-x3Onwe3s4G5RKSecUQrHn89omC7KAokBLGG5oo+h6blJHyIWbQNS8jagNJfARk4gmfpKDhOtpLrk8GCJDbQ7Ww==}
+  '@platforma-sdk/ui-vue@1.17.3':
+    resolution: {integrity: sha512-92BmcSjO8UKgTlS3wW75NuMvS8G4TQ1KYwBchFYlLmjSKYJ4Wr9kXgRgbUy95HnJ1+WKW8Eb0vntHa7427N/dw==}
 
   '@platforma-sdk/workflow-tengo@2.6.0':
     resolution: {integrity: sha512-LyWvdqcoWLgcsNNpI4RSHMx4Kzsn7Tv6CX4NO+fsHwqBYHz5hrCjWJ7qFAOHeWQXYqHPxf5mzPJSKw8eBR9vzw==}
@@ -5809,6 +5812,12 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
+  '@milaboratories/uikit@2.2.28(typescript@5.6.3)':
+    dependencies:
+      vue: 3.5.13(typescript@5.6.3)
+    transitivePeerDependencies:
+      - typescript
+
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
       '@nodelib/fs.stat': 2.0.5
@@ -5958,7 +5967,7 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  '@platforma-sdk/ui-vue@1.17.0(typescript@5.6.3)':
+  '@platforma-sdk/ui-vue@1.17.3(typescript@5.6.3)':
     dependencies:
       '@ag-grid-community/client-side-row-model': 32.3.3
       '@ag-grid-community/core': 32.3.3
@@ -5976,7 +5985,7 @@ snapshots:
       '@ag-grid-enterprise/rich-select': 32.3.3
       '@ag-grid-enterprise/server-side-row-model': 32.3.3
       '@ag-grid-enterprise/side-bar': 32.3.3
-      '@milaboratories/uikit': 2.2.26(typescript@5.6.3)
+      '@milaboratories/uikit': 2.2.28(typescript@5.6.3)
       '@platforma-sdk/model': 1.17.0
       canonicalize: 2.0.0
       lru-cache: 11.0.2

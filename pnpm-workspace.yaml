@@ -10,7 +10,7 @@ catalog:
   '@platforma-sdk/block-tools': ^2.4.9
 
   "@platforma-sdk/model": ^1.17.0
-  "@platforma-sdk/ui-vue": ^1.17.0
+  "@platforma-sdk/ui-vue": ^1.17.3
 
   '@platforma-sdk/test': ^1.17.0
   "@milaboratories/graph-maker": ^1.1.7
