@@ -3,6 +3,7 @@ pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 ll := import("@platforma-sdk/workflow-tengo:ll")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 exec := import("@platforma-sdk/workflow-tengo:exec")
+times := import("times")
 
 json := import("json")
 
@@ -32,11 +33,13 @@ self.body(func(inputs) {
 
     ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 
+    seed := times.time_string(times.now())
+
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
-        env("SEED", "1").
+        env("SEED", seed).
         software(mixcrSw).
         arg("findAlleles").
         arg("--report").arg("report.txt").
@@ -120,6 +123,7 @@ self.body(func(inputs) {
         printErrStreamToStdout().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
+        env("SEED", seed).
         software(mixcrSw).
         arg("findShmTrees").
         arg("--report").arg("report.txt").
@@ -147,7 +151,6 @@ self.body(func(inputs) {
         printErrStreamToStdout().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
-        env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTrees")
 
@@ -169,7 +172,6 @@ self.body(func(inputs) {
         printErrStreamToStdout().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
-        env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("exportShmTreesWithNodes")
 
