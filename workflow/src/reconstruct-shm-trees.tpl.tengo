@@ -36,6 +36,7 @@ self.body(func(inputs) {
         printErrStreamToStdout().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_PROGRESS_PREFIX", progressPrefix).
+        env("SEED", "1").
         software(mixcrSw).
         arg("findAlleles").
         arg("--report").arg("report.txt").
