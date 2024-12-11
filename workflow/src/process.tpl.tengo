@@ -153,7 +153,7 @@ self.body(func(inputs) {
     )
 
 	// Running SOI search for the data
-	soiResults := {}
+	soiResults := {} // @TODO migrate to map after fixing pframes.exportFrame incompatibility with maps
 	for soiDb in inputs.params.sequencesOfInterest {
 
 		columnId := ""
@@ -176,13 +176,13 @@ self.body(func(inputs) {
 		querySpec := treeNodes[columnId + ".spec"]
 		queryData := treeNodes[columnId + ".data"]
 
-		results := render.create(soiTpl, {
+		soiResult := render.create(soiTpl, {
 			querySpec: querySpec,
 			queryData: queryData,
 			db: soiDb
 		})
 
-		soiResults[soiDb.parameters.id] = results.output("hits")
+		soiResults[soiDb.parameters.id] = soiResult.output("result") // @TODO migrate to map after fixing pframes.exportFrame incompatibility with maps
 	}
 
 	tsvs := mixcrResults.output("tsvs")
@@ -195,7 +195,7 @@ self.body(func(inputs) {
         // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
 
-		"soiResults": soiResults,
+		"soiResults": maps.mapValues(soiResults, pframes.exportFrame),
 
         "tsvs": tsvs,
 

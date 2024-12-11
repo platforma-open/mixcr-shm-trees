@@ -6,7 +6,7 @@ xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 json := import("json")
 pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 
-self.defineOutputs("hits")
+self.defineOutputs("result")
 
 // import MiXCR as a software to use
 mitoolSw := assets.importSoftware("@platforma-open/milaboratories.software-mitool:main")
@@ -45,7 +45,7 @@ self.body(func(inputs) {
 	for idx, spec in originalAxesSpecs {
 		colName := "key" + idx
 		modifiedAxesSpecs = append(modifiedAxesSpecs, maps.deepMerge(
-			querySpec,
+			spec,
 			{ annotations: { "pl7.app/label": colName } }
 		))
 		importAxesSpec = append(importAxesSpec, {
@@ -88,10 +88,13 @@ self.body(func(inputs) {
 				"annotations": {
 					"pl7.app/label": "Top Hit"
 				}
+			},
+			"domain": {
+				"pl7.app/list": db.parameters.id
 			}
 		} ],
 		"storageFormat": "Binary",
-		"partitionKeyLength": inferPartitionKeyLength(queryData)
+		"partitionKeyLength": 0 // inferPartitionKeyLength(queryData)
 	}
 
 	result := xsv.importFile(
@@ -101,6 +104,6 @@ self.body(func(inputs) {
     )
 
 	return {
-		hits: result
+		result: result
 	}
 })

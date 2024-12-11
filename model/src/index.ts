@@ -175,7 +175,15 @@ export const model = BlockModel.create()
     const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
     if (treeNodesWithClonesColumns === undefined) return undefined;
 
-    return ctx.createPFrame(treeNodesColumns.concat(treeNodesWithClonesColumns));
+    const soiResultColumns = (
+      ctx.outputs?.resolve('soiResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+    ).flatMap((a) => a);
+
+    return ctx.createPFrame([
+      ...treeNodesColumns,
+      ...treeNodesWithClonesColumns,
+      ...soiResultColumns
+    ]);
   })
 
   /** Donor ids for which we have at least one dataset to analyze */
