@@ -16,6 +16,7 @@
     "@milaboratories/software-pframes-conv": "catalog:",
     "@platforma-open/milaboratories.software-small-binaries": "catalog:",
     "@platforma-open/milaboratories.software-mixcr": "catalog:",
+    "@platforma-open/milaboratories.software-mitool": "catalog:",
     "@platforma-sdk/test": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"

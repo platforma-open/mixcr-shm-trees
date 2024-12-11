@@ -20,6 +20,8 @@ self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
 self.awaitState("donorColumn", "ResourceReady")
 self.awaitState("params", "ResourceReady")
 
+soiTpl := assets.importTemplate(":soi")
+
 self.body(func(inputs) {
 	// overall description of data that we have.
     dataDescription := {
@@ -148,6 +150,37 @@ self.body(func(inputs) {
         shmTreeNodesWithClonesTableOptions["pfconvParams"],
         additionalArgsForImportTsv
     )
+
+	// Running SOI search for the data
+	soiResults := {}
+	for soiDb in inputs.params.sequencesOfInterest {
+		columnId := ""
+		if soiDb.parameters.type == "nucleotide" {
+			columnId = "n-seq-"
+		} else if soiDb.parameters.type == "amino-acid" {
+			columnId = "aa-seq-"
+		} else {
+			ll.panic("unknown alphabet: " + soiDb.parameters.type)
+		}
+
+		if soiDb.parameters.targetFeature == "CDR3" {
+			columnId = columnId + "CDR3"
+		} else if soiDb.parameters.targetFeature == "VDJRegion" {
+			columnId = columnId + "VDJRegion"
+		} else {
+			ll.panic("unknown target feature: " + soiDb.parameters.targetFeature)
+		}
+
+		querySpec := treeNodes[columnId + ".spec"]
+		queryData := treeNodes[columnId + ".data"]
+
+		results := render.create(soiTpl, {
+			querySpec:
+			queryData:
+			db: soiDb
+		})
+		soiResults[soiDb.parameters.id] =
+	}
 
 	tsvs := mixcrResults.output("tsvs")
 

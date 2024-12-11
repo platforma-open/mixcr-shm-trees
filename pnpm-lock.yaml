@@ -30,6 +30,9 @@ catalogs:
     '@milaboratories/software-pframes-conv':
       specifier: ^2.1.2
       version: 2.1.2
+    '@platforma-open/milaboratories.software-mitool':
+      specifier: 2.3.1-2-main
+      version: 2.3.1-2-main
     '@platforma-open/milaboratories.software-mixcr':
       specifier: 4.7.0-133-develop
       version: 4.7.0-133-develop
@@ -213,6 +216,9 @@ importers:
       '@milaboratories/software-pframes-conv':
         specifier: 'catalog:'
         version: 2.1.2
+      '@platforma-open/milaboratories.software-mitool':
+        specifier: 'catalog:'
+        version: 2.3.1-2-main
       '@platforma-open/milaboratories.software-mixcr':
         specifier: 'catalog:'
         version: 4.7.0-133-develop
@@ -1025,6 +1031,9 @@ packages:
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
+
+  '@platforma-open/milaboratories.software-mitool@2.3.1-2-main':
+    resolution: {integrity: sha512-ui/rxzL1gR3vz+6VpIiLfI1poklatclG4mWRkh0o2bTzz0QneQZ2avmFX/fbEKEier3eRr8t/FHZxDcpDQr4Vg==}
 
   '@platforma-open/milaboratories.software-mixcr@4.7.0-133-develop':
     resolution: {integrity: sha512-b7jnFwjbO+tmlCEstILbTqVYYF3a5tYk2albcWNsfrJW8oP+of1KIBVCKMKVBr0UyshmsFjOLtLyrtLEa/ObGQ==}
@@ -5874,6 +5883,8 @@ snapshots:
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
+
+  '@platforma-open/milaboratories.software-mitool@2.3.1-2-main': {}
 
   '@platforma-open/milaboratories.software-mixcr@4.7.0-133-develop': {}
 

@@ -12,7 +12,7 @@ export const sdkPlugin = defineApp(model, () => {
       '/soi': () => SOIPage,
       '/trees': () => TreeTablePage,
       // '/treeNodes': () => TreeNodesTablePage,
-      '/dendrogram': () => DendrogramPage
+      '/dendrogram': (a) => DendrogramPage
     }
   };
 });

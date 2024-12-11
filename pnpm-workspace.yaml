@@ -20,6 +20,7 @@ catalog:
   '@milaboratories/software-pframes-conv': ^2.1.2
   '@platforma-open/milaboratories.software-small-binaries': ^1.14.6
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-133-develop
+  '@platforma-open/milaboratories.software-mitool': 2.3.1-2-main
 
   '@milaboratories/helpers': ^1.6.8
 
