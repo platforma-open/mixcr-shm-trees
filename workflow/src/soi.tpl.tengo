@@ -1,15 +1,17 @@
 self := import("@platforma-sdk/workflow-tengo:tpl")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 maps := import("@platforma-sdk/workflow-tengo:maps")
+exec := import("@platforma-sdk/workflow-tengo:exec")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
-pConstants := import(":pframes.constants")
+json := import("json")
+pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 
 self.defineOutputs("hits")
 
 // import MiXCR as a software to use
 mitoolSw := assets.importSoftware("@platforma-open/milaboratories.software-mitool:main")
 
-inferPartitionKeyLength := func(inputs) {
+inferPartitionKeyLength := func(data) {
 	rType := data.info().Type.Name
 	if (rType == pConstants.RTYPE_P_COLUMN_DATA_JSON_PARTITIONED.Name) {
 		return data.getDataAsJson().partitionKeyLength

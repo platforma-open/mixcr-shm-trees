@@ -4,6 +4,7 @@ llPFrames := import("@platforma-sdk/workflow-tengo:pframes.ll")
 ll := import("@platforma-sdk/workflow-tengo:ll")
 maps := import("@platforma-sdk/workflow-tengo:maps")
 assets := import("@platforma-sdk/workflow-tengo:assets")
+render := import("@platforma-sdk/workflow-tengo:render")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 text := import("text")
 exportSettings := import(":export-settings")
@@ -154,6 +155,7 @@ self.body(func(inputs) {
 	// Running SOI search for the data
 	soiResults := {}
 	for soiDb in inputs.params.sequencesOfInterest {
+
 		columnId := ""
 		if soiDb.parameters.type == "nucleotide" {
 			columnId = "n-seq-"
@@ -175,11 +177,12 @@ self.body(func(inputs) {
 		queryData := treeNodes[columnId + ".data"]
 
 		results := render.create(soiTpl, {
-			querySpec:
-			queryData:
+			querySpec: querySpec,
+			queryData: queryData,
 			db: soiDb
 		})
-		soiResults[soiDb.parameters.id] =
+
+		soiResults[soiDb.parameters.id] = results.output("hits")
 	}
 
 	tsvs := mixcrResults.output("tsvs")
@@ -191,6 +194,8 @@ self.body(func(inputs) {
         "treeNodes": pframes.exportFrame(treeNodes),
         // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
+
+		"soiResults": soiResults,
 
         "tsvs": tsvs,
 
