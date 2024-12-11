@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ListOption, PlDropdown } from '@platforma-sdk/ui-vue';
+import { ListOption, PlDropdown, PlTextField } from '@platforma-sdk/ui-vue';
 import DownsamplingSettings from './DownsamplingSettings.vue';
 import { Alphabet, createSOIListParameters, SearchParameters, SOIListParameters, TargetFeature } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 
@@ -50,6 +50,7 @@ const searchSettings: ListOption<SearchParameters>[] = [{
 </script>
 
 <template>
+  <PlTextField v-model="model.name" label="List name" />
   <PlDropdown :options="alphabets" v-model="model.type" label="Alphabet" />
   <PlDropdown :options="targetFeatures" v-model="model.targetFeature" label="Target Feature" />
   <PlDropdown :options="searchSettings" v-model="model.searchParameters" label="Sequence Search Parameters" />

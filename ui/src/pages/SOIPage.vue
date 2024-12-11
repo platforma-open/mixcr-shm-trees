@@ -1,42 +1,100 @@
 <script setup lang="ts">
-import { AgGridVue } from '@ag-grid-community/vue3';
-import { AgGridTheme, ListOption, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
+import { ListOption, PlBlockPage, PlBtnGhost, PlDialogModal, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { useApp } from '../app';
-import RunReportPanel from './components/RunReportPanel.vue';
-import SettingsPanel from './components/MainSettingsPanel.vue';
 import { computed, reactive, watch } from 'vue';
-import { PlId, SOIList, uniquePlId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { PlId, SequenceOfInterest, SOIList, uniquePlId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import SOISettingsPanel from './components/SOISettingsPanel.vue';
-import { Args } from '@platforma-sdk/model';
+import SOITable from './components/SOITable.vue';
+import SOIImportModal from './components/SOIImportModal.vue';
+import { getRawPlatformaInstance, LocalImportFileHandle } from '@platforma-sdk/model';
 
-const { model } = useApp();
+const app = useApp();
 
 const lists = computed(() =>
-  [...(model.args.sequencesOfInterest?.map((l) => ({
+  [...(app.model.args.sequencesOfInterest?.map((l) => ({
     value: l.parameters.id,
     label: l.parameters.name
   })) ?? []), {
     value: "", label: "+ Add New List"
   }] as ListOption<string>[])
 
-const data = reactive<{ currentListId: PlId | undefined, settingsOpen: boolean }>({ currentListId: model.args.sequencesOfInterest?.[0]?.parameters?.id, settingsOpen: false })
+const data = reactive<{ currentListId?: PlId, importFile?: LocalImportFileHandle, settingsOpen: boolean }>({ settingsOpen: false })
+
+watch(() => app.model.args.sequencesOfInterest?.map(v => v.parameters.id) ?? [], (ids) => {
+  if (data.currentListId === undefined && ids.length > 0)
+    data.currentListId = ids[0];
+  else if (!ids.find(id => id === data.currentListId)) {
+    if (ids.length === 0)
+      data.currentListId = undefined;
+    else
+      data.currentListId = ids[0];
+  }
+}, { immediate: true })
 
 function addNewList() {
   const id = uniquePlId()
-  let sois = model.args.sequencesOfInterest
+  let sois = app.model.args.sequencesOfInterest
   if (sois === undefined) {
     sois = []
-    model.args.sequencesOfInterest = sois
+    app.model.args.sequencesOfInterest = sois
   }
+  const names = new Set(sois.map(l => l.parameters.name));
+  let i = 1;
+  let name = '';
+  do {
+    name = `Sequence List (${i})`;
+    i++;
+  } while (names.has(name))
   sois.push({
     sequences: [], parameters: {
-      id, name: "Sequence List", targetFeature: 'CDR3',
-      type: 'nucleotide',
+      id, name,
+      targetFeature: 'CDR3', type: 'nucleotide',
       searchParameters: { type: 'tree_search_top', parameters: 'oneMismatch' }
     }
   })
   data.currentListId = id
   data.settingsOpen = true
+}
+
+function getCurrentListIdx(): number | undefined {
+  if (data.currentListId === undefined) return undefined;
+  const idx = app.model.args.sequencesOfInterest?.findIndex(l => l.parameters.id === data.currentListId)
+  if (idx === undefined || idx === -1)
+    return undefined;
+  return idx;
+}
+
+function deleteCurrentList() {
+  const idx = getCurrentListIdx();
+  if (idx === undefined) return;
+  data.currentListId = idx > 0
+    ? app.model.args.sequencesOfInterest![idx - 1].parameters.id
+    : app.model.args.sequencesOfInterest!.length === 1
+      ? undefined
+      : app.model.args.sequencesOfInterest![1].parameters.id;
+  app.model.args.sequencesOfInterest!.splice(idx, 1)
+}
+
+async function importFile() {
+  const file = await getRawPlatformaInstance().lsDriver.showOpenSingleFileDialog({
+    title: "Select sequence list file",
+    buttonLabel: "Import",
+    filters: [
+      { name: "Fasta Or Table", extensions: ["xlsx", "tsv", "csv", "fa", "fasta"] }
+    ]
+  })
+  if (!file.file) return;
+  data.importFile = file.file;
+}
+
+function onImport(records: SequenceOfInterest[]) {
+  const idx = getCurrentListIdx();
+  if (idx === undefined) return;
+  app.model.args.sequencesOfInterest![idx].sequences = [
+    ...app.model.args.sequencesOfInterest![idx].sequences,
+    ...records
+  ]
+  data.importFile = undefined;
 }
 
 const currentListIdForList = computed<string>({
@@ -53,15 +111,15 @@ const currentList = computed<SOIList | undefined>({
   get: () => {
     if (data.currentListId === undefined)
       return undefined;
-    return model.args.sequencesOfInterest?.find(l => l.parameters.id === data.currentListId)
+    return app.model.args.sequencesOfInterest?.find(l => l.parameters.id === data.currentListId)
   },
   set: (newValue) => {
     if (data.currentListId === undefined || newValue === undefined)
       return;
-    const idx = model.args.sequencesOfInterest?.findIndex(l => l.parameters.id === data.currentListId)
+    const idx = app.model.args.sequencesOfInterest?.findIndex(l => l.parameters.id === data.currentListId)
     if (idx === undefined || idx === -1)
       return
-    model.args.sequencesOfInterest![idx] = newValue
+    app.model.args.sequencesOfInterest![idx] = newValue
   }
 })
 
@@ -78,18 +136,33 @@ const currentList = computed<SOIList | undefined>({
       </PlBtnGhost>
     </template>
     <template #append>
-      <PlBtnGhost v-if="data.currentListId" @click.stop="() => data.settingsOpen = true">Settings
-        <template #append>
-          <PlMaskIcon24 name="settings" />
-        </template>
-      </PlBtnGhost>
+      <template v-if="data.currentListId">
+        <PlBtnGhost @click.stop="deleteCurrentList">Delete current list
+          <template #append>
+            <PlMaskIcon24 name="delete-bin" />
+          </template>
+        </PlBtnGhost>
+        <PlBtnGhost @click.stop="importFile">Import Sequences
+          <template #append>
+            <PlMaskIcon24 name="dna-import" />
+          </template>
+        </PlBtnGhost>
+        <PlBtnGhost @click.stop="() => data.settingsOpen = true">Settings
+          <template #append>
+            <PlMaskIcon24 name="settings" />
+          </template>
+        </PlBtnGhost>
+      </template>
     </template>
 
-    <!-- <div :style="{ flex: 1 }">
-      <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :defaultColDef="defaultColDef"
-        :columnDefs="columnDefs" :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true }"
-        :loadingOverlayComponent=PlAgOverlayLoading :noRowsOverlayComponent=PlAgOverlayNoRows />
-    </div> -->
+    <template v-if="currentList">
+      <div :style="{ flex: 1 }">
+        <SOITable v-model="currentList.sequences" />
+      </div>
+    </template>
+
+    <SOIImportModal v-if="data.importFile" :file="data.importFile" @on-close="data.importFile = undefined"
+      @on-import="onImport" />
 
     <PlSlideModal v-model="data.settingsOpen" v-if="currentList !== undefined">
       <template #title>Settings</template>
