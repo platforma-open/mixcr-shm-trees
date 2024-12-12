@@ -36,6 +36,9 @@ catalogs:
     '@platforma-open/milaboratories.software-mixcr':
       specifier: 4.7.0-133-develop
       version: 4.7.0-133-develop
+    '@platforma-open/milaboratories.software-paggregate':
+      specifier: ^1.0.1
+      version: 1.0.1
     '@platforma-open/milaboratories.software-small-binaries':
       specifier: ^1.14.6
       version: 1.14.6
@@ -222,6 +225,9 @@ importers:
       '@platforma-open/milaboratories.software-mixcr':
         specifier: 'catalog:'
         version: 4.7.0-133-develop
+      '@platforma-open/milaboratories.software-paggregate':
+        specifier: 'catalog:'
+        version: 1.0.1
       '@platforma-open/milaboratories.software-small-binaries':
         specifier: 'catalog:'
         version: 1.14.6
@@ -1037,6 +1043,9 @@ packages:
 
   '@platforma-open/milaboratories.software-mixcr@4.7.0-133-develop':
     resolution: {integrity: sha512-b7jnFwjbO+tmlCEstILbTqVYYF3a5tYk2albcWNsfrJW8oP+of1KIBVCKMKVBr0UyshmsFjOLtLyrtLEa/ObGQ==}
+
+  '@platforma-open/milaboratories.software-paggregate@1.0.1':
+    resolution: {integrity: sha512-Y0zdivjFqcm4id9/h13Ha1xdK963gHbTilhcEhLe//frNIWpiF+zGHn4rz3fzSFnsPaJVlgsHSzL24yG4EL8dg==}
 
   '@platforma-open/milaboratories.software-small-binaries@1.14.6':
     resolution: {integrity: sha512-d7cbFNHb6/1O4wWNlvjTVlTTsIelafnt/niAe8AZNjxoM0ivbE8bR4jnTUXaXwURjUzwV/LI5sk39kJelZxsMA==}
@@ -5887,6 +5896,8 @@ snapshots:
   '@platforma-open/milaboratories.software-mitool@2.3.1-2-main': {}
 
   '@platforma-open/milaboratories.software-mixcr@4.7.0-133-develop': {}
+
+  '@platforma-open/milaboratories.software-paggregate@1.0.1': {}
 
   '@platforma-open/milaboratories.software-small-binaries@1.14.6': {}
 

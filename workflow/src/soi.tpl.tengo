@@ -5,11 +5,13 @@ exec := import("@platforma-sdk/workflow-tengo:exec")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 json := import("json")
 pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
+soiExport := import(":soi-export")
 
-self.defineOutputs("result")
+self.defineOutputs("nodesResult", "treesResult")
 
 // import MiXCR as a software to use
 mitoolSw := assets.importSoftware("@platforma-open/milaboratories.software-mitool:main")
+paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-paggregate:main")
 
 inferPartitionKeyLength := func(data) {
 	rType := data.info().Type.Name
@@ -42,6 +44,10 @@ self.body(func(inputs) {
 	originalAxesSpecs := querySpec.axesSpec
 	modifiedAxesSpecs := []
 	importAxesSpec := []
+
+	aggregationGroupByTargets := []
+	aggregationImportAxesSpec := []
+
 	for idx, spec in originalAxesSpecs {
 		colName := "key" + idx
 		modifiedAxesSpecs = append(modifiedAxesSpecs, maps.deepMerge(
@@ -52,6 +58,15 @@ self.body(func(inputs) {
 			"column": colName,
 			"spec": spec
 		})
+
+		// aggregating clonal and subtree axes away
+		if spec.name != "pl7.app/dendrogram/subtreeId" && spec.name != "pl7.app/dendrogram/nodeId" {
+			aggregationGroupByTargets = append(aggregationGroupByTargets, colName)
+			aggregationImportAxesSpec = append(aggregationImportAxesSpec, {
+				"column": colName,
+				"spec": spec
+			})
+		}
 	}
 	modifiedQuerySpec := maps.deepMerge(querySpec, {
 		axesSpec: modifiedAxesSpecs,
@@ -77,33 +92,61 @@ self.body(func(inputs) {
 
 	resultCsv := searchCmd.getFile("output.tsv")
 
-	convParams := {
+	resultColumns := soiExport.soiResultImportColumns(db.parameters)
+	resultConvParams := {
 		"axes": importAxesSpec,
-		"columns": [ {
-			"column": "topHit",
-			"id": "topHit",
-			"spec": {
-				"name": "pl7.app/search/topHit",
-				"valueType": "String",
-				"annotations": {
-					"pl7.app/label": "Top Hit"
-				}
-			},
-			"domain": {
-				"pl7.app/list": db.parameters.id
-			}
-		} ],
+		"columns": resultColumns,
 		"storageFormat": "Binary",
 		"partitionKeyLength": 0 // inferPartitionKeyLength(queryData)
 	}
 
-	result := xsv.importFile(
+	aggregatedConvParams := {
+		"axes": aggregationImportAxesSpec,
+		"columns": resultColumns,
+		"storageFormat": "Binary",
+		"partitionKeyLength": 0 // inferPartitionKeyLength(queryData)
+	}
+
+	aggregations := []
+	for col in resultColumns {
+		aggregations = append(aggregations, {
+			type: "first",
+			src: col.column,
+			dst: col.column
+		})
+	}
+
+	aggregationWorkflow := { steps: [ {
+			type: "aggregate",
+			groupBy: aggregationGroupByTargets,
+			aggregations: aggregations
+		} ] }
+
+	aggregateCmd := exec.builder().
+        printErrStreamToStdout().
+        software(paggregateSw).
+        arg("--workflow").arg("wf.json").
+		writeFile("wf.json", json.encode(aggregationWorkflow)).
+		arg("input.tsv").addFile("input.tsv", resultCsv).
+		arg("output.tsv").saveFile("output.tsv").
+		run()
+
+	aggregatedCsv := aggregateCmd.getFile("output.tsv")
+
+	nodesResult := xsv.importFile(
         resultCsv,
         "tsv",
-        convParams
+        resultConvParams
+    )
+
+	treesResult := xsv.importFile(
+        aggregatedCsv,
+        "tsv",
+        aggregatedConvParams
     )
 
 	return {
-		result: result
+		nodesResult: nodesResult,
+		treesResult: treesResult
 	}
 })

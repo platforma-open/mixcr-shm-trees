@@ -153,7 +153,8 @@ self.body(func(inputs) {
     )
 
 	// Running SOI search for the data
-	soiResults := {} // @TODO migrate to map after fixing pframes.exportFrame incompatibility with maps
+	soiNodesResults := {}
+	soiTreesResults := {}
 	for soiDb in inputs.params.sequencesOfInterest {
 
 		columnId := ""
@@ -182,7 +183,8 @@ self.body(func(inputs) {
 			db: soiDb
 		})
 
-		soiResults[soiDb.parameters.id] = soiResult.output("result") // @TODO migrate to map after fixing pframes.exportFrame incompatibility with maps
+		soiNodesResults[soiDb.parameters.id] = soiResult.output("nodesResult")
+		soiTreesResults[soiDb.parameters.id] = soiResult.output("treesResult")
 	}
 
 	tsvs := mixcrResults.output("tsvs")
@@ -195,7 +197,8 @@ self.body(func(inputs) {
         // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
 
-		"soiResults": maps.mapValues(soiResults, pframes.exportFrame),
+		"soiNodesResults": maps.mapValues(soiNodesResults, pframes.exportFrame),
+		"soiTreesResults": maps.mapValues(soiTreesResults, pframes.exportFrame),
 
         "tsvs": tsvs,
 

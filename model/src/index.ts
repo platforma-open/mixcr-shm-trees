@@ -151,12 +151,16 @@ export const model = BlockModel.create()
     const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
     if (pCols === undefined) return undefined;
 
+    const soiResultColumns = (
+      ctx.outputs?.resolve('soiTreesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+    ).flatMap((a) => a);
+
     // wait until sheet filters are set
     const sheetFilters = ctx.uiState?.treeTableState.pTableParams?.filters;
     if (!sheetFilters) return undefined;
 
     return ctx.createPTable({
-      columns: pCols,
+      columns: [...pCols, ...soiResultColumns],
       filters: [...sheetFilters, ...(ctx.uiState?.filterModel?.filters ?? [])],
       sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
     });
@@ -176,7 +180,7 @@ export const model = BlockModel.create()
     if (treeNodesWithClonesColumns === undefined) return undefined;
 
     const soiResultColumns = (
-      ctx.outputs?.resolve('soiResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+      ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
     ).flatMap((a) => a);
 
     return ctx.createPFrame([

@@ -46,7 +46,8 @@ wf.body(func(args) {
 			"treeNodes": results.output("treeNodes"),
 			"treeNodesWithClones": results.output("treeNodesWithClones"),
 
-			"soiResults": results.output("soiResults"),
+			"soiNodesResults": results.output("soiNodesResults"),
+			"soiTreesResults": results.output("soiTreesResults"),
 
 			"tsvs": results.output("tsvs"),
 			"allelesLogs": results.output("allelesLogs"),

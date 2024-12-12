@@ -1,0 +1,39 @@
+ll := import("@platforma-sdk/workflow-tengo:ll")
+
+soiResultImportColumns := func(dbParameters) {
+	if dbParameters.searchParameters.type == "tree_search_top" {
+		return [ {
+			"column": "topHit",
+			"id": "topHit",
+			"spec": {
+				"name": "pl7.app/search/topHit",
+				"valueType": "String",
+				"annotations": {
+					"pl7.app/label": "Top Hit " + dbParameters.name
+				}
+			},
+			"domain": {
+				"pl7.app/list": dbParameters.id
+			}
+		}, {
+			"column": "mutations",
+			"id": "mutations",
+			"spec": {
+				"name": "pl7.app/search/numberOfMutations",
+				"valueType": "Int",
+				"annotations": {
+					"pl7.app/label": "Number of mutations " + dbParameters.name
+				}
+			},
+			"domain": {
+				"pl7.app/list": dbParameters.id
+			}
+		} ]
+	} else {
+		ll.panic("Unknown search mode: " + dbParameters.searchParameters.type)
+	}
+}
+
+export ll.toStrict({
+	soiResultImportColumns: soiResultImportColumns
+})
