@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 2.3.3
+
+### Patch Changes
+
+- 96a150e: Random seed added to main analysis routine
+
 ## 2.3.2
 
 ### Patch Changes

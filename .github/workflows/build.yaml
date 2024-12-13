@@ -27,11 +27,11 @@ jobs:
       node-version: '20.x'
 
       build-script-name: 'build'
-      pnpm-recursive-build: true
+      pnpm-recursive-build: false
 
       test: false
       test-script-name: 'test'
-      pnpm-recursive-tests: true
+      pnpm-recursive-tests: false
 
       publish-to-public: 'true'
 

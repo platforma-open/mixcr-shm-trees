@@ -13,7 +13,7 @@ const nextId = () => {
 
 export async function addDendrogram(
   label: string,
-  donorId: PValueJsonSafe,
+  donorId: string | number,
   treeId: number,
   subtreeId: string | undefined,
   vGene: string,
