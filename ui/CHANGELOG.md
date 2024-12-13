@@ -1,5 +1,14 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 2.3.2
+
+### Patch Changes
+
+- ef7df65: SDK upgrade
+- 5454f7b: updated version and added show-cell-button-for-axis-id
+- Updated dependencies [ef7df65]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@2.4.1
+
 ## 2.3.1
 
 ### Patch Changes
