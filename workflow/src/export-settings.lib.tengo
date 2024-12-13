@@ -444,7 +444,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
 // export data that is unique for clones, but not unique for a node
 // (different clones could be in the same topology node, for example, different time points)
 shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
-    donorColumnSpec := donorColumn.get("spec").getDataAsJson()
+    donorColumnSpec := donorColumn.spec
 
     axes := []
     columns := []
