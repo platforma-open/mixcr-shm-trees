@@ -38,7 +38,9 @@ self.body(func(inputs) {
 
 	assemblingFeature := ""
 	for clonotypingBlockId, dataset in inputs.datasets {
-		presetAnnotations := dataset.get("spec").getDataAsJson()["annotations"]
+		presetAnnotations := dataset.spec.annotations
+
+		ll.assert(!is_undefined(presetAnnotations), "No annotations in dataset specs")
 
 		datasetTypes[clonotypingBlockId] = "bulk"
 
