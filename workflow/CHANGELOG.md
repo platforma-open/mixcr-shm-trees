@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 2.3.4
+
+### Patch Changes
+
+- ef7df65: SDK upgrade
+
 ## 2.3.3
 
 ### Patch Changes
