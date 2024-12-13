@@ -1,6 +1,13 @@
 <script setup lang="ts">
 // import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { isPValue, PTableColumnSpec, PValue, safeConvertToPValue, toJsonSafePValue } from '@platforma-sdk/model';
+import {
+  AxisId,
+  isPValue,
+  PTableColumnSpec,
+  PValue,
+  safeConvertToPValue,
+  toJsonSafePValue
+} from '@platforma-sdk/model';
 import {
   PlAgDataTable,
   PlAgDataTableToolsPanel,
@@ -50,9 +57,14 @@ const onRowDoubleClicked = (keys: PTableRowKey) => {
   const treeId = Number(keys[1]);
   const subtreeId = keys.length > 2 ? String(keys[2]) : undefined;
   addDendrogram('Tree / ' + String(keys[0]) + ' / ' + treeId, donorId, treeId, subtreeId, 'X', 'Y');
-}
+};
 
 const tableInstance = ref<PlAgDataTableController>();
+
+const treeIdAxis = ref<AxisId>({
+  type: 'Long',
+  name: 'pl7.app/dendrogram/treeId'
+});
 </script>
 
 <template>
@@ -63,8 +75,14 @@ const tableInstance = ref<PlAgDataTableController>();
         <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
       </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings" show-columns-panel show-export-button
+    <PlAgDataTable
+      v-model="app.model.ui.treeTableState"
+      :settings="tableSettings"
+      :show-cell-button-for-axis-id="treeIdAxis"
+      show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)"
-      @on-row-double-clicked="(k) => onRowDoubleClicked(k as PTableRowKey)" ref="tableInstance" />
+      @on-row-double-clicked="(k) => onRowDoubleClicked(k as PTableRowKey)"
+      ref="tableInstance"
+    />
   </PlBlockPage>
 </template>
