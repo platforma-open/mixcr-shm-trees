@@ -20,7 +20,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
 	//        axes[0]: sampleId
 	//          value: fileRef resource
 
-    donorColumnSpec := donorColumn.get("spec").getDataAsJson()
+    donorColumnSpec := donorColumn.spec
 
     sampleIdAxis := donorColumnSpec.axesSpec[0]
 
@@ -53,7 +53,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
     sampleToDonor := {}
 
     // columns with meta could be fetched as data direcctly
-	for k, v in donorColumn.get("data").getDataAsJson()["data"] {
+	for k, v in donorColumn.data.getDataAsJson()["data"] {
         sampleId := json.decode(k)[0]
         sampleToDonor[sampleId] = v
 	}
@@ -63,7 +63,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
 
     // collect all the clns files that we have into pColumn
 	for clonotypingBlockId, dataset in datasets {
-		for sKey, fileRef in dataset.get("data").inputs() {
+		for sKey, fileRef in dataset.data.inputs() {
             sampleId := json.decode(sKey)[0]
             donor := sampleToDonor[sampleId]
             dataBuilder.createInputField(json.encode([donor, sampleId, clonotypingBlockId])).set(fileRef)
