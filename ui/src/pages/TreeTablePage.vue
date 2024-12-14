@@ -81,7 +81,7 @@ const treeIdAxis = ref<AxisId>({
       :show-cell-button-for-axis-id="treeIdAxis"
       show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)"
-      @on-row-double-clicked="(k) => onRowDoubleClicked(k as PTableRowKey)"
+      @on-row-double-clicked="onRowDoubleClicked"
       ref="tableInstance"
     />
   </PlBlockPage>

@@ -22,7 +22,8 @@ const fileName = computed(() => getFileNameFromHandle(props.file));
 
 const fileType = computed<'table' | 'fasta'>(() => {
   if (fileName.value.endsWith('.tsv') || fileName.value.endsWith('.csv')
-    || fileName.value.endsWith('.xlsx') || fileName.value.endsWith('.xls'))
+    || fileName.value.endsWith('.xlsx') || fileName.value.endsWith('.xls')
+    || fileName.value.endsWith('.txt'))
     return 'table'
   else
     return 'fasta'

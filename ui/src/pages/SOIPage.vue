@@ -42,7 +42,7 @@ function addNewList() {
   let i = 1;
   let name = '';
   do {
-    name = `Sequence List (${i})`;
+    name = `Seq. List (${i})`;
     i++;
   } while (names.has(name))
   sois.push({
@@ -80,7 +80,7 @@ async function importFile() {
     title: "Select sequence list file",
     buttonLabel: "Import",
     filters: [
-      { name: "Fasta Or Table", extensions: ["xlsx", "tsv", "csv", "fa", "fasta"] }
+      { name: "Fasta Or Table", extensions: ["xlsx", "tsv", "csv", "fa", "fasta", "txt"] }
     ]
   })
   if (!file.file) return;
