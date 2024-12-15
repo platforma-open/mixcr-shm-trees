@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.0.0
+
+### Major Changes
+
+- 84fec04: Sequence Search Support
+
 ## 2.4.1
 
 ### Patch Changes
