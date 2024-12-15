@@ -29,23 +29,40 @@ const fileType = computed<'table' | 'fasta'>(() => {
     return 'fasta'
 });
 
-const tableData = computedAsync(async () => {
+//
+// Commmon
+//
+
+const fileContent = computedAsync(async () => {
   const pl = getRawPlatformaInstance();
-  if (fileType.value === 'table') {
-    if ((await pl.lsDriver.getLocalFileSize(props.file)) > 5_000_000) {
-      data.errorMessage = { title: 'File is too big' };
-      return undefined;
-    }
-    const content = await platforma!.lsDriver.getLocalFileContent(props.file);
+  if ((await pl.lsDriver.getLocalFileSize(props.file)) > 5_000_000) {
+    data.errorMessage = { title: 'File is too big' };
+    return undefined;
+  }
+  try {
+    return await platforma!.lsDriver.getLocalFileContent(props.file);
+  } catch (e: any) {
+    console.error(e);
+    data.errorMessage = { title: 'Error reading file', message: e.msg };
+    return undefined;
+  }
+})
+
+//
+// Table
+//
+
+const tableData = computed(() => {
+  if (fileType.value === 'table' && fileContent.value !== undefined) {
     try {
-      return readFileForImport(content);
+      return readFileForImport(fileContent.value);
     } catch (e: any) {
       console.error(e);
       data.errorMessage = { title: 'Error reading table', message: e.msg };
       return undefined;
     }
-  }
-  return undefined
+  } else
+    return undefined
 })
 
 const columnOptions = computed<ListOption<number>[]>(() => {
@@ -58,23 +75,76 @@ const columnOptions = computed<ListOption<number>[]>(() => {
   } else return [] as ListOption<number>[];
 })
 
+//
+// Fasta
+//
+
+type FastaRecord = { readonly description: string; readonly sequence: string }
+function parseFasta(content: string): FastaRecord[] {
+  const lines = content.split('\n');
+  const records: FastaRecord[] = [];
+
+  let currentDescription = '';
+  let currentSequence = '';
+
+  for (let line of lines) {
+    line = line.trim();
+    if (line.startsWith('>')) {
+      if (currentDescription || currentSequence)
+        records.push({ description: currentDescription, sequence: currentSequence });
+      currentDescription = line.replace(/^>\s*/, '');
+      currentSequence = '';
+    } else if (line.length > 0) {
+      currentSequence += line;
+    }
+  }
+
+  if (currentDescription || currentSequence) {
+    records.push({ description: currentDescription, sequence: currentSequence });
+  }
+
+  return records;
+}
+
+const fastaData = computed(() => {
+  if (fileType.value === 'fasta' && fileContent.value !== undefined) {
+    try {
+      const content = new TextDecoder().decode(fileContent.value);
+      return parseFasta(content);
+    } catch (e: any) {
+      console.error(e);
+      data.errorMessage = { title: 'Error reading fasta file', message: e.msg };
+      return undefined;
+    }
+  } else
+    return undefined
+})
+
+//
+// UI
+//
+
 const importText = computed(() => {
   if (fileType.value === 'table') {
     if (tableData.value)
       return `Number of rows to be imported: ${tableData.value.data.rows.length}`
     else
       return `Error reading table.\n${data.errorMessage?.title}`
-  } else
-    return `Fasta files are not yet supported`
+  } else {
+    if (fastaData.value)
+      return `Number of records to be imported: ${fastaData.value.length}`
+    else
+      return `Error reading fasta file.\n${data.errorMessage?.title}`
+  }
 })
 
 const canImport = computed(() =>
   fileType.value === 'table'
     ? data.nameColumn !== undefined && data.sequenceColumn !== undefined
-    : false
+    : (fastaData.value && fastaData.value?.length > 0)
 )
 
-async function runImport() {
+function runImport() {
   data.importing = true;
   let result: SequenceOfInterest[] = []
   if (tableData.value) {
@@ -84,6 +154,10 @@ async function runImport() {
     result = rawData.data.rows
       .filter(r => r[nc] !== undefined && r[sc] !== undefined)
       .map(r => ({ id: uniquePlId(), name: String(r[nc]!), sequence: String(r[sc]!) }))
+  } else if (fastaData.value && fastaData.value.length > 0) {
+    result = fastaData.value
+      .filter(r => r.description.length > 0 && r.sequence.length > 0)
+      .map(r => ({ id: uniquePlId(), name: r.description, sequence: r.sequence }))
   }
   emit("onImport", result);
 }
@@ -95,8 +169,8 @@ async function runImport() {
     <template v-if="fileType === 'table'">
       <PlDropdown :options="columnOptions" v-model="data.sequenceColumn" clearable label="Sequence Column" />
       <PlDropdown :options="columnOptions" v-model="data.nameColumn" clearable label="Name Column" />
-      <PlLogView :value="importText" label="Import information" />
     </template>
+    <PlLogView :value="importText" label="Import information" />
     <template #actions>
       <PlBtnPrimary @click="runImport" :loading="data.importing" :diabled="!canImport">
         Import
