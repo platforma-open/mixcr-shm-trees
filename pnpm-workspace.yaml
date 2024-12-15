@@ -13,7 +13,7 @@ catalog:
   "@platforma-sdk/ui-vue": ^1.20.9
 
   '@platforma-sdk/test': ^1.20.9
-  "@milaboratories/graph-maker": ^1.1.10
+  "@milaboratories/graph-maker": ^1.1.13
 
   '@platforma-sdk/workflow-tengo': ^2.8.2
 
