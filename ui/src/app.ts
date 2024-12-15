@@ -5,8 +5,9 @@ import DendrogramPage from './pages/DendrogramPage.vue';
 import TreeTablePage from './pages/TreeTablePage.vue';
 import SOIPage from './pages/SOIPage.vue';
 
-export const sdkPlugin = defineApp(model, () => {
+export const sdkPlugin = defineApp(model, (app) => {
   return {
+    progress: () => app.model.outputs.calculating,
     routes: {
       '/': () => MainPage,
       '/soi': () => SOIPage,

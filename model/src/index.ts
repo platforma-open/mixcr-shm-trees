@@ -8,6 +8,7 @@ import {
   PlRef,
   deriveLabels,
   getAxisId,
+  isPColumnResult,
   isPColumnSpec,
   isPColumnSpecResult,
   parseResourceMap,
@@ -100,6 +101,8 @@ export const model = BlockModel.create()
   //     .map( (v) => v.obj as PColumnSpec )
   // )
 
+  .output('calculating', (ctx) => ctx.outputs?.getIsReadyOrError() === false)
+
   // select metadata columns
   .retentiveOutput('donorOptions', (ctx) =>
     ctx.resultPool.getOptions((spec) => {
@@ -183,11 +186,25 @@ export const model = BlockModel.create()
       ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
     ).flatMap((a) => a);
 
-    return ctx.createPFrame([
-      ...treeNodesColumns,
-      ...treeNodesWithClonesColumns,
-      ...soiResultColumns
-    ]);
+    const targetColumns = [...treeNodesColumns, ...treeNodesWithClonesColumns, ...soiResultColumns];
+
+    if (ctx.args.donorColumn !== undefined) {
+      const donorColumn = ctx.args.donorColumn;
+      const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
+      if (donorColumnSpec !== undefined && isPColumnSpec(donorColumnSpec)) {
+        const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
+        const col = ctx.resultPool
+          .getData()
+          .entries.filter(isPColumnResult)
+          .find(
+            ({ obj: { spec } }) =>
+              spec.name === 'pl7.app/label' && matchAxesId([sampleAxisId], spec.axesSpec)
+          );
+        if (col) targetColumns.push(col.obj);
+      }
+    }
+
+    return ctx.createPFrame(targetColumns);
   })
 
   /** Donor ids for which we have at least one dataset to analyze */

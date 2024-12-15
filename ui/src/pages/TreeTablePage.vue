@@ -52,6 +52,7 @@ function noNaOrNULL(key: PTableRowKey): key is (string | number)[] {
 }
 
 const onRowDoubleClicked = (keys: PTableRowKey) => {
+  console.dir(keys)
   if (!noNaOrNULL(keys)) return;
   if (!isPValue(keys[1], 'Long')) throw new Error(`Unexpected key type ${typeof keys[1]}`)
   const donorId = keys[0];
@@ -67,7 +68,7 @@ const treeIdAxis = ref<AxisId>({
   name: 'pl7.app/dendrogram/treeId'
 });
 
-// Temp fix (to remove)
+// @TODO Temp fix (to remove)
 const treeTableState = computed({
   get() {
     return app.model.ui.treeTableState;
@@ -92,14 +93,8 @@ const treeTableState = computed({
         <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
       </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable
-      v-model="treeTableState"
-      :settings="tableSettings"
-      :show-cell-button-for-axis-id="treeIdAxis"
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
-      @on-row-double-clicked="onRowDoubleClicked"
-      ref="tableInstance"
-    />
+    <PlAgDataTable v-model="treeTableState" :settings="tableSettings" :show-cell-button-for-axis-id="treeIdAxis"
+      @columns-changed="(newColumns) => (columns = newColumns)" @row-double-clicked="onRowDoubleClicked"
+      ref="tableInstance" />
   </PlBlockPage>
 </template>
