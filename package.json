@@ -37,8 +37,6 @@
     }
   },
   "pnpm": {
-    "overrides": {
-      "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
-    }
+    "overrides": {}
   }
 }
