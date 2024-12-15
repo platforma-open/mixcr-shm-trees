@@ -4,6 +4,7 @@ llPFrames := import("@platforma-sdk/workflow-tengo:pframes.ll")
 ll := import("@platforma-sdk/workflow-tengo:ll")
 maps := import("@platforma-sdk/workflow-tengo:maps")
 assets := import("@platforma-sdk/workflow-tengo:assets")
+render := import("@platforma-sdk/workflow-tengo:render")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 text := import("text")
 exportSettings := import(":export-settings")
@@ -19,6 +20,8 @@ self.awaitState("datasets", { wildcard: "*" }, "data", "InputsLocked")
 self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
 self.awaitState("donorColumn", "ResourceReady")
 self.awaitState("params", "ResourceReady")
+
+soiTpl := assets.importTemplate(":soi")
 
 self.body(func(inputs) {
 	// overall description of data that we have.
@@ -151,6 +154,41 @@ self.body(func(inputs) {
         additionalArgsForImportTsv
     )
 
+	// Running SOI search for the data
+	soiNodesResults := {}
+	soiTreesResults := {}
+	for soiDb in inputs.params.sequencesOfInterest {
+
+		columnId := ""
+		if soiDb.parameters.type == "nucleotide" {
+			columnId = "n-seq-"
+		} else if soiDb.parameters.type == "amino-acid" {
+			columnId = "aa-seq-"
+		} else {
+			ll.panic("unknown alphabet: " + soiDb.parameters.type)
+		}
+
+		if soiDb.parameters.targetFeature == "CDR3" {
+			columnId = columnId + "CDR3"
+		} else if soiDb.parameters.targetFeature == "VDJRegion" {
+			columnId = columnId + "VDJRegion"
+		} else {
+			ll.panic("unknown target feature: " + soiDb.parameters.targetFeature)
+		}
+
+		querySpec := treeNodes[columnId + ".spec"]
+		queryData := treeNodes[columnId + ".data"]
+
+		soiResult := render.create(soiTpl, {
+			querySpec: querySpec,
+			queryData: queryData,
+			db: soiDb
+		})
+
+		soiNodesResults[soiDb.parameters.id] = soiResult.output("nodesResult")
+		soiTreesResults[soiDb.parameters.id] = soiResult.output("treesResult")
+	}
+
 	tsvs := mixcrResults.output("tsvs")
 
     return {
@@ -160,6 +198,9 @@ self.body(func(inputs) {
         "treeNodes": pframes.exportFrame(treeNodes),
         // combine columns into pFrame
         "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
+
+		"soiNodesResults": maps.mapValues(soiNodesResults, pframes.exportFrame),
+		"soiTreesResults": maps.mapValues(soiTreesResults, pframes.exportFrame),
 
         "tsvs": tsvs,
 

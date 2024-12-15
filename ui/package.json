@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "xlsx": "../vendor/xlsx-0.20.3.tgz",
     "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
     "@ag-grid-community/client-side-row-model": "catalog:",
     "@ag-grid-community/core": "catalog:",

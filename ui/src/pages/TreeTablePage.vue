@@ -19,9 +19,10 @@ import {
   type PlAgDataTableController,
   type PlDataTableSettings
 } from '@platforma-sdk/ui-vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { addDendrogram } from '../addDendrogram';
 import { useApp } from '../app';
+import { deepEqual } from '@milaboratories/helpers';
 
 const app = useApp();
 
@@ -51,6 +52,7 @@ function noNaOrNULL(key: PTableRowKey): key is (string | number)[] {
 }
 
 const onRowDoubleClicked = (keys: PTableRowKey) => {
+  console.dir(keys)
   if (!noNaOrNULL(keys)) return;
   if (!isPValue(keys[1], 'Long')) throw new Error(`Unexpected key type ${typeof keys[1]}`)
   const donorId = keys[0];
@@ -65,6 +67,22 @@ const treeIdAxis = ref<AxisId>({
   type: 'Long',
   name: 'pl7.app/dendrogram/treeId'
 });
+
+// @TODO Temp fix (to remove)
+const treeTableState = computed({
+  get() {
+    return app.model.ui.treeTableState;
+  },
+  set(n) {
+    if (!n.gridState.sort) {
+      delete n.gridState.sort;
+    }
+
+    if (!deepEqual(n, app.model.ui.treeTableState)) {
+      app.model.ui.treeTableState = n;
+    }
+  }
+});
 </script>
 
 <template>
@@ -75,14 +93,8 @@ const treeIdAxis = ref<AxisId>({
         <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
       </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable
-      v-model="app.model.ui.treeTableState"
-      :settings="tableSettings"
-      :show-cell-button-for-axis-id="treeIdAxis"
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
-      @on-row-double-clicked="(k) => onRowDoubleClicked(k as PTableRowKey)"
-      ref="tableInstance"
-    />
+    <PlAgDataTable v-model="treeTableState" :settings="tableSettings" :show-cell-button-for-axis-id="treeIdAxis"
+      @columns-changed="(newColumns) => (columns = newColumns)" @row-double-clicked="onRowDoubleClicked"
+      ref="tableInstance" />
   </PlBlockPage>
 </template>

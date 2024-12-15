@@ -26,6 +26,11 @@
   "//": {
     "pnpm": {
       "overrides": {
+        "@platforma-open/milaboratories.software-paggregate": "file:/Users/dbolotin/milab/blocks/software-paggregate/package.tgz",
+        "@milaboratories/graph-maker": "/Users/poslavskysv/Projects/milab/platforma/graph-maker/milaboratories-graph-maker-1.1.0.tgz",
+        "@platforma-sdk/model": "file:/Users/dbolotin/milab/core/platforma/sdk/model/package.tgz",
+        "@platforma-sdk/workflow-tengo": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/workflow-tengo/package.tgz",
+        "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz",
         "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz",
         "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
       }
