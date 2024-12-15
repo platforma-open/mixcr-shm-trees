@@ -15,6 +15,9 @@ export const sdkPlugin = defineApp(model, () => {
       '/dendrogram': (a) => DendrogramPage
     }
   };
+}, {
+  debug: true,
+  deepPatchModel: true
 });
 
 export const useApp = sdkPlugin.useApp;

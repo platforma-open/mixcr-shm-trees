@@ -19,9 +19,10 @@ import {
   type PlAgDataTableController,
   type PlDataTableSettings
 } from '@platforma-sdk/ui-vue';
-import { computed, ref } from 'vue';
+import { computed, ref, watch } from 'vue';
 import { addDendrogram } from '../addDendrogram';
 import { useApp } from '../app';
+import { deepEqual } from '@milaboratories/helpers';
 
 const app = useApp();
 
@@ -65,6 +66,22 @@ const treeIdAxis = ref<AxisId>({
   type: 'Long',
   name: 'pl7.app/dendrogram/treeId'
 });
+
+// Temp fix (to remove)
+const treeTableState = computed({
+  get() {
+    return app.model.ui.treeTableState;
+  },
+  set(n) {
+    if (!n.gridState.sort) {
+      delete n.gridState.sort;
+    }
+
+    if (!deepEqual(n, app.model.ui.treeTableState)) {
+      app.model.ui.treeTableState = n;
+    }
+  }
+});
 </script>
 
 <template>
@@ -76,7 +93,7 @@ const treeIdAxis = ref<AxisId>({
       </PlAgDataTableToolsPanel>
     </template>
     <PlAgDataTable
-      v-model="app.model.ui.treeTableState"
+      v-model="treeTableState"
       :settings="tableSettings"
       :show-cell-button-for-axis-id="treeIdAxis"
       show-columns-panel

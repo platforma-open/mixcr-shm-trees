@@ -172,7 +172,7 @@ function runImport() {
     </template>
     <PlLogView :value="importText" label="Import information" />
     <template #actions>
-      <PlBtnPrimary @click="runImport" :loading="data.importing" :diabled="!canImport">
+      <PlBtnPrimary @click="runImport" :loading="data.importing" :disabled="!canImport">
         Import
       </PlBtnPrimary>
       <PlBtnGhost @click="emit('onClose')">Cancel</PlBtnGhost>
