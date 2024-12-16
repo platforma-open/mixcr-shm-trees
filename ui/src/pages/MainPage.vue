@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ColDef, GridOptions } from '@ag-grid-community/core';
-import { AgGridVue } from '@ag-grid-community/vue3';
+import { ColDef, GridOptions } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 import { AgGridTheme, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
 import { reactive, } from 'vue';

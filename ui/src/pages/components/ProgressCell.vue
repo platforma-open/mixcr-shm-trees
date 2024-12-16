@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ICellRendererParams } from '@ag-grid-community/core';
+import { ICellRendererParams } from 'ag-grid-enterprise';
 import { ProgressPattern } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { computed, unref } from 'vue';
 import { TreeResult } from '../../results';
