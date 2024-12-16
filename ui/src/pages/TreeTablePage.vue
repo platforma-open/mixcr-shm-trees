@@ -1,19 +1,13 @@
 <script setup lang="ts">
-// import { platforma } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import {
   AxisId,
   isPValue,
   PTableColumnSpec,
-  PValue,
-  safeConvertToPValue,
-  toJsonSafePValue
 } from '@platforma-sdk/model';
 import {
   PlAgDataTable,
   PlAgDataTableToolsPanel,
   PlBlockPage,
-  PlBtnGhost,
-  PlMaskIcon24,
   PlTableFilters,
   PTableRowKey,
   type PlAgDataTableController,
@@ -93,8 +87,8 @@ const treeTableState = computed({
         <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
       </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable v-model="treeTableState" :settings="tableSettings" :show-cell-button-for-axis-id="treeIdAxis"
-      @columns-changed="(newColumns) => (columns = newColumns)" @row-double-clicked="onRowDoubleClicked"
-      ref="tableInstance" />
+    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings" :show-cell-button-for-axis-id="treeIdAxis"
+      @cell-button-clicked="onRowDoubleClicked" show-export-button show-columns-panel
+      @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
   </PlBlockPage>
 </template>

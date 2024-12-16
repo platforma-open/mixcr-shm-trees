@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ColDef, GridOptions } from '@ag-grid-community/core';
-import { AgGridVue } from '@ag-grid-community/vue3';
+import { ColDef, GridOptions } from 'ag-grid-enterprise';
+import { AgGridVue } from 'ag-grid-vue3';
 import { SequenceOfInterest } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { AgGridTheme } from '@platforma-sdk/ui-vue';
 
