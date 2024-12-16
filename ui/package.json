@@ -1,6 +1,6 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -11,10 +11,8 @@
   "dependencies": {
     "xlsx": "../vendor/xlsx-0.20.3.tgz",
     "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
-    "@ag-grid-community/client-side-row-model": "catalog:",
-    "@ag-grid-community/core": "catalog:",
-    "@ag-grid-community/styles": "catalog:",
-    "@ag-grid-community/vue3": "catalog:",
+    "ag-grid-enterprise": "catalog:",
+    "ag-grid-vue3": "catalog:",
     "@milaboratories/helpers": "catalog:",
     "@platforma-sdk/model": "catalog:",
     "@platforma-sdk/ui-vue": "catalog:",
