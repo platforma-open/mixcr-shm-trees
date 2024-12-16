@@ -1,6 +1,6 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "type": "module",
   "scripts": {
     "dev": "vite",
