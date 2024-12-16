@@ -45,9 +45,9 @@ function noNaOrNULL(key: PTableRowKey): key is (string | number)[] {
   return true;
 }
 
-const onRowDoubleClicked = (keys: PTableRowKey) => {
+const onRowDoubleClicked = (keys?: PTableRowKey) => {
   console.dir(keys)
-  if (!noNaOrNULL(keys)) return;
+  if (!keys || !noNaOrNULL(keys)) return;
   if (!isPValue(keys[1], 'Long')) throw new Error(`Unexpected key type ${typeof keys[1]}`)
   const donorId = keys[0];
   const treeId = Number(keys[1]);
