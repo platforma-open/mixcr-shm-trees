@@ -1,5 +1,12 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.0.3
+
+### Patch Changes
+
+- 580c94b: update graph-maker version
+- 2072f38: update graph-maker version
+
 ## 3.0.2
 
 ### Patch Changes
