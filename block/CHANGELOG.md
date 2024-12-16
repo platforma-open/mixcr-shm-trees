@@ -1,5 +1,12 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.0.5
+
+### Patch Changes
+
+- Updated dependencies [a4d53a7]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.0.5
+
 ## 3.0.4
 
 ### Patch Changes
