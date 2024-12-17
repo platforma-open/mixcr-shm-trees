@@ -3,9 +3,13 @@ import {
   BlockModel,
   InferOutputsType,
   NotNAPValue,
+  PColumn,
+  PTableHandle,
   PValueJsonSafe,
   PlDataTableState,
   PlRef,
+  RenderCtx,
+  TreeNodeAccessor,
   deriveLabels,
   getAxisId,
   isPColumnResult,
@@ -17,6 +21,7 @@ import {
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
 import { SOIList } from './soi';
+import { FullTreeId, treeNodesFilter } from './tree_filter';
 
 export type DownsamplingByCount = {
   type: 'CountReadsFixed' | 'CountMoleculesFixed';
@@ -48,12 +53,8 @@ export type BlockArgs = {
   sequencesOfInterest?: SOIList[];
 };
 
-export type DendrogramState = {
+export type DendrogramState = FullTreeId & {
   id: string;
-
-  donorId: PValueJsonSafe;
-  treeId: number;
-  subtreeId: string | undefined;
 
   state: GraphMakerState;
 };
@@ -61,7 +62,6 @@ export type DendrogramState = {
 export type UiState = {
   treeTableState: PlDataTableState;
   filterModel: PlTableFiltersModel;
-  treeNodesGraphState: GraphMakerState;
   dendrograms: DendrogramState[];
 };
 
@@ -71,6 +71,40 @@ export type DatasetOption = {
   assemblingFeature: string;
 };
 
+function treeNodesColumns(
+  ctx: RenderCtx<BlockArgs, UiState>
+): PColumn<TreeNodeAccessor>[] | undefined {
+  const treeNodesColumns = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+  if (treeNodesColumns === undefined) return undefined;
+
+  const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+  if (treeNodesWithClonesColumns === undefined) return undefined;
+
+  const soiResultColumns = (
+    ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+  ).flatMap((a) => a);
+
+  const targetColumns = [...treeNodesColumns, ...treeNodesWithClonesColumns, ...soiResultColumns];
+
+  if (ctx.args.donorColumn !== undefined) {
+    const donorColumn = ctx.args.donorColumn;
+    const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
+    if (donorColumnSpec !== undefined && isPColumnSpec(donorColumnSpec)) {
+      const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
+      const col = ctx.resultPool
+        .getData()
+        .entries.filter(isPColumnResult)
+        .find(
+          ({ obj: { spec } }) =>
+            spec.name === 'pl7.app/label' && matchAxesId([sampleAxisId], spec.axesSpec)
+        );
+      if (col) targetColumns.push(col.obj);
+    }
+  }
+
+  return targetColumns;
+}
+
 export const model = BlockModel.create()
 
   .withArgs<BlockArgs>({
@@ -78,10 +112,6 @@ export const model = BlockModel.create()
   })
 
   .withUiState<UiState>({
-    treeNodesGraphState: {
-      title: '',
-      template: 'dendro'
-    },
     treeTableState: {
       gridState: {},
       pTableParams: {
@@ -175,36 +205,26 @@ export const model = BlockModel.create()
     return pCols[0].spec;
   })
 
-  .output('treeNodes', (ctx) => {
-    const treeNodesColumns = ctx.outputs?.resolve('treeNodes')?.getPColumns();
-    if (treeNodesColumns === undefined) return undefined;
+  .output('treeNodesPFrame', (ctx) => {
+    const cols = treeNodesColumns(ctx);
+    if (cols === undefined) return undefined;
+    return ctx.createPFrame(cols);
+  })
 
-    const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
-    if (treeNodesWithClonesColumns === undefined) return undefined;
+  .output('treeNodesPerTree', (ctx) => {
+    const columns = treeNodesColumns(ctx);
+    if (columns === undefined) return undefined;
 
-    const soiResultColumns = (
-      ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
-    ).flatMap((a) => a);
+    const result: Record<string, PTableHandle> = {};
 
-    const targetColumns = [...treeNodesColumns, ...treeNodesWithClonesColumns, ...soiResultColumns];
-
-    if (ctx.args.donorColumn !== undefined) {
-      const donorColumn = ctx.args.donorColumn;
-      const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
-      if (donorColumnSpec !== undefined && isPColumnSpec(donorColumnSpec)) {
-        const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
-        const col = ctx.resultPool
-          .getData()
-          .entries.filter(isPColumnResult)
-          .find(
-            ({ obj: { spec } }) =>
-              spec.name === 'pl7.app/label' && matchAxesId([sampleAxisId], spec.axesSpec)
-          );
-        if (col) targetColumns.push(col.obj);
-      }
+    for (const tree of ctx.uiState!.dendrograms) {
+      result[tree.id] = ctx.createPTable({
+        columns,
+        filters: treeNodesFilter(columns[0].spec, tree)
+      });
     }
 
-    return ctx.createPFrame(targetColumns);
+    return result;
   })
 
   /** Donor ids for which we have at least one dataset to analyze */
@@ -337,3 +357,4 @@ export type BlockOutputs = InferOutputsType<typeof model>;
 export * from './progress';
 export * from './soi';
 export * from './helpers';
+export * from './tree_filter';

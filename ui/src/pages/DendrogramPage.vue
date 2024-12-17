@@ -259,9 +259,9 @@ const fixedOptions = computed(() => {
 })
 
 const subtreeOptions = computedAsync(async () => {
-  if (!subtreeAxis.value || !app.model.outputs.treeNodes || !app.model.outputs.vjColumns || !app.model.outputs.treeColumnSpec || !dendro.value) return undefined;
+  if (!subtreeAxis.value || !app.model.outputs.treeNodesPFrame || !app.model.outputs.vjColumns || !app.model.outputs.treeColumnSpec || !dendro.value) return undefined;
 
-  const data = await model.pFrameDriver.calculateTableData(app.model.outputs.treeNodes,
+  const data = await model.pFrameDriver.calculateTableData(app.model.outputs.treeNodesPFrame,
     {
       src: {
         type: 'inner',
@@ -328,7 +328,7 @@ const removeSection = async () => {
 
 <template>
   <div v-if="dendro" class="container_graph_page" :key="app.queryParams.id">
-    <GraphMaker chart-type='dendro' v-model="dendro.state" :p-frame="app.model.outputs.treeNodes"
+    <GraphMaker chart-type='dendro' v-model="dendro.state" :p-frame="app.model.outputs.treeNodesPFrame"
       @delete-this-graph="removeSection" :fixed-options="fixedOptions" :default-options="defaultOptions">
       <template v-slot:titleLineSlot>
         <PlDropdown v-if="subtreeAxis" v-model="dendro.subtreeId" :options="subtreeOptions"
@@ -337,7 +337,6 @@ const removeSection = async () => {
           label="Show nodes table" />
       </template>
     </GraphMaker>
-
   </div>
 </template>
 
