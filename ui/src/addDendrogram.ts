@@ -36,7 +36,8 @@ export async function addDendrogram(
       title: label,
       template: 'dendro'
     },
-    tableState: InitialFullTableState()
+    tableState: InitialFullTableState(),
+    tab: 'Graph'
   };
 
   await app.updateUiState((ui) => {

@@ -16,20 +16,13 @@ const dendro = computed({
 /** Migration */
 (() => {
   if (dendro.value.tableState === undefined) dendro.value = { ...dendro.value, tableState: InitialFullTableState() }
+  if (dendro.value.tab === undefined) dendro.value = { ...dendro.value, tab: 'Graph' }
 })();
-
-//
-// Switching
-//
-
-type TreePageSection = 'Graph' | 'Table' // | 'TreeAndTable'
-const tab = ref<TreePageSection>('Graph')
-
 </script>
 
 <template :key="dendro?.id ?? ''">
-  <TreePageGraph v-if="tab === 'Graph'" @to-table="tab = 'Table'" />
-  <TreePageTable v-else @to-graph="tab = 'Graph'" />
+  <TreePageGraph v-if="dendro.tab === 'Graph'" @to-table="dendro.tab = 'Table'" />
+  <TreePageTable v-else @to-graph="dendro.tab = 'Graph'" />
 </template>
 
 <style lang="css">

@@ -70,10 +70,13 @@ export function InitialFullTableState(): FullTableState {
   };
 }
 
+export type TreePageTab = 'Graph' | 'Table';
+
 export type DendrogramState = FullTreeId & {
   id: string;
   state: GraphMakerState;
   tableState: FullTableState;
+  tab: TreePageTab;
 };
 
 export type UiState = {

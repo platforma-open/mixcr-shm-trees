@@ -63,5 +63,25 @@ export function treeNodesFilter(
     });
   }
 
+  // const cloneIdAxis = anchorColumnSpec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId');
+  // if (!cloneIdAxis) throw new Error('No clone id axis');
+
+  filters.push({
+    type: 'bySingleColumnV2',
+    column: {
+      type: 'axis',
+      id: {
+        name: 'pl7.app/vdj/cloneId',
+        type: 'Long'
+      }
+    },
+    predicate: {
+      operator: 'Not',
+      operand: {
+        operator: 'IsNA'
+      }
+    }
+  });
+
   return filters;
 }
