@@ -1,5 +1,16 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.1.0
+
+### Minor Changes
+
+- 6f53941: Tree-specific nodes table
+
+### Patch Changes
+
+- Updated dependencies [6f53941]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.1.0
+
 ## 3.0.7
 
 ### Patch Changes
