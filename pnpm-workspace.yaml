@@ -6,20 +6,20 @@ packages:
   - test
 
 catalog:
-  '@platforma-sdk/tengo-builder': ^1.17.4
-  '@platforma-sdk/block-tools': ^2.5.0
+  '@platforma-sdk/tengo-builder': ^1.17.5
+  '@platforma-sdk/block-tools': ^2.5.1
 
-  "@platforma-sdk/model": ^1.20.11
-  "@platforma-sdk/ui-vue": ^1.20.17
+  '@platforma-sdk/model': ^1.20.27
+  '@platforma-sdk/ui-vue': ^1.20.27
 
-  '@platforma-sdk/test': ^1.20.12
-  "@milaboratories/graph-maker": ^1.1.18
+  '@platforma-sdk/test': ^1.20.27
+  '@milaboratories/graph-maker': ^1.1.18
 
-  '@platforma-sdk/workflow-tengo': ^2.8.3
+  '@platforma-sdk/workflow-tengo': ^2.8.6
 
   '@milaboratories/software-pframes-conv': ^2.1.2
-  '@platforma-open/milaboratories.software-small-binaries': ^1.15.0
-  '@platforma-open/milaboratories.software-mixcr': 4.7.0-133-develop
+  '@platforma-open/milaboratories.software-small-binaries': ^1.15.6
+  '@platforma-open/milaboratories.software-mixcr': 4.7.0-139-develop
   '@platforma-open/milaboratories.software-mitool': 2.3.1-2-main
   '@platforma-open/milaboratories.software-paggregate': ^1.0.1
 
@@ -36,11 +36,11 @@ catalog:
   'tsup': ~8.3.5
   'turbo': ^2.3.3
 
-  'vite': ^6.0.3
+  'vite': ^6.0.4
   'vitest': ^2.1.8
   '@vitejs/plugin-vue': ^5.2.1
 
-  'ag-grid-enterprise': &ag-grid ^33.0.2
+  'ag-grid-enterprise': &ag-grid ^33.0.3
   'ag-grid-vue3': *ag-grid
 
-  '@changesets/cli': ^2.27.10
+  '@changesets/cli': ^2.27.11
