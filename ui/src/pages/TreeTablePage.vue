@@ -36,6 +36,7 @@ const tableSettings = computed<PlDataTableSettings | undefined>(() =>
 );
 const columns = ref<PTableColumnSpec[]>([]);
 
+// @TODO move to SDK
 function noNaOrNULL(key: PTableRowKey): key is (string | number)[] {
   for (const k of key) {
     const kType = typeof k;
@@ -57,26 +58,10 @@ const onRowDoubleClicked = (keys?: PTableRowKey) => {
 
 const tableInstance = ref<PlAgDataTableController>();
 
-const treeIdAxis = ref<AxisId>({
+const treeIdAxis: AxisId = {
   type: 'Long',
   name: 'pl7.app/dendrogram/treeId'
-});
-
-// @TODO Temp fix (to remove)
-const treeTableState = computed({
-  get() {
-    return app.model.ui.treeTableState;
-  },
-  set(n) {
-    if (!n.gridState.sort) {
-      delete n.gridState.sort;
-    }
-
-    if (!deepEqual(n, app.model.ui.treeTableState)) {
-      app.model.ui.treeTableState = n;
-    }
-  }
-});
+};
 </script>
 
 <template>
@@ -87,8 +72,8 @@ const treeTableState = computed({
         <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
       </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings" :show-cell-button-for-axis-id="treeIdAxis"
-      @cell-button-clicked="onRowDoubleClicked" show-export-button show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
+    <PlAgDataTable v-model="app.model.ui.treeTableState" :settings="tableSettings"
+      :show-cell-button-for-axis-id="treeIdAxis" @cell-button-clicked="onRowDoubleClicked" show-export-button
+      show-columns-panel @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
   </PlBlockPage>
 </template>

@@ -1,6 +1,8 @@
-import { DendrogramState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import {
+  DendrogramState,
+  InitialFullTableState
+} from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { useApp } from './app';
-import { PValueJsonSafe, pValueToStringOrNumber, safeConvertToPValue } from '@platforma-sdk/model';
 
 const nextId = () => {
   const app = useApp();
@@ -33,7 +35,8 @@ export async function addDendrogram(
     state: {
       title: label,
       template: 'dendro'
-    }
+    },
+    tableState: InitialFullTableState()
   };
 
   await app.updateUiState((ui) => {
