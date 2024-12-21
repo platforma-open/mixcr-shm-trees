@@ -10,10 +10,10 @@ catalog:
   '@platforma-sdk/block-tools': ^2.5.1
 
   '@platforma-sdk/model': ^1.20.27
-  '@platforma-sdk/ui-vue': ^1.20.27
+  '@platforma-sdk/ui-vue': ^1.20.30
 
-  '@platforma-sdk/test': ^1.20.27
-  '@milaboratories/graph-maker': ^1.1.18
+  '@platforma-sdk/test': ^1.20.29
+  '@milaboratories/graph-maker': ^1.1.19
 
   '@platforma-sdk/workflow-tengo': ^2.8.6
 
@@ -36,7 +36,7 @@ catalog:
   'tsup': ~8.3.5
   'turbo': ^2.3.3
 
-  'vite': ^6.0.4
+  'vite': ^6.0.5
   'vitest': ^2.1.8
   '@vitejs/plugin-vue': ^5.2.1
 
