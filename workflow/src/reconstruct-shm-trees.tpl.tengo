@@ -28,8 +28,8 @@ self.body(func(inputs) {
     datasetTypes := globalParams.datasetTypes
     downsampling := globalParams.downsampling
 
-    ll.print("__THE_LOG__ " + json.encode(datasetTypes))
-    ll.print("__THE_LOG__ " + json.encode(downsampling))
+    // ll.print("__THE_LOG__ " + json.encode(datasetTypes))
+    // ll.print("__THE_LOG__ " + json.encode(downsampling))
 
     ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 
@@ -98,7 +98,7 @@ self.body(func(inputs) {
             ll.panic("Unknown downsampling type: " + downsampling.type)
         }
 
-        ll.print("__THE_LOG__ " + downsamplingParam)
+        // ll.print("__THE_LOG__ " + downsamplingParam)
 
         for input in toProcess {
             if datasetTypes[input.clonotypingBlockId] == "bulk" {

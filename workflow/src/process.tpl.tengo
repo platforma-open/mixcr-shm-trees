@@ -7,6 +7,7 @@ assets := import("@platforma-sdk/workflow-tengo:assets")
 render := import("@platforma-sdk/workflow-tengo:render")
 xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 text := import("text")
+json := import("json")
 exportSettings := import(":export-settings")
 prepareDonorColumn := import(":prepare-donor-column")
 pframes := import("@platforma-sdk/workflow-tengo:pframes")
@@ -133,6 +134,8 @@ self.body(func(inputs) {
 		additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
 	}
 
+	ll.print("__THE_LOG__ " + string(json.encode(additionalArgsForImportTsv)))
+
 	trees := xsv.importFileMap(
         mixcrResults.output("trees"),
         "tsv",
@@ -158,6 +161,10 @@ self.body(func(inputs) {
 	soiNodesResults := {}
 	soiTreesResults := {}
 	for soiDb in inputs.params.sequencesOfInterest {
+
+		if len(soiDb.sequences) == 0 {
+			continue
+		}
 
 		columnId := ""
 		if soiDb.parameters.type == "nucleotide" {
