@@ -9,10 +9,10 @@ catalog:
   '@platforma-sdk/tengo-builder': ^1.17.5
   '@platforma-sdk/block-tools': ^2.5.1
 
-  '@platforma-sdk/model': ^1.20.27
-  '@platforma-sdk/ui-vue': ^1.20.30
+  '@platforma-sdk/model': ^1.21.0
+  '@platforma-sdk/ui-vue': ^1.21.0
 
-  '@platforma-sdk/test': ^1.20.31
+  '@platforma-sdk/test': ^1.21.0
   '@milaboratories/graph-maker': ^1.1.19
 
   '@platforma-sdk/workflow-tengo': ^2.8.8

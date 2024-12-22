@@ -37,8 +37,6 @@
     }
   },
   "pnpm": {
-    "overrides": {
-      "@platforma-sdk/model": "file:/Users/dbolotin/milab/core/platforma/sdk/model/package.tgz"
-    }
+    "overrides": {}
   }
 }
