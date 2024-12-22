@@ -38,7 +38,7 @@
   },
   "pnpm": {
     "overrides": {
-      "@platforma-sdk/workflow-tengo": "file:/Users/dbolotin/milab/core/platforma/sdk/workflow-tengo/package.tgz"
+      "@platforma-sdk/model": "file:/Users/dbolotin/milab/core/platforma/sdk/model/package.tgz"
     }
   }
 }

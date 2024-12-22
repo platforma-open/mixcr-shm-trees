@@ -246,11 +246,19 @@ export const model = BlockModel.create()
       //     ...(tree.tableState?.filterModel?.filters ?? [])
       //   ]
       // });
-      const t = createPlDataTable(ctx, columns, tree.tableState.tableState, [
-        ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
-        ...(tree.tableState?.filterModel?.filters ?? [])
-      ]);
+
+      const t = createPlDataTable(ctx, columns, tree.tableState.tableState, {
+        coreColumnPredicate: (spec) =>
+          spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined,
+        coreJoinType: 'inner',
+        filters: [
+          ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
+          ...(tree.tableState?.filterModel?.filters ?? [])
+        ]
+      });
+
       if (t) result[tree.id] = t;
+
       // result[tree.id] = {
       //   columns,
       //   filters: [

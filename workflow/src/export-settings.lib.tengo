@@ -271,7 +271,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
     cmdArgs = append(cmdArgs, "-isObserved")
     columns = append(columns, {
         "column": "isObserved",
-        "id": "is-node-obsered",
+        "id": "is-node-observed",
         "allowNA": false,
         "spec": {
             "name": "pl7.app/dendrogram/isObserved",
@@ -495,7 +495,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     axes = append(axes, {
         "column": "fileName",
         // in case of single cell trees, not all subtrees will be filled for nodes with observed
-        "allowNA": true,
+        // "allowNA": true,
         "preProcess": [
             {
                 "type": "regexpReplace",
@@ -510,7 +510,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     axes = append(axes, {
         "column": "cloneId",
         "id": "clone-id",
-        "allowNA": true,
+        // "allowNA": true,
+        // filtering off records without clones because we are not interested in them here
+        filterOutRegex: "^$",
         "spec": {
             "name": "pl7.app/vdj/cloneId",
             "type": "Long",
