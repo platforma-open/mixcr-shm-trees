@@ -2,11 +2,12 @@
 import { ListOption, PlBlockPage, PlBtnGhost, PlDialogModal, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { useApp } from '../app';
 import { computed, reactive, watch } from 'vue';
-import { PlId, SequenceOfInterest, SOIList, uniquePlId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { SequenceOfInterest, SOIList } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import SOISettingsPanel from './components/SOISettingsPanel.vue';
 import SOITable from './components/SOITable.vue';
 import SOIImportModal from './components/SOIImportModal.vue';
-import { getRawPlatformaInstance, LocalImportFileHandle } from '@platforma-sdk/model';
+import { getRawPlatformaInstance, LocalImportFileHandle, PlId, uniquePlId } from '@platforma-sdk/model';
+import { inferNewName } from '../util';
 
 const app = useApp();
 
@@ -38,13 +39,7 @@ function addNewList() {
     sois = []
     app.model.args.sequencesOfInterest = sois
   }
-  const names = new Set(sois.map(l => l.parameters.name));
-  let i = 1;
-  let name = '';
-  do {
-    name = `Seq. List (${i})`;
-    i++;
-  } while (names.has(name))
+  const name = inferNewName(sois.map(l => l.parameters.name), i => `Seq. List (${i})`)
   sois.push({
     sequences: [], parameters: {
       id, name,

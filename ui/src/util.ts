@@ -21,3 +21,18 @@ export function fromRefString(ref: RefString | undefined): PlRef | undefined {
     name: split[1]
   };
 }
+
+export function inferNewName(
+  existingNames: string[],
+  nameConstructor: (i: number) => string,
+  initialValue?: string
+) {
+  const names = new Set(existingNames);
+  let i = 1;
+  let name = initialValue;
+  while (name === undefined || names.has(name)) {
+    name = nameConstructor(i);
+    i++;
+  }
+  return name;
+}

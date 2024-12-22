@@ -1,8 +1,10 @@
 <script setup lang="ts">
-import { PTableColumnSpec } from '@platforma-sdk/model';
+import { isPTableAbsent, PColumnValue, PTableColumnSpec, PTableValue } from '@platforma-sdk/model';
 import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlDialogModal, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
+import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import AddToBasketModal from './components/AddToBasketModal.vue';
 
 const emit = defineEmits<{ toGraph: [] }>()
 
@@ -23,11 +25,50 @@ const tableInstance = ref<PlAgDataTableController>();
 
 const data = reactive<{
   selectedRows: PTableRowKey[],
-  addingToBasketOpen: boolean
+  nodesToAdd: FullNodeId[]
 }>({
   selectedRows: [],
-  addingToBasketOpen: false
+  nodesToAdd: []
 })
+
+// @TODO transfer to SDK
+function ensureSimpleValue(v: PTableValue): string | number {
+  if (isPTableAbsent(v) || v === null)
+    throw new Error(`Unexpected value: ${v}`);
+  return v;
+}
+function ensureNumber(v: PTableValue): number {
+  if (isPTableAbsent(v) || v === null || typeof v === 'string')
+    throw new Error(`Unexpected value type: ${typeof v}`);
+  return v;
+}
+function ensureString(v: PTableValue): string {
+  if (isPTableAbsent(v) || v === null || typeof v === 'number')
+    throw new Error(`Unexpected value type: ${typeof v}`);
+  return v;
+}
+
+function keyToNodeId(key: PTableRowKey): FullNodeId {
+  if (key.length === 6) {
+    return {
+      donorId: ensureSimpleValue(key[1]),
+      treeId: ensureNumber(key[2]),
+      subtreeId: String(ensureNumber(key[3])),
+      nodeId: ensureNumber(key[4]),
+    }
+  } else if (key.length === 5) {
+    return {
+      donorId: ensureSimpleValue(key[1]),
+      treeId: ensureNumber(key[2]),
+      nodeId: ensureNumber(key[3])
+    }
+  } else
+    throw new Error(`Unexpected key format: ${JSON.stringify(key)}`)
+}
+
+function addToBasket() {
+  data.nodesToAdd = data.selectedRows.map(r => keyToNodeId(r));
+}
 
 </script>
 
@@ -35,7 +76,7 @@ const data = reactive<{
   <PlBlockPage>
     <template #title>{{ dendro.state.title }}</template>
     <template #append>
-      <PlBtnGhost v-if="data.selectedRows.length > 0" @click="data.addingToBasketOpen = true" icon="table-add">
+      <PlBtnGhost v-if="data.selectedRows.length > 0" @click="addToBasket()" icon="table-add">
         Add Nodes to Basket
       </PlBtnGhost>
       <PlAgDataTableToolsPanel>
@@ -46,7 +87,7 @@ const data = reactive<{
     <PlAgDataTable v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
-    <PlDialogModal v-model="data.addingToBasketOpen">
-    </PlDialogModal>
+    <AddToBasketModal v-if="data.nodesToAdd.length > 0" :nodes-to-add="data.nodesToAdd"
+      @on-close="data.nodesToAdd = []" />
   </PlBlockPage>
 </template>

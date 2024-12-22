@@ -1,4 +1,4 @@
-import { PlId, uniquePlId } from './helpers';
+import { PlId, uniquePlId } from "@platforma-sdk/model";
 
 export type SequenceOfInterest = {
   id: PlId;

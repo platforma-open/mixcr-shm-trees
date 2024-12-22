@@ -17,6 +17,7 @@ const dendro = computed({
 (() => {
   if (dendro.value.tableState === undefined) dendro.value = { ...dendro.value, tableState: InitialFullTableState() }
   if (dendro.value.tab === undefined) dendro.value = { ...dendro.value, tab: 'Graph' }
+  if (app.model.ui.baskets === undefined) app.model.ui.baskets = [];
 })();
 </script>
 
