@@ -91,6 +91,7 @@ export type NodeBasket = {
   name: string;
   comment: string;
   nodes: FullNodeId[];
+  tableState: FullTableState;
 };
 
 export type UiState = {
@@ -126,7 +127,12 @@ function treeNodesColumns(
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
-function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): PColumn<PColumnValues>[] | undefined {
+type BasketColumns = {
+  allColumns: PColumn<PColumnValues>[];
+  perBasket: Record<PlId, PColumn<PColumnValues>>;
+};
+
+function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | undefined {
   const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
   if (treeNodesWithClonesColumns === undefined) return undefined;
   const bigAxesSpec = treeNodesWithClonesColumns[0].spec.axesSpec;
@@ -147,6 +153,7 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): PColumn<PColumnValue
       : [pValueToStringOrNumber(id.donorId), id.treeId, id.nodeId];
 
   const columns: PColumn<PColumnValues>[] = [];
+  const columnPerBasket: Record<PlId, PColumn<PColumnValues>> = {};
 
   for (const basket of ctx.uiState.baskets) {
     const inBasketSpec: PColumnSpec = {
@@ -161,17 +168,19 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): PColumn<PColumnValue
       },
       axesSpec
     };
-    columns.push({
+    const col: PColumn<PColumnValues> = {
       id: basket.id as string as PObjectId,
       spec: inBasketSpec,
       data: basket.nodes.map((id) => ({
         key: toKey(id),
         val: 1
       }))
-    });
+    };
+    columns.push(col);
+    columnPerBasket[basket.id] = col;
   }
 
-  return columns;
+  return { allColumns: columns, perBasket: columnPerBasket };
 }
 
 export const model = BlockModel.create()
@@ -287,37 +296,50 @@ export const model = BlockModel.create()
     if (columns === undefined || bColumns === undefined) return undefined;
 
     const result: Record<string, PTableHandle> = {};
-    // const result: Record<string, any> = {};
 
     for (const tree of ctx.uiState!.dendrograms) {
-      // result[tree.id] = ctx.createPTable({
-      //   columns,
-      //   filters: [
-      //     ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
-      //     ...(tree.tableState?.filterModel?.filters ?? [])
-      //   ]
-      // });
-
-      const t = createPlDataTable(ctx, [...columns, ...bColumns], tree.tableState.tableState, {
-        coreColumnPredicate: (spec) =>
-          spec.name !== InBasketPColumnName &&
-          spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined,
-        coreJoinType: 'inner',
-        filters: [
-          ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
-          ...(tree.tableState?.filterModel?.filters ?? [])
-        ]
-      });
+      const t = createPlDataTable(
+        ctx,
+        [...columns, ...bColumns.allColumns],
+        tree.tableState.tableState,
+        {
+          coreColumnPredicate: (spec) =>
+            spec.name !== InBasketPColumnName &&
+            spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined,
+          coreJoinType: 'inner',
+          filters: [
+            ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
+            ...(tree.tableState?.filterModel?.filters ?? [])
+          ]
+        }
+      );
 
       if (t) result[tree.id] = t;
+    }
 
-      // result[tree.id] = {
-      //   columns,
-      //   filters: [
-      //     ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
-      //     ...(tree.tableState?.filterModel?.filters ?? [])
-      //   ]
-      // };
+    return result;
+  })
+
+  .output('treeNodesPerBasket', (ctx) => {
+    const columns = treeNodesColumns(ctx);
+    const bColumns = basketColumns(ctx);
+    if (columns === undefined || bColumns === undefined) return undefined;
+
+    const result: Record<string, PTableHandle> = {};
+
+    for (const basket of ctx.uiState.baskets) {
+      const t = createPlDataTable(
+        ctx,
+        [...columns, bColumns.perBasket[basket.id]!],
+        basket.tableState.tableState,
+        {
+          coreColumnPredicate: (spec) => spec.name === InBasketPColumnName,
+          coreJoinType: 'inner',
+          filters: [...(basket.tableState?.filterModel?.filters ?? [])]
+        }
+      );
+
+      if (t) result[basket.id] = t;
     }
 
     return result;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FullNodeId, NodeBasket } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, InitialFullTableState, NodeBasket } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { PlId, uniquePlId } from '@platforma-sdk/model';
 import { ListOption, PlBtnGhost, PlBtnPrimary, PlDialogModal, PlDropdown, PlTextField } from '@platforma-sdk/ui-vue';
 import { computed, reactive, watch } from 'vue';
@@ -52,7 +52,8 @@ function runAdd() {
       id: uniquePlId(),
       comment: '',
       name: data.newBasketName,
-      nodes: props.nodesToAdd
+      nodes: props.nodesToAdd,
+      tableState: InitialFullTableState()
     }
     app.model.ui.baskets.push(newBasket);
   } else {
