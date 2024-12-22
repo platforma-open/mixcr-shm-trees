@@ -1,5 +1,17 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.1.0
+
+### Minor Changes
+
+- c558d62: Initial implementation of node baskets
+
+### Patch Changes
+
+- 2086db2: Fixes error if empty sequence search list is used
+- 2086db2: Fixes error if sample name is used as donor
+- 954ec46: Filter off all not-observed records form the node-clonotypes table
+
 ## 3.0.1
 
 ### Patch Changes

@@ -1,5 +1,17 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.2.0
+
+### Minor Changes
+
+- c558d62: Initial implementation of node baskets
+
+### Patch Changes
+
+- Updated dependencies [c558d62]
+- Updated dependencies [954ec46]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.2.0
+
 ## 3.1.0
 
 ### Minor Changes

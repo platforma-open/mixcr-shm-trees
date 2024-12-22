@@ -1,5 +1,15 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.2.0
+
+### Minor Changes
+
+- c558d62: Initial implementation of node baskets
+
+### Patch Changes
+
+- 954ec46: Better table joining settings for the node-clonotypes table
+
 ## 3.1.0
 
 ### Minor Changes
