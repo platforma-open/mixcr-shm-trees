@@ -1,11 +1,17 @@
 import { GraphMakerState } from '@milaboratories/graph-maker';
 import {
+  AxesSpec,
   BlockModel,
   InferOutputsType,
   NotNAPValue,
   PColumn,
+  PColumnSpec,
+  PColumnValue,
+  PColumnValues,
+  PObjectId,
   PTableHandle,
   PlDataTableState,
+  PlId,
   PlRef,
   RenderCtx,
   TreeNodeAccessor,
@@ -14,13 +20,14 @@ import {
   getAxisId,
   isPColumnSpec,
   isPColumnSpecResult,
+  pValueToStringOrNumber,
   parseResourceMap,
   type PlTableFiltersModel
 } from '@platforma-sdk/model';
 import { ProgressPrefix } from './progress';
 import { matchAxesId } from './util';
 import { SOIList } from './soi';
-import { FullTreeId, treeNodesFilter } from './tree_filter';
+import { FullNodeId, FullTreeId, treeNodesFilter } from './tree_filter';
 
 export type DownsamplingByCount = {
   type: 'CountReadsFixed' | 'CountMoleculesFixed';
@@ -79,10 +86,18 @@ export type DendrogramState = FullTreeId & {
   tab: TreePageTab;
 };
 
+export type NodeBasket = {
+  id: PlId;
+  name: string;
+  comment: string;
+  nodes: FullNodeId[];
+};
+
 export type UiState = {
   treeTableState: PlDataTableState;
   filterModel: PlTableFiltersModel;
   dendrograms: DendrogramState[];
+  baskets: NodeBasket[];
 };
 
 export type DatasetOption = {
@@ -106,23 +121,57 @@ function treeNodesColumns(
 
   const targetColumns = [...soiResultColumns, ...treeNodesColumns, ...treeNodesWithClonesColumns];
 
-  // if (ctx.args.donorColumn !== undefined) {
-  //   const donorColumn = ctx.args.donorColumn;
-  //   const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
-  //   if (donorColumnSpec !== undefined && isPColumnSpec(donorColumnSpec)) {
-  //     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
-  //     const col = ctx.resultPool
-  //       .getData()
-  //       .entries.filter(isPColumnResult)
-  //       .find(
-  //         ({ obj: { spec } }) =>
-  //           spec.name === 'pl7.app/label' && matchAxesId([sampleAxisId], spec.axesSpec)
-  //       );
-  //     if (col) targetColumns.push(col.obj);
-  //   }
-  // }
-
   return targetColumns;
+}
+
+const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
+
+function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): PColumn<PColumnValues>[] | undefined {
+  const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+  if (treeNodesWithClonesColumns === undefined) return undefined;
+  const bigAxesSpec = treeNodesWithClonesColumns[0].spec.axesSpec;
+
+  const axesSpec: AxesSpec = [];
+  const hasSubtreeId = bigAxesSpec.length === 6;
+  if (bigAxesSpec.length === 6)
+    // [donor, treeId, subtreeId, nodeId], sampleId, cloneId
+    axesSpec.push(...bigAxesSpec.slice(0, 4));
+  else if (bigAxesSpec.length === 5)
+    // [donor, treeId, nodeId], sampleId, cloneId
+    axesSpec.push(...bigAxesSpec.slice(0, 3));
+  else throw new Error(`Unexpected axes structureL: ${JSON.stringify(bigAxesSpec)}`);
+
+  const toKey = (id: FullNodeId): PColumnValue[] =>
+    hasSubtreeId
+      ? [pValueToStringOrNumber(id.donorId), id.treeId, Number(id.subtreeId!), id.nodeId]
+      : [pValueToStringOrNumber(id.donorId), id.treeId, id.nodeId];
+
+  const columns: PColumn<PColumnValues>[] = [];
+
+  for (const basket of ctx.uiState.baskets) {
+    const inBasketSpec: PColumnSpec = {
+      kind: 'PColumn',
+      name: InBasketPColumnName,
+      valueType: 'Int',
+      domain: {
+        'pl7.app/dendrogram/basket': basket.id
+      },
+      annotations: {
+        'pl7.app/label': `In ${basket.name}`
+      },
+      axesSpec
+    };
+    columns.push({
+      id: basket.id as string as PObjectId,
+      spec: inBasketSpec,
+      data: basket.nodes.map((id) => ({
+        key: toKey(id),
+        val: 1
+      }))
+    });
+  }
+
+  return columns;
 }
 
 export const model = BlockModel.create()
@@ -140,7 +189,8 @@ export const model = BlockModel.create()
       }
     },
     filterModel: {},
-    dendrograms: []
+    dendrograms: [],
+    baskets: []
   })
 
   // for debuginf: specs for all available columns
@@ -233,7 +283,8 @@ export const model = BlockModel.create()
 
   .output('treeNodesPerTree', (ctx) => {
     const columns = treeNodesColumns(ctx);
-    if (columns === undefined) return undefined;
+    const bColumns = basketColumns(ctx);
+    if (columns === undefined || bColumns === undefined) return undefined;
 
     const result: Record<string, PTableHandle> = {};
     // const result: Record<string, any> = {};
@@ -247,8 +298,9 @@ export const model = BlockModel.create()
       //   ]
       // });
 
-      const t = createPlDataTable(ctx, columns, tree.tableState.tableState, {
+      const t = createPlDataTable(ctx, [...columns, ...bColumns], tree.tableState.tableState, {
         coreColumnPredicate: (spec) =>
+          spec.name !== InBasketPColumnName &&
           spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined,
         coreJoinType: 'inner',
         filters: [
@@ -378,17 +430,28 @@ export const model = BlockModel.create()
   })
 
   .sections((ctx) => {
-    const dendroRoutes = (ctx.uiState?.dendrograms ?? []).map((gs) => ({
+    const dendroSectionsRaw = (ctx.uiState?.dendrograms ?? []).map((gs) => ({
       type: 'link' as const,
       href: `/dendrogram?id=${gs.id}` as const,
       label: gs.state.title
     }));
+    const dendroSections =
+      dendroSectionsRaw.length === 0 ? [] : [{ type: 'delimiter' as const }, ...dendroSectionsRaw];
+
+    const basketSectionsRaw = (ctx.uiState?.baskets ?? []).map((b) => ({
+      type: 'link' as const,
+      href: `/basket?id=${b.id as string}` as const,
+      label: b.name
+    }));
+    const basketSections =
+      basketSectionsRaw.length === 0 ? [] : [{ type: 'delimiter' as const }, ...basketSectionsRaw];
+
     return [
       { type: 'link', href: '/', label: 'Analysis Overview' },
       { type: 'link', href: '/soi', label: 'Sequence Search' },
       { type: 'link', href: '/trees', label: 'Trees Table' },
-      // { type: 'link', href: '/treeNodes', label: 'Tree Visualization' },
-      ...dendroRoutes
+      ...dendroSections,
+      ...basketSections
     ];
   })
 
@@ -400,5 +463,4 @@ export type BlockOutputs = InferOutputsType<typeof model>;
 
 export * from './progress';
 export * from './soi';
-export * from './helpers';
 export * from './tree_filter';

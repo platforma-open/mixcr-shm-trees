@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { SequenceOfInterest, uniquePlId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { getFileNameFromHandle, getRawPlatformaInstance, LocalImportFileHandle } from '@platforma-sdk/model';
+import { SequenceOfInterest } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { getFileNameFromHandle, getRawPlatformaInstance, LocalImportFileHandle, uniquePlId } from '@platforma-sdk/model';
 import { PlDialogModal, PlBtnPrimary, PlBtnGhost, ListOption, PlDropdown, PlLogView } from '@platforma-sdk/ui-vue';
 import { computedAsync } from '@vueuse/core';
 import { computed, reactive } from 'vue';
-import * as XLSX from 'xlsx';
 import { readFileForImport } from '../../dataimport';
 
 // const model = defineModel<ImportFileHandle>({ required: true })

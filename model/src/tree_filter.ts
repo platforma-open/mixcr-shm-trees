@@ -2,7 +2,6 @@ import {
   getAxisId,
   PColumnSpec,
   PTableRecordFilter,
-  PValue,
   PValueJsonSafe,
   pValueToStringOrNumber
 } from '@platforma-sdk/model';
@@ -10,7 +9,11 @@ import {
 export type FullTreeId = {
   donorId: PValueJsonSafe;
   treeId: number;
-  subtreeId: string | undefined;
+  subtreeId?: string;
+};
+
+export type FullNodeId = FullTreeId & {
+  nodeId: number;
 };
 
 export function treeNodesFilter(
