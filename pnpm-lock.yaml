@@ -43,7 +43,7 @@ catalogs:
       specifier: ^1.21.0
       version: 1.21.0
     '@platforma-sdk/ui-vue':
-      specifier: ^1.21.0
+      specifier: ^1.20.30
       version: 1.21.0
     '@platforma-sdk/workflow-tengo':
       specifier: ^2.8.8
