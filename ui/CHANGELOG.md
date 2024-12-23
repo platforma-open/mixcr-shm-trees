@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.2.1
+
+### Patch Changes
+
+- dd190a5: added PlAgCellProgress from ui-vue
+
 ## 3.2.0
 
 ### Minor Changes
