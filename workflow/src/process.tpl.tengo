@@ -14,6 +14,7 @@ pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
 
+self.awaitState("datasets", { wildcard: "*" }, "AllInputsSet")
 // this templete should run only after resolving of all inputs
 // we don't need to wait for file content, just refs
 self.awaitState("datasets", { wildcard: "*" }, "data", "InputsLocked")
