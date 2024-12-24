@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.2.0
+
+### Minor Changes
+
+- 2dc8d53: By-node tables are now aggregated to achieve unique addressing of nodes
+
 ## 3.1.0
 
 ### Minor Changes
