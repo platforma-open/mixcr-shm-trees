@@ -19,6 +19,9 @@ self.defineOutputs(
 // import MiXCR as a software to use
 mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
 
+// used to postprocess some tables
+paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-paggregate:main")
+
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
 
@@ -144,7 +147,7 @@ self.body(func(inputs) {
     shmTreesCmdBuilder.arg("output.shmt").saveFile("output.shmt")
 
     shmTrees := shmTreesCmdBuilder.run()
-
+    outputShmt := shmTrees.getFile("output.shmt")
 
     // export trees without nodes
     shmTreeExportsCmdBuilder := exec.builder().
@@ -154,17 +157,18 @@ self.body(func(inputs) {
         software(mixcrSw).
         arg("exportShmTrees")
 
-    for arg in inputs.shmTreeTableOptions {
+    for arg in inputs.shmTreeTableArgs {
         shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.arg(arg)
     }
 
     shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.
         arg("input.shmt").
         arg("output.tsv").
-        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        addFile("input.shmt", outputShmt).
         saveFile("output.tsv")
 
     shmTreeExports := shmTreeExportsCmdBuilder.run()
+    shmTreeTsv := shmTreeExports.getFile("output.tsv")
 
 
     // export tree nodes with data uniq for the node
@@ -175,18 +179,51 @@ self.body(func(inputs) {
         software(mixcrSw).
         arg("exportShmTreesWithNodes")
 
-    for arg in inputs.shmTreeNodesTableOptions {
+    for arg in inputs.shmTreeNodesTableOptions.cmdArgs {
         shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.arg(arg)
     }
 
     shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.
         arg("input.shmt").
         arg("output.tsv").
-        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        addFile("input.shmt", outputShmt).
         saveFile("output.tsv")
 
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
+    shmTreeNodesTsvRaw := shmTreeNodesExports.getFile("output.tsv")
 
+    // aggregating by-nodes output to make it uniquely addressable by it's native key
+
+    aggregations := []
+	for col in inputs.shmTreeNodesTableOptions.pfconvParams.columns {
+		aggregations = append(aggregations, {
+			type: "first",
+			src: col.column,
+			dst: col.column
+		})
+	}
+
+    keyColumns := []
+    for axis in inputs.shmTreeNodesTableOptions.pfconvParams.axes {
+		keyColumns = append(keyColumns, axis.column)
+	}
+
+	aggregationWorkflow := { steps: [ {
+			type: "aggregate",
+			groupBy: keyColumns,
+			aggregations: aggregations
+		} ] }
+
+	aggregateCmd := exec.builder().
+        printErrStreamToStdout().
+        software(paggregateSw).
+        arg("--workflow").arg("wf.json").
+		writeFile("wf.json", json.encode(aggregationWorkflow)).
+		arg("input.tsv").addFile("input.tsv", shmTreeNodesTsvRaw).
+		arg("output.tsv").saveFile("output.tsv").
+		run()
+
+	shmTreeNodesTsv := aggregateCmd.getFile("output.tsv")
 
 
     // export nodes with clones. For each node could be several clones
@@ -200,36 +237,37 @@ self.body(func(inputs) {
         // don't export nodes that don't have clones
         arg("--only-observed")
 
-    for arg in inputs.shmTreeNodesWithClonesTableOptions {
+    for arg in inputs.shmTreeNodesWithClonesTableArgs {
         shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.arg(arg)
     }
 
     shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.
         arg("input.shmt").
         arg("output.tsv").
-        addFile("input.shmt", shmTrees.getFile("output.shmt")).
+        addFile("input.shmt", outputShmt).
         saveFile("output.tsv")
 
     shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
+    shmTreeNodesWithClonesTsv := shmTreeNodesWithClonesExports.getFile("output.tsv")
 
     return {
-        "trees": shmTreeExports.getFile("output.tsv"),
-        "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
-        "treeNodesWithClones": shmTreeNodesWithClonesExports.getFile("output.tsv"),
+        trees: shmTreeTsv,
+        treeNodes: shmTreeNodesTsv,
+        treeNodesWithClones: shmTreeNodesWithClonesTsv,
 
-        "tsvs": {
-            "trees": shmTreeExports.getFile("output.tsv"),
-            "treeNodes": shmTreeNodesExports.getFile("output.tsv"),
-            "treeNodesWithClones": shmTreeNodesWithClonesExports.getFile("output.tsv")
+        tsvs: {
+            trees: shmTreeTsv,
+            treeNodes: shmTreeNodesTsv,
+            treeNodesWithClones: shmTreeNodesWithClonesTsv
         },
 
-        "allelesLog": alleles.getStdoutStream(),
-        "treesLog": shmTrees.getStdoutStream(),
+        allelesLog: alleles.getStdoutStream(),
+        treesLog: shmTrees.getStdoutStream(),
 
-        "allelesReport": alleles.getFile("report.txt"),
-        "treesReport": shmTrees.getFile("report.txt"),
+        allelesReport: alleles.getFile("report.txt"),
+        treesReport: shmTrees.getFile("report.txt"),
 
-        "allelesReportJson": alleles.getFile("report.json"),
-        "treesReportJson": shmTrees.getFile("report.json")
+        allelesReportJson: alleles.getFile("report.json"),
+        treesReportJson: shmTrees.getFile("report.json")
     }
 })

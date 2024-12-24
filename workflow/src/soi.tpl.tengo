@@ -55,16 +55,16 @@ self.body(func(inputs) {
 			{ annotations: { "pl7.app/label": colName } }
 		))
 		importAxesSpec = append(importAxesSpec, {
-			"column": colName,
-			"spec": spec
+			column: colName,
+			spec: spec
 		})
 
 		// aggregating clonal and subtree axes away
 		if spec.name != "pl7.app/dendrogram/subtreeId" && spec.name != "pl7.app/dendrogram/nodeId" {
 			aggregationGroupByTargets = append(aggregationGroupByTargets, colName)
 			aggregationImportAxesSpec = append(aggregationImportAxesSpec, {
-				"column": colName,
-				"spec": spec
+				column: colName,
+				spec: spec
 			})
 		}
 	}
@@ -94,17 +94,17 @@ self.body(func(inputs) {
 
 	resultColumns := soiExport.soiResultImportColumns(db.parameters)
 	resultConvParams := {
-		"axes": importAxesSpec,
-		"columns": resultColumns,
-		"storageFormat": "Binary",
-		"partitionKeyLength": 0 // inferPartitionKeyLength(queryData)
+		axes: importAxesSpec,
+		columns: resultColumns,
+		storageFormat: "Binary",
+		partitionKeyLength: 0 // inferPartitionKeyLength(queryData)
 	}
 
 	aggregatedConvParams := {
-		"axes": aggregationImportAxesSpec,
-		"columns": resultColumns,
-		"storageFormat": "Binary",
-		"partitionKeyLength": 0 // inferPartitionKeyLength(queryData)
+		axes: aggregationImportAxesSpec,
+		columns: resultColumns,
+		storageFormat: "Binary",
+		partitionKeyLength: 0 // inferPartitionKeyLength(queryData)
 	}
 
 	aggregations := []

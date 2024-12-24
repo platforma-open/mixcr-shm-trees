@@ -85,44 +85,44 @@ self.body(func(inputs) {
 		// all the outputs that should be gethered
 		[
 			{
-				"name": "trees",
-				"type": "Resource"
+				name: "trees",
+				type: "Resource"
 			}, {
-				"name": "treeNodes",
-				"type": "Resource"
+				name: "treeNodes",
+				type: "Resource"
 			}, {
-				"name": "treeNodesWithClones",
-				"type": "Resource"
+				name: "treeNodesWithClones",
+				type: "Resource"
 			}, {
-				"name": "tsvs",
-				"type": "Resource"
+				name: "tsvs",
+				type: "Resource"
 			}, {
-				"name": "allelesLog",
-				"type": "Resource"
+				name: "allelesLog",
+				type: "Resource"
 			}, {
-				"name": "treesLog",
-				"type": "Resource"
+				name: "treesLog",
+				type: "Resource"
 			}, {
-				"name": "allelesReport",
-				"type": "Resource"
+				name: "allelesReport",
+				type: "Resource"
 			}, {
-				"name": "treesReport",
-				"type": "Resource"
+				name: "treesReport",
+				type: "Resource"
 			}, {
-				"name": "allelesReportJson",
-				"type": "Resource"
+				name: "allelesReportJson",
+				type: "Resource"
 			}, {
-				"name": "treesReportJson",
-				"type": "Resource"
+				name: "treesReportJson",
+				type: "Resource"
 			}
 		],
 		false,
 		// inputs
 		{
-			"shmTreeTableOptions": shmTreeTableOptions["cmdArgs"],
-			"shmTreeNodesTableOptions": shmTreeNodesTableOptions["cmdArgs"],
-			"shmTreeNodesWithClonesTableOptions": shmTreeNodesWithClonesTableOptions["cmdArgs"],
-			"globalParams": maps.merge(
+			shmTreeTableArgs: shmTreeTableOptions.cmdArgs,
+			shmTreeNodesTableOptions: shmTreeNodesTableOptions,
+			shmTreeNodesWithClonesTableArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
+			globalParams: maps.merge(
 				inputs.params,
 				{ datasetTypes: datasetTypes }
 			)
@@ -131,7 +131,7 @@ self.body(func(inputs) {
 
 	// donorId axis is inherited from dataGroupedByDonorId and we should specify it explicitly (other axes will be supplied by pfconvParams)
 	additionalArgsForImportTsv := {
-		additionalAxesSpec: dataGroupedByDonorId["spec"]["axesSpec"][:1]
+		additionalAxesSpec: dataGroupedByDonorId.spec["axesSpec"][:1]
 	}
 
 	ll.print("__THE_LOG__ " + string(json.encode(additionalArgsForImportTsv)))
@@ -139,21 +139,21 @@ self.body(func(inputs) {
 	trees := xsv.importFileMap(
         mixcrResults.output("trees"),
         "tsv",
-        shmTreeTableOptions["pfconvParams"],
+        shmTreeTableOptions.pfconvParams,
         additionalArgsForImportTsv
     )
 
 	treeNodes := xsv.importFileMap(
         mixcrResults.output("treeNodes"),
         "tsv",
-        shmTreeNodesTableOptions["pfconvParams"],
+        shmTreeNodesTableOptions.pfconvParams,
         additionalArgsForImportTsv
     )
 
 	treeNodesWithClones := xsv.importFileMap(
         mixcrResults.output("treeNodesWithClones"),
         "tsv",
-        shmTreeNodesWithClonesTableOptions["pfconvParams"],
+        shmTreeNodesWithClonesTableOptions.pfconvParams,
         additionalArgsForImportTsv
     )
 
@@ -200,23 +200,23 @@ self.body(func(inputs) {
 
     return {
 		// combine columns into pFrame
-        "trees": pframes.exportFrame(trees),
+        trees: pframes.exportFrame(trees),
         // combine columns into pFrame
-        "treeNodes": pframes.exportFrame(treeNodes),
+        treeNodes: pframes.exportFrame(treeNodes),
         // combine columns into pFrame
-        "treeNodesWithClones": pframes.exportFrame(treeNodesWithClones),
+        treeNodesWithClones: pframes.exportFrame(treeNodesWithClones),
 
-		"soiNodesResults": maps.mapValues(soiNodesResults, pframes.exportFrame),
-		"soiTreesResults": maps.mapValues(soiTreesResults, pframes.exportFrame),
+		soiNodesResults: maps.mapValues(soiNodesResults, pframes.exportFrame),
+		soiTreesResults: maps.mapValues(soiTreesResults, pframes.exportFrame),
 
-        "tsvs": tsvs,
+        tsvs: tsvs,
 
-		"allelesLogs": mixcrResults.output("allelesLog"),
-        "treesLogs": mixcrResults.output("treesLog"),
+		allelesLogs: mixcrResults.output("allelesLog"),
+        treesLogs: mixcrResults.output("treesLog"),
 
-		"allelesReports": mixcrResults.output("allelesReport"),
-        "treesReports": mixcrResults.output("treesReport"),
-		"allelesReportsJson": mixcrResults.output("allelesReportJson"),
-        "treesReportsJson": mixcrResults.output("treesReportJson")
+		allelesReports: mixcrResults.output("allelesReport"),
+        treesReports: mixcrResults.output("treesReport"),
+		allelesReportsJson: mixcrResults.output("allelesReportJson"),
+        treesReportsJson: mixcrResults.output("treesReportJson")
 	}
 })
