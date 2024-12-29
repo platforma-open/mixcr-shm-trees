@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.3.0
+
+### Minor Changes
+
+- 42a581b: Stricter search sequence list pipeline, automated sequence translation for aa lists with nucleotide imports
+
 ## 3.2.1
 
 ### Patch Changes
