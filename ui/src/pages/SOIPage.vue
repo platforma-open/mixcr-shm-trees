@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { ListOption, PlBlockPage, PlBtnGhost, PlDialogModal, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
+import { ListOption, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { useApp } from '../app';
 import { computed, reactive, watch } from 'vue';
-import { SequenceOfInterest, SOIList } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { Alphabet, SequenceOfInterest, SOIList, SOIListParameters } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import SOISettingsPanel from './components/SOISettingsPanel.vue';
 import SOITable from './components/SOITable.vue';
 import SOIImportModal from './components/SOIImportModal.vue';
 import { getRawPlatformaInstance, LocalImportFileHandle, PlId, uniquePlId } from '@platforma-sdk/model';
 import { inferNewName } from '../util';
+import PlDataDialogModal from './components/PlDataDialogModal.vue';
+import { alphabetOptions, targetFeatureOptions } from '../soi_util';
 
 const app = useApp();
 
@@ -19,7 +21,14 @@ const lists = computed(() =>
     value: "", label: "+ Add New List"
   }] as ListOption<string>[])
 
-const data = reactive<{ currentListId?: PlId, importFile?: LocalImportFileHandle, settingsOpen: boolean }>({ settingsOpen: false })
+type NewListSettings = Pick<SOIListParameters, 'type' | 'targetFeature'>
+
+const data = reactive<{
+  currentListId?: PlId,
+  importFile?: LocalImportFileHandle,
+  settingsOpen: boolean,
+  newList?: NewListSettings
+}>({ settingsOpen: false })
 
 watch(() => app.model.args.sequencesOfInterest?.map(v => v.parameters.id) ?? [], (ids) => {
   if (data.currentListId === undefined && ids.length > 0)
@@ -32,7 +41,13 @@ watch(() => app.model.args.sequencesOfInterest?.map(v => v.parameters.id) ?? [],
   }
 }, { immediate: true })
 
+function startAddingNewList() {
+  data.newList = { type: 'nucleotide', targetFeature: 'CDR3' }
+}
+
 function addNewList() {
+  if (!data.newList)
+    return;
   const id = uniquePlId()
   let sois = app.model.args.sequencesOfInterest
   if (sois === undefined) {
@@ -43,11 +58,12 @@ function addNewList() {
   sois.push({
     sequences: [], parameters: {
       id, name,
-      targetFeature: 'CDR3', type: 'nucleotide',
+      type: data.newList.type, targetFeature: data.newList.targetFeature,
       searchParameters: { type: 'tree_search_top', parameters: 'oneMismatch' }
     }
   })
   data.currentListId = id
+  data.newList = undefined
   data.settingsOpen = true
 }
 
@@ -96,7 +112,7 @@ const currentListIdForList = computed<string>({
   get: () => data.currentListId ?? "",
   set: (newValue) => {
     if (newValue === "")
-      addNewList()
+      startAddingNewList()
     else
       data.currentListId = newValue as PlId
   }
@@ -124,29 +140,13 @@ const currentList = computed<SOIList | undefined>({
   <PlBlockPage>
     <template #title>
       <PlDropdownLine v-if="data.currentListId" :options="lists" v-model="currentListIdForList" />
-      <PlBtnGhost v-else @click.stop="() => addNewList()">Create new list
-        <template #append>
-          <PlMaskIcon24 name="add" />
-        </template>
-      </PlBtnGhost>
+      <PlBtnGhost v-else @click.stop="() => startAddingNewList()" icon="add">Create new list</PlBtnGhost>
     </template>
     <template #append>
       <template v-if="data.currentListId">
-        <PlBtnGhost @click.stop="deleteCurrentList">Delete current list
-          <template #append>
-            <PlMaskIcon24 name="delete-bin" />
-          </template>
-        </PlBtnGhost>
-        <PlBtnGhost @click.stop="importFile">Import Sequences
-          <template #append>
-            <PlMaskIcon24 name="dna-import" />
-          </template>
-        </PlBtnGhost>
-        <PlBtnGhost @click.stop="() => data.settingsOpen = true">Settings
-          <template #append>
-            <PlMaskIcon24 name="settings" />
-          </template>
-        </PlBtnGhost>
+        <PlBtnGhost @click.stop="deleteCurrentList" icon="delete-bin">Delete current list</PlBtnGhost>
+        <PlBtnGhost @click.stop="importFile" icon="dna-import">Import Sequences</PlBtnGhost>
+        <PlBtnGhost @click.stop="() => data.settingsOpen = true" icon="settings">Settings</PlBtnGhost>
       </template>
     </template>
 
@@ -157,7 +157,26 @@ const currentList = computed<SOIList | undefined>({
     </template>
 
     <SOIImportModal v-if="data.importFile" :file="data.importFile" @on-close="data.importFile = undefined"
-      @on-import="onImport" />
+      @on-import="onImport" :alphabet="currentList!.parameters.type"
+      :target-feature="currentList!.parameters.targetFeature" />
+
+    <!-- <PlDataDialogModal v-model="data.newList">
+      <template #default="{ value }">
+        <PlDropdown :options="alphabetOptions" v-model="value.type" label="Alphabet" />
+        <PlDropdown :options="targetFeatureOptions" v-model="value.targetFeature" label="Target Feature" />
+      </template>
+    </PlDataDialogModal> -->
+
+    <PlDialogModal v-if="data.newList !== undefined" :model-value="true"
+      @update:model-value="(v) => { if (!v) data.newList = undefined }">
+      <template #title>New list settings</template>
+      <PlDropdown :options="alphabetOptions" v-model="data.newList.type" label="Alphabet" />
+      <PlDropdown :options="targetFeatureOptions" v-model="data.newList.targetFeature" label="Target Feature" />
+      <template #actions>
+        <PlBtnPrimary @click="() => addNewList()">Create</PlBtnPrimary>
+        <PlBtnSecondary @click="() => data.newList = undefined">Cancel</PlBtnSecondary>
+      </template>
+    </PlDialogModal>
 
     <PlSlideModal v-model="data.settingsOpen" v-if="currentList !== undefined">
       <template #title>Settings</template>

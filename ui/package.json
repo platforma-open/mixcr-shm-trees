@@ -6,6 +6,7 @@
     "dev": "vite",
     "watch": "vue-tsc && vite build --watch",
     "build": "vue-tsc -b && vite build",
+    "test": "vitest",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -18,6 +19,7 @@
     "@platforma-sdk/ui-vue": "catalog:",
     "@milaboratories/graph-maker": "catalog:",
     "utility-types": "catalog:",
+    "vitest": "catalog:",
     "vue": "catalog:",
     "@vueuse/core": "catalog:",
     "zod": "catalog:"
