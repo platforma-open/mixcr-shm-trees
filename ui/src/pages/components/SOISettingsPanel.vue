@@ -2,24 +2,9 @@
 import { ListOption, PlDropdown, PlTextField } from '@platforma-sdk/ui-vue';
 import DownsamplingSettings from './DownsamplingSettings.vue';
 import { Alphabet, createSOIListParameters, SearchParameters, SOIListParameters, TargetFeature } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { alphabetOptions, targetFeatureOptions } from '../../soi_util';
 
 const model = defineModel<SOIListParameters>({ required: true })
-
-const alphabets: ListOption<Alphabet>[] = [{
-  value: 'nucleotide',
-  label: 'Nucleotide'
-}, {
-  value: 'amino-acid',
-  label: 'Amino Acid'
-}]
-
-const targetFeatures: ListOption<TargetFeature>[] = [{
-  value: 'CDR3',
-  label: 'CDR3'
-}, {
-  value: 'VDJRegion',
-  label: 'VDJRegion'
-}]
 
 const searchSettings: ListOption<SearchParameters>[] = [{
   value: { type: 'tree_search_top', parameters: 'oneMismatch' },
@@ -50,8 +35,9 @@ const searchSettings: ListOption<SearchParameters>[] = [{
 </script>
 
 <template>
+  <PlDropdown :options="alphabetOptions" v-model="model.type" label="Alphabet" :disabled="true" />
+  <PlDropdown :options="targetFeatureOptions" v-model="model.targetFeature" label="Target Feature" :disabled="true" />
+
   <PlTextField v-model="model.name" label="List name" />
-  <PlDropdown :options="alphabets" v-model="model.type" label="Alphabet" />
-  <PlDropdown :options="targetFeatures" v-model="model.targetFeature" label="Target Feature" />
   <PlDropdown :options="searchSettings" v-model="model.searchParameters" label="Sequence Search Parameters" />
 </template>

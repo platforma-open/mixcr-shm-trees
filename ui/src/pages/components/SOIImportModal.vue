@@ -1,13 +1,14 @@
 <script setup lang="ts">
-import { SequenceOfInterest } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { Alphabet, SequenceOfInterest, TargetFeature } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { getFileNameFromHandle, getRawPlatformaInstance, LocalImportFileHandle, uniquePlId } from '@platforma-sdk/model';
 import { PlDialogModal, PlBtnPrimary, PlBtnGhost, ListOption, PlDropdown, PlLogView } from '@platforma-sdk/ui-vue';
 import { computedAsync } from '@vueuse/core';
 import { computed, reactive } from 'vue';
 import { readFileForImport } from '../../dataimport';
+import { detectAlphabet, translate } from '../../alphabets';
 
 // const model = defineModel<ImportFileHandle>({ required: true })
-const props = defineProps<{ file: LocalImportFileHandle }>()
+const props = defineProps<{ file: LocalImportFileHandle, alphabet: Alphabet, targetFeature: TargetFeature }>()
 
 type ErrorMessage = { title: string, message?: string }
 const data = reactive<{ errorMessage?: ErrorMessage, importing: boolean, sequenceColumn?: number, nameColumn?: number }>({ importing: false });
@@ -119,57 +120,114 @@ const fastaData = computed(() => {
     return undefined
 })
 
+const sequencesToImport = computed(() => {
+  if (fileType.value === 'table') {
+    const sc = data.sequenceColumn;
+    if (!tableData.value || sc === undefined)
+      return undefined;
+    return tableData.value.data.rows
+      .filter(r => r[sc] !== undefined)
+      .map(r => String(r[sc]))
+  } else {
+    if (fastaData.value === undefined)
+      return undefined;
+    return fastaData.value.map(r => r.sequence)
+  }
+})
+
+const recordsToImport = computed(() => {
+  if (fileType.value === 'table') {
+    const sc = data.sequenceColumn;
+    const nc = data.nameColumn;
+    if (!tableData.value || sc === undefined || nc === undefined)
+      return undefined;
+    return tableData.value.data.rows
+      .filter(r => r[nc] !== undefined && r[sc] !== undefined)
+      .map(r => ({
+        description: String(r[nc]),
+        sequence: String(r[sc])
+      } satisfies FastaRecord))
+  } else {
+    if (fastaData.value === undefined)
+      return undefined;
+    return fastaData.value
+  }
+})
+
+const detectedAlphabetHelper = computed(() => {
+  if (sequencesToImport.value === undefined || sequencesToImport.value.length === 0)
+    return undefined;
+  try {
+    return detectAlphabet(sequencesToImport.value);
+  } catch (e: unknown) {
+    console.log(e);
+    return undefined;
+  }
+})
+
 //
 // UI
 //
 
-const importText = computed(() => {
-  if (fileType.value === 'table') {
-    if (tableData.value)
-      return `Number of rows to be imported: ${tableData.value.data.rows.length}`
-    else
-      return `Error reading table.\n${data.errorMessage?.title}`
-  } else {
-    if (fastaData.value)
-      return `Number of records to be imported: ${fastaData.value.length}`
-    else
-      return `Error reading fasta file.\n${data.errorMessage?.title}`
+type TextAndRecords = {
+  text: string,
+  records?: FastaRecord[]
+}
+
+const importData = computed<TextAndRecords>(() => {
+  if (data.errorMessage)
+    return { text: `Error:\n${data.errorMessage?.title}` };
+  const soi = sequencesToImport.value;
+  if (soi === undefined)
+    return { text: `Please select sequences` };
+  const da = detectedAlphabetHelper.value;
+  if (!da)
+    return { text: `Can't detect alphabet` };
+
+  if (da.type === 'amino-acid' && props.alphabet === 'nucleotide')
+    return { text: `Can't convert amino acid sequence to nucleotides, please create nucleotide sequence list.` };
+
+  let records = recordsToImport.value;
+  if (records === undefined)
+    return { text: `Please select sequence name column.` };
+
+  let text = ''
+  if (da.type === 'nucleotide' && props.alphabet === 'amino-acid') {
+    try {
+      records = records.map(({ description, sequence }) => ({ description, sequence: translate(sequence) }))
+    } catch (e: any) {
+      return { text: `Can't translate sequences: ${e.message}` }
+    }
+    text = 'Sequences are translated to fit the sequence list alphabet.\n'
   }
+  text += `Records to import: ${records.length}`
+
+  return { text, records };
 })
 
 const canImport = computed(() =>
-  fileType.value === 'table'
-    ? data.nameColumn !== undefined && data.sequenceColumn !== undefined
-    : (fastaData.value && fastaData.value?.length > 0)
+  importData.value?.records?.length && importData.value?.records?.length > 0
 )
 
 function runImport() {
   data.importing = true;
   let result: SequenceOfInterest[] = []
-  if (tableData.value) {
-    const rawData = tableData.value
-    const nc = data.nameColumn!
-    const sc = data.sequenceColumn!
-    result = rawData.data.rows
-      .filter(r => r[nc] !== undefined && r[sc] !== undefined)
-      .map(r => ({ id: uniquePlId(), name: String(r[nc]!), sequence: String(r[sc]!) }))
-  } else if (fastaData.value && fastaData.value.length > 0) {
-    result = fastaData.value
-      .filter(r => r.description.length > 0 && r.sequence.length > 0)
-      .map(r => ({ id: uniquePlId(), name: r.description, sequence: r.sequence }))
-  }
-  emit("onImport", result);
+  const records = importData.value?.records;
+  if (!records)
+    return;
+  emit("onImport",
+    records.map(r => ({ id: uniquePlId(), name: r.description, sequence: r.sequence })));
 }
 </script>
 
 <template>
-  <PlDialogModal :model-value="true" @update:model-value="(v) => { if (!v) emit('onClose') }">
+  <PlDialogModal width="800px" :model-value="true" @update:model-value="(v) => { if (!v) emit('onClose') }">
     <template #title>Import sequences</template>
     <template v-if="fileType === 'table'">
-      <PlDropdown :options="columnOptions" v-model="data.sequenceColumn" clearable label="Sequence Column" />
       <PlDropdown :options="columnOptions" v-model="data.nameColumn" clearable label="Name Column" />
+      <PlDropdown :options="columnOptions" v-model="data.sequenceColumn" clearable label="Sequence Column" />
     </template>
-    <PlLogView :value="importText" label="Import information" />
+    <PlLogView :value="importData?.text" label="Import information" />
     <template #actions>
       <PlBtnPrimary @click="runImport" :loading="data.importing" :disabled="!canImport">
         Import
