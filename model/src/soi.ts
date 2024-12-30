@@ -1,4 +1,4 @@
-import { PlId, uniquePlId } from "@platforma-sdk/model";
+import { PlId, uniquePlId } from '@platforma-sdk/model';
 
 export type SequenceOfInterest = {
   id: PlId;
@@ -21,7 +21,12 @@ export type SearchParametersTreeSearchTop = {
   parameters: KnownTreeSearchParameters;
 };
 
-export type SearchParameters = SearchParametersTreeSearchTop;
+export type SearchPresetTop = {
+  type: 'preset_alignment_search_top';
+  dissimilarityPercent: number;
+};
+
+export type SearchParameters = SearchParametersTreeSearchTop | SearchPresetTop;
 
 export type Alphabet = 'nucleotide' | 'amino-acid';
 export type TargetFeature = 'CDR3' | 'VDJRegion';
@@ -40,7 +45,7 @@ export function createSOIListParameters(name: string = 'Sequence List'): SOIList
     name,
     targetFeature: 'CDR3',
     type: 'nucleotide',
-    searchParameters: { type: 'tree_search_top', parameters: 'oneMismatch' }
+    searchParameters: { type: 'preset_alignment_search_top', dissimilarityPercent: 2 }
   };
 }
 

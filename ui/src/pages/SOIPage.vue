@@ -54,12 +54,16 @@ function addNewList() {
     sois = []
     app.model.args.sequencesOfInterest = sois
   }
-  const name = inferNewName(sois.map(l => l.parameters.name), i => `Seq. List (${i})`)
+  let prefix = data.newList.targetFeature + ' ' + (data.newList.type === 'nucleotide' ? 'Nt' : 'AA')
+  const name = inferNewName(sois.map(l => l.parameters.name), i => `${prefix} List (${i})`)
   sois.push({
     sequences: [], parameters: {
       id, name,
       type: data.newList.type, targetFeature: data.newList.targetFeature,
-      searchParameters: { type: 'tree_search_top', parameters: 'oneMismatch' }
+      searchParameters: {
+        type: 'preset_alignment_search_top',
+        dissimilarityPercent: data.newList.type === 'nucleotide' ? 10 : 2
+      }
     }
   })
   data.currentListId = id
