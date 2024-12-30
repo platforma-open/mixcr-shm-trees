@@ -1,6 +1,9 @@
 ll := import("@platforma-sdk/workflow-tengo:ll")
 
 soiResultImportColumns := func(dbParameters) {
+	commonDomain := {
+		"pl7.app/list": dbParameters.id
+	}
 	if dbParameters.searchParameters.type == "tree_search_top" {
 		return [ {
 			column: "topHit",
@@ -12,9 +15,7 @@ soiResultImportColumns := func(dbParameters) {
 					"pl7.app/label": "Top Hit " + dbParameters.name
 				}
 			},
-			domain: {
-				"pl7.app/list": dbParameters.id
-			}
+			domain: commonDomain
 		}, {
 			column: "mutations",
 			id: "mutations",
@@ -25,9 +26,42 @@ soiResultImportColumns := func(dbParameters) {
 					"pl7.app/label": "Number of mutations " + dbParameters.name
 				}
 			},
-			domain: {
-				"pl7.app/list": dbParameters.id
-			}
+			domain: commonDomain
+		} ]
+	} else if dbParameters.searchParameters.type == "preset_alignment_search_top" {
+		return [ {
+			column: "topHit",
+			id: "topHit",
+			spec: {
+				name: "pl7.app/search/topHit",
+				valueType: "String",
+				annotations: {
+					"pl7.app/label": "Top Hit " + dbParameters.name
+				}
+			},
+			domain: commonDomain
+		}, {
+			column: "penalty",
+			id: "penalty",
+			spec: {
+				name: "pl7.app/search/alignmentPenalty",
+				valueType: "Int",
+				annotations: {
+					"pl7.app/label": "Alignment penalty " + dbParameters.name
+				}
+			},
+			domain: commonDomain
+		}, {
+			column: "score",
+			id: "score",
+			spec: {
+				name: "pl7.app/search/alignmentScore",
+				valueType: "Int",
+				annotations: {
+					"pl7.app/label": "Alignment score " + dbParameters.name
+				}
+			},
+			domain: commonDomain
 		} ]
 	} else {
 		ll.panic("Unknown search mode: " + dbParameters.searchParameters.type)

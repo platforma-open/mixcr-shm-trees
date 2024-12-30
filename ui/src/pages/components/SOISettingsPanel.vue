@@ -7,29 +7,44 @@ import { alphabetOptions, targetFeatureOptions } from '../../soi_util';
 const model = defineModel<SOIListParameters>({ required: true })
 
 const searchSettings: ListOption<SearchParameters>[] = [{
+  value: { type: 'preset_alignment_search_top', dissimilarityPercent: 1 },
+  label: 'Max dissimilarity 1%'
+}, {
+  value: { type: 'preset_alignment_search_top', dissimilarityPercent: 2 },
+  label: 'Max dissimilarity 2%'
+}, {
+  value: { type: 'preset_alignment_search_top', dissimilarityPercent: 5 },
+  label: 'Max dissimilarity 5%'
+}, {
+  value: { type: 'preset_alignment_search_top', dissimilarityPercent: 10 },
+  label: 'Max dissimilarity 10%'
+}, {
+  value: { type: 'preset_alignment_search_top', dissimilarityPercent: 15 },
+  label: 'Max dissimilarity 15%'
+}, {
   value: { type: 'tree_search_top', parameters: 'oneMismatch' },
-  label: 'Fuzzy: 1 Mismatch'
+  label: 'Fuzzy exact: 1 Mismatch'
 }, {
   value: { type: 'tree_search_top', parameters: 'oneMismatchOrIndel' },
-  label: 'Fuzzy: 1 Mismatch Or Indel'
+  label: 'Fuzzy exact: 1 Mismatch Or Indel'
 }, {
   value: { type: 'tree_search_top', parameters: 'twoMismatches' },
-  label: 'Fuzzy: 2 Mismatch'
+  label: 'Fuzzy exact: 2 Mismatch'
 }, {
   value: { type: 'tree_search_top', parameters: 'twoMismatchesOrIndels' },
-  label: 'Fuzzy: 2 Mismatch Or Indel'
+  label: 'Fuzzy exact: 2 Mismatch Or Indel'
 }, {
   value: { type: 'tree_search_top', parameters: 'threeMismatches' },
-  label: 'Fuzzy: 3 Mismatch'
+  label: 'Fuzzy exact: 3 Mismatch'
 }, {
   value: { type: 'tree_search_top', parameters: 'threeMismatchesOrIndels' },
-  label: 'Fuzzy: 3 Mismatch Or Indel'
+  label: 'Fuzzy exact: 3 Mismatch Or Indel'
 }, {
   value: { type: 'tree_search_top', parameters: 'fourMismatches' },
-  label: 'Fuzzy: 4 Mismatch'
+  label: 'Fuzzy exact: 4 Mismatch'
 }, {
   value: { type: 'tree_search_top', parameters: 'fourMismatchesOrIndels' },
-  label: 'Fuzzy: 4 Mismatch Or Indel'
+  label: 'Fuzzy exact: 4 Mismatch Or Indel'
 }]
 
 </script>
