@@ -1,5 +1,18 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.1.0
+
+### Minor Changes
+
+- b8c818f: Alignment-based sequence search for sequence collections, multiple other improvements for this subsystem
+
+### Patch Changes
+
+- Updated dependencies [b8c818f]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@3.3.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.3.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.0
+
 ## 3.0.13
 
 ### Patch Changes
