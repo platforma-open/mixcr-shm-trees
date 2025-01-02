@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.2
+
+### Patch Changes
+
+- 6dc2050: Basket delete & basket nodes delete
+
 ## 3.4.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.3.1
+
+### Patch Changes
+
+- d8d8f49: Additional ensure uniqueness step in trees reconstruction workflow
+
 ## 3.3.0
 
 ### Minor Changes
