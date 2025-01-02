@@ -1,5 +1,14 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.1
+
+### Patch Changes
+
+- 366ed9e: Better progress, sequence list delete confirmation, several UI fixes, SDK upgrade.
+- Updated dependencies [366ed9e]
+- Updated dependencies [366ed9e]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.4.0
+
 ## 3.4.0
 
 ### Minor Changes

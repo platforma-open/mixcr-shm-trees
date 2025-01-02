@@ -1,5 +1,15 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.4.0
+
+### Minor Changes
+
+- 366ed9e: Prevent re-execution if trees or baskets are added
+
+### Patch Changes
+
+- 366ed9e: Better progress, sequence list delete confirmation, several UI fixes, SDK upgrade.
+
 ## 3.3.0
 
 ### Minor Changes
