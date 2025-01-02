@@ -122,6 +122,7 @@ self.body(func(inputs) {
 		{
 			shmTreeTableArgs: shmTreeTableOptions.cmdArgs,
 			shmTreeNodesTableOptions: shmTreeNodesTableOptions,
+			shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
 			shmTreeNodesWithClonesTableArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
 			globalParams: maps.merge(
 				inputs.params,
