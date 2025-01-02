@@ -437,6 +437,8 @@ export const model = BlockModel.create()
     return cols.filter((col) => col.spec.name === 'pl7.app/vdj/geneHit').map((col) => col.id);
   })
 
+  .output('soiReady', (ctx) => ctx.outputs?.resolve('soiNodesResults')?.getIsReadyOrError())
+
   .output('started', (ctx) => ctx.outputs !== undefined)
 
   .output('done', (ctx) => {
@@ -477,7 +479,13 @@ export const model = BlockModel.create()
     ];
   })
 
-  .argsValid((ctx) => ctx.args.donorColumn !== undefined && ctx.args.datasetColumns.length > 0)
+  .argsValid(
+    (ctx) =>
+      ctx.args.donorColumn !== undefined &&
+      ctx.args.datasetColumns.length > 0 &&
+      (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
+      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0)
+  )
 
   .done();
 

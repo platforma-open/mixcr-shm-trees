@@ -27,7 +27,8 @@ const data = reactive<{
   currentListId?: PlId,
   importFile?: LocalImportFileHandle,
   settingsOpen: boolean,
-  newList?: NewListSettings
+  newList?: NewListSettings,
+  listToDelete?: PlId
 }>({ settingsOpen: false })
 
 watch(() => app.model.args.sequencesOfInterest?.map(v => v.parameters.id) ?? [], (ids) => {
@@ -71,16 +72,16 @@ function addNewList() {
   data.settingsOpen = true
 }
 
-function getCurrentListIdx(): number | undefined {
-  if (data.currentListId === undefined) return undefined;
-  const idx = app.model.args.sequencesOfInterest?.findIndex(l => l.parameters.id === data.currentListId)
+function getListIdx(id: PlId | undefined): number | undefined {
+  if (id === undefined) return undefined;
+  const idx = app.model.args.sequencesOfInterest?.findIndex(l => l.parameters.id === id)
   if (idx === undefined || idx === -1)
     return undefined;
   return idx;
 }
 
-function deleteCurrentList() {
-  const idx = getCurrentListIdx();
+function deleteList(listToDelete: PlId) {
+  const idx = getListIdx(data.currentListId);
   if (idx === undefined) return;
   data.currentListId = idx > 0
     ? app.model.args.sequencesOfInterest![idx - 1].parameters.id
@@ -103,7 +104,7 @@ async function importFile() {
 }
 
 function onImport(records: SequenceOfInterest[]) {
-  const idx = getCurrentListIdx();
+  const idx = getListIdx(data.currentListId);
   if (idx === undefined) return;
   app.model.args.sequencesOfInterest![idx].sequences = [
     ...app.model.args.sequencesOfInterest![idx].sequences,
@@ -148,7 +149,8 @@ const currentList = computed<SOIList | undefined>({
     </template>
     <template #append>
       <template v-if="data.currentListId">
-        <PlBtnGhost @click.stop="deleteCurrentList" icon="delete-bin">Delete current list</PlBtnGhost>
+        <PlBtnGhost @click.stop="() => data.listToDelete = data.currentListId" icon="delete-bin">Delete current list
+        </PlBtnGhost>
         <PlBtnGhost @click.stop="importFile" icon="dna-import">Import Sequences</PlBtnGhost>
         <PlBtnGhost @click.stop="() => data.settingsOpen = true" icon="settings">Settings</PlBtnGhost>
       </template>
@@ -176,9 +178,20 @@ const currentList = computed<SOIList | undefined>({
       <template #title>New list settings</template>
       <PlDropdown :options="alphabetOptions" v-model="data.newList.type" label="Alphabet" />
       <PlDropdown :options="targetFeatureOptions" v-model="data.newList.targetFeature" label="Target Feature" />
+      <p><b>Note:</b> Nucleotide sequences will be automatically translated if added to the amino acid sequence list.
+      </p>
       <template #actions>
         <PlBtnPrimary @click="() => addNewList()">Create</PlBtnPrimary>
         <PlBtnSecondary @click="() => data.newList = undefined">Cancel</PlBtnSecondary>
+      </template>
+    </PlDialogModal>
+
+    <PlDialogModal v-if="data.listToDelete !== undefined" :model-value="true"
+      @update:model-value="(v) => { if (!v) data.listToDelete = undefined }">
+      <template #title>Confirm delete</template>
+      <template #actions>
+        <PlBtnPrimary @click="() => deleteList(data.listToDelete!)">Delete</PlBtnPrimary>
+        <PlBtnSecondary @click="() => data.listToDelete = undefined">Cancel</PlBtnSecondary>
       </template>
     </PlDialogModal>
 
