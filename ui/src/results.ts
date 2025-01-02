@@ -17,6 +17,8 @@ export type TreeResult = {
 
   progress: ByStepIdRecord<string>;
 
+  soiReady: string;
+
   logHandle: ByStepIdRecord<AnyLogHandle | undefined>;
 
   jsonReport: ByStepIdRecord<any | undefined>;
@@ -60,6 +62,7 @@ export const TreeResultsMap = computed(() => {
         alleles: 'Queued',
         trees: 'Queued'
       },
+      soiReady: 'Queued',
       jsonReport: { alleles: undefined, trees: undefined },
       txtReportHandle: { alleles: undefined, trees: undefined },
       logHandle: { alleles: undefined, trees: undefined }
@@ -120,6 +123,17 @@ export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
         ? 'Done'
         : 'Queued';
     });
+
+  const soiReady = app.model.outputs.soiReady;
+  for (const r of resultMap.values())
+    r.soiReady =
+      soiReady === undefined
+        ? 'Queued'
+        : soiReady === true
+        ? 'Done'
+        : r.progress.alleles === 'Done' && r.progress.trees === 'Done'
+        ? 'In Progress'
+        : 'Queued';
 
   return [...resultMap.values()];
 });

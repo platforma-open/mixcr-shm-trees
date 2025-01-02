@@ -56,6 +56,16 @@ const columnDefs: ColDef<TreeResult>[] = [
       '--ag-cell-horizontal-padding': '0px',
       '--ag-cell-vertical-padding': '0px'
     }
+  },
+  {
+    colId: 'soiReady',
+    valueGetter: (d) => d.data?.soiReady,
+    cellRenderer: 'ProgressCell',
+    headerName: "Sequence Search",
+    cellStyle: {
+      '--ag-cell-horizontal-padding': '0px',
+      '--ag-cell-vertical-padding': '0px'
+    }
   }
 ];
 
