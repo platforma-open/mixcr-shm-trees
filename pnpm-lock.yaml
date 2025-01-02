@@ -60,6 +60,9 @@ catalogs:
     ag-grid-vue3:
       specifier: ^33.0.3
       version: 33.0.3
+    canonicalize:
+      specifier: ^2.0.0
+      version: 2.0.0
     tsup:
       specifier: ~8.3.5
       version: 8.3.5
@@ -185,6 +188,9 @@ importers:
       ag-grid-vue3:
         specifier: 'catalog:'
         version: 33.0.3(vue@3.5.13(typescript@5.6.3))
+      canonicalize:
+        specifier: 'catalog:'
+        version: 2.0.0
       utility-types:
         specifier: 'catalog:'
         version: 3.11.0
