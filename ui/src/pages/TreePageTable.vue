@@ -5,6 +5,7 @@ import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
 import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import AddToBasketModal from './components/AddToBasketModal.vue';
+import { ensureNumber, ensureSimpleValue } from '../util';
 
 const emit = defineEmits<{ toGraph: [] }>()
 
@@ -30,23 +31,6 @@ const data = reactive<{
   selectedRows: [],
   nodesToAdd: []
 })
-
-// @TODO transfer to SDK
-function ensureSimpleValue(v: PTableValue): string | number {
-  if (isPTableAbsent(v) || v === null)
-    throw new Error(`Unexpected value: ${v}`);
-  return v;
-}
-function ensureNumber(v: PTableValue): number {
-  if (isPTableAbsent(v) || v === null || typeof v === 'string')
-    throw new Error(`Unexpected value type: ${typeof v}`);
-  return v;
-}
-function ensureString(v: PTableValue): string {
-  if (isPTableAbsent(v) || v === null || typeof v === 'number')
-    throw new Error(`Unexpected value type: ${typeof v}`);
-  return v;
-}
 
 function keyToNodeId(key: PTableRowKey): FullNodeId {
   if (key.length === 6) {

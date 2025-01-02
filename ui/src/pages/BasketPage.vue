@@ -2,9 +2,12 @@
 import { computed, reactive, ref } from 'vue';
 import { useApp } from '../app';
 import { PTableColumnSpec } from '@platforma-sdk/model';
-import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlEditableTitle, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
+import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDataTableSettings, PlDialogModal, PlEditableTitle, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
+import { ensureNumber, ensureSimpleValue } from '../util';
+import canonicalize from 'canonicalize';
+import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 
-const app = useApp<`/basket?id=${string}`>();
+const app = useApp<'/' | `/basket?id=${string}`>();
 
 const basketIdx = computed(() => app.model.ui.baskets.findIndex(it => it.id === app.queryParams.id));
 const basket = computed({
@@ -20,48 +23,46 @@ const columns = ref<PTableColumnSpec[]>([]);
 const tableInstance = ref<PlAgDataTableController>();
 
 const data = reactive<{
-  selectedRows: PTableRowKey[]
+  selectedRows: PTableRowKey[],
+  nodesToDelete?: FullNodeId[],
+  showDeleteBasketConfirmation: boolean
 }>({
-  selectedRows: []
+  selectedRows: [],
+  showDeleteBasketConfirmation: false
 })
 
-// // @TODO transfer to SDK
-// function ensureSimpleValue(v: PTableValue): string | number {
-//   if (isPTableAbsent(v) || v === null)
-//     throw new Error(`Unexpected value: ${v}`);
-//   return v;
-// }
-// function ensureNumber(v: PTableValue): number {
-//   if (isPTableAbsent(v) || v === null || typeof v === 'string')
-//     throw new Error(`Unexpected value type: ${typeof v}`);
-//   return v;
-// }
-// function ensureString(v: PTableValue): string {
-//   if (isPTableAbsent(v) || v === null || typeof v === 'number')
-//     throw new Error(`Unexpected value type: ${typeof v}`);
-//   return v;
-// }
+function keyToNodeId(key: PTableRowKey): FullNodeId {
+  if (key.length === 6) {
+    return {
+      donorId: ensureSimpleValue(key[1]),
+      treeId: ensureNumber(key[2]),
+      subtreeId: String(ensureNumber(key[3])),
+      nodeId: ensureNumber(key[4]),
+    }
+  } else if (key.length === 5) {
+    return {
+      donorId: ensureSimpleValue(key[1]),
+      treeId: ensureNumber(key[2]),
+      nodeId: ensureNumber(key[3])
+    }
+  } else
+    throw new Error(`Unexpected key format: ${JSON.stringify(key)}`)
+}
 
-// function keyToNodeId(key: PTableRowKey): FullNodeId {
-//   if (key.length === 6) {
-//     return {
-//       donorId: ensureSimpleValue(key[1]),
-//       treeId: ensureNumber(key[2]),
-//       subtreeId: String(ensureNumber(key[3])),
-//       nodeId: ensureNumber(key[4]),
-//     }
-//   } else if (key.length === 5) {
-//     return {
-//       donorId: ensureSimpleValue(key[1]),
-//       treeId: ensureNumber(key[2]),
-//       nodeId: ensureNumber(key[3])
-//     }
-//   } else
-//     throw new Error(`Unexpected key format: ${JSON.stringify(key)}`)
-// }
+function beginDeleteFromBasket() {
+  data.nodesToDelete = data.selectedRows.map(r => keyToNodeId(r));
+}
 
-function deleteFromBasket() {
-  // data.nodesToAdd = data.selectedRows.map(r => keyToNodeId(r));
+function deleteNodes() {
+  if (data.nodesToDelete === undefined) return;
+  const toDeletSet = new Set(data.nodesToDelete.map(n => canonicalize(n)!))
+  basket.value.nodes = basket.value.nodes.filter(n => !toDeletSet.has(canonicalize(n)!))
+  data.nodesToDelete = undefined;
+}
+
+function deleteBasket() {
+  app.model.ui.baskets = app.model.ui.baskets.filter(it => it.id !== app.queryParams.id)
+  app.navigateTo('/');
 }
 </script>
 
@@ -71,8 +72,11 @@ function deleteFromBasket() {
       <PlEditableTitle max-width="600px" placeholder="Basket ..." :max-length="40" v-model="basket.name" />
     </template>
     <template #append>
-      <PlBtnGhost v-if="data.selectedRows.length > 0" @click="deleteFromBasket()" icon="delete-bin">
+      <PlBtnGhost v-if="data.selectedRows.length > 0" @click="beginDeleteFromBasket()" icon="delete-bin">
         Delete Selected Nodes
+      </PlBtnGhost>
+      <PlBtnGhost v-else @click="data.showDeleteBasketConfirmation = true" icon="delete-bin">
+        Delete This Basket
       </PlBtnGhost>
       <PlAgDataTableToolsPanel>
         <PlTableFilters v-model="basket.tableState.filterModel" :columns="columns" />
@@ -81,5 +85,22 @@ function deleteFromBasket() {
     <PlAgDataTable v-model="basket.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
+
+    <PlDialogModal v-if="data.nodesToDelete !== undefined" :model-value="true"
+      @update:model-value="(v) => { if (!v) data.nodesToDelete = undefined }">
+      <template #title>Confirm delete of {{ data.nodesToDelete.length }} nodes</template>
+      <template #actions>
+        <PlBtnPrimary @click="() => deleteNodes()">Delete</PlBtnPrimary>
+        <PlBtnSecondary @click="() => data.nodesToDelete = undefined">Cancel</PlBtnSecondary>
+      </template>
+    </PlDialogModal>
+
+    <PlDialogModal v-model="data.showDeleteBasketConfirmation">
+      <template #title>Confirm delete of "{{ basket.name }}" basket</template>
+      <template #actions>
+        <PlBtnPrimary @click="() => deleteBasket()">Delete</PlBtnPrimary>
+        <PlBtnSecondary @click="() => data.showDeleteBasketConfirmation = false">Cancel</PlBtnSecondary>
+      </template>
+    </PlDialogModal>
   </PlBlockPage>
 </template>

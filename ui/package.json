@@ -19,6 +19,7 @@
     "@platforma-sdk/ui-vue": "catalog:",
     "@milaboratories/graph-maker": "catalog:",
     "utility-types": "catalog:",
+    "canonicalize": "catalog:",
     "vitest": "catalog:",
     "vue": "catalog:",
     "@vueuse/core": "catalog:",
