@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { GraphMaker, PredefinedGraphOption } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
-import { FullTreeId, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, FullTreeId, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { AxisSpec, getRawPlatformaInstance, pValueToStringOrNumber, PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
 import { PlBtnGhost, PlDropdown } from '@platforma-sdk/ui-vue';
 import { computedAsync } from '@vueuse/core';
 import { computed } from 'vue';
 import { useApp } from '../app';
 
-const emit = defineEmits<{ toTable: [] }>()
+const emit = defineEmits<{
+  toTable: [],
+  toNode: [nodeId: FullNodeId]
+}>()
 
 const app = useApp<`/dendrogram?id=${string}`>();
 
@@ -198,12 +201,22 @@ const removeSection = async () => {
   }
 };
 
+const goToNode = (a: any) => {
+  if (fullId.value === undefined)
+    return;
+  if (typeof a === 'number')
+    emit('toNode', { ...fullId.value, nodeId: a });
+  else
+    console.error(`Unexpected key type: ${a} / ${typeof a}`)
+}
+
 </script>
 
 <template>
   <div v-if="dendro" class="container_graph_page">
     <GraphMaker chart-type='dendro' v-model="dendro.state" :p-frame="app.model.outputs.treeNodesPFrame"
-      @delete-this-graph="removeSection" :fixed-options="fixedOptions" :default-options="defaultOptions">
+      @delete-this-graph="removeSection" @tooltip-btn-click="goToNode" :fixed-options="fixedOptions"
+      tooltip-button="Show in Table" :default-options="defaultOptions">
       <template #titleLineSlot>
         <PlDropdown v-if="subtreeAxis" v-model="dendro.subtreeId" :options="subtreeOptions"
           label="Select chain (subtree)" :style="{ width: '300px' }" />

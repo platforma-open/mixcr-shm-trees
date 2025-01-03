@@ -1,15 +1,18 @@
 <script setup lang="ts">
-import { isPTableAbsent, PColumnValue, PTableColumnSpec, PTableValue } from '@platforma-sdk/model';
+import { getRawPlatformaInstance, isPTableAbsent, PColumnValue, PTableColumnSpec, pTableValue, PTableValue } from '@platforma-sdk/model';
 import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlDialogModal, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
 import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import AddToBasketModal from './components/AddToBasketModal.vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
+import canonicalize from 'canonicalize';
 
 const emit = defineEmits<{ toGraph: [] }>()
 
 const app = useApp<`/dendrogram?id=${string}`>();
+
+const props = defineProps<{ initialSelection?: FullNodeId }>()
 
 const dendroIdx = computed(() => app.model.ui.dendrograms.findIndex(it => it.id === app.queryParams.id));
 const dendro = computed({
@@ -30,6 +33,30 @@ const data = reactive<{
 }>({
   selectedRows: [],
   nodesToAdd: []
+})
+
+watch(tableInstance, async (tiNew, tiOld) => {
+  const table = app.model.outputs.treeNodesPerTree?.[dendro.value.id];
+  if (tiOld === undefined && tiNew !== undefined && props.initialSelection !== undefined && table !== undefined) {
+    const targetKeyStr = canonicalize(props.initialSelection);
+    const platforma = getRawPlatformaInstance();
+    const keyLength = props.initialSelection.subtreeId === undefined ? 5 : 6;
+    const keyColumns: number[] = [];
+    for (let k = 0; k < keyLength; ++k)
+      keyColumns.push(k);
+    const tData = await platforma.pFrameDriver.getData(table, keyColumns)
+    const selection: PTableRowKey[] = []
+    for (let i = 0; i < tData[0].data.length; ++i) {
+      const key: PTableRowKey = [];
+      for (let k = 0; k < keyLength; ++k)
+        key.push(pTableValue(tData[k], i))
+      if (canonicalize(keyToNodeId(key)) === targetKeyStr)
+        selection.push(key);
+    }
+    data.selectedRows = selection;
+    if (data.selectedRows.length > 0)
+      tiNew.focusRow(data.selectedRows[0])
+  }
 })
 
 function keyToNodeId(key: PTableRowKey): FullNodeId {
