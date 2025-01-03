@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.3
+
+### Patch Changes
+
+- 7cb110c: Jump from graph node to table
+
 ## 3.4.2
 
 ### Patch Changes
