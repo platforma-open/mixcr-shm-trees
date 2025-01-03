@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { InitialFullTableState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { computed, ref } from 'vue';
+import { FullNodeId, FullTreeId, InitialFullTableState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { computed, reactive, ref } from 'vue';
 import { useApp } from '../app';
 import TreePageTable from './TreePageTable.vue';
 import TreePageGraph from './TreePageGraph.vue';
@@ -19,11 +19,17 @@ const dendro = computed({
   if (dendro.value.tab === undefined) dendro.value = { ...dendro.value, tab: 'Graph' }
   if (app.model.ui.baskets === undefined) app.model.ui.baskets = [];
 })();
+
+const data = reactive<{
+  initialTableSelection?: FullNodeId,
+}>({})
 </script>
 
 <template :key="dendro?.id ?? ''">
-  <TreePageGraph v-if="dendro.tab === 'Graph'" @to-table="dendro.tab = 'Table'" />
-  <TreePageTable v-else @to-graph="dendro.tab = 'Graph'" />
+  <TreePageGraph v-if="dendro.tab === 'Graph'" @to-table="() => { dendro.tab = 'Table' }"
+    @to-node="(n) => { data.initialTableSelection = n; dendro.tab = 'Table' }" />
+  <TreePageTable v-else @to-graph="() => { dendro.tab = 'Graph'; data.initialTableSelection = undefined }"
+    :initial-selection="data.initialTableSelection" />
 </template>
 
 <style lang="css">
