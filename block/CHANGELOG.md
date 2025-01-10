@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.1.4
+
+### Patch Changes
+
+- 73fb8ae: chore: fix changelog
+
 ## 3.1.3
 
 ### Patch Changes
@@ -316,4 +322,3 @@
   - @platforma-open/milaboratories.mixcr-shm-trees.workflow@2.0.0
   - @platforma-open/milaboratories.mixcr-shm-trees.model@2.0.0
   - @platforma-open/milaboratories.mixcr-shm-trees.ui@2.0.0
-  
