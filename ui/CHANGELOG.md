@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.4
+
+### Patch Changes
+
+- 69e5f73: add graph delete confirmation
+
 ## 3.4.3
 
 ### Patch Changes
