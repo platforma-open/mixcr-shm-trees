@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.5
+
+### Patch Changes
+
+- 88c8769: Improved automatic alphabet detection in sequence search import
+
 ## 3.4.4
 
 ### Patch Changes
