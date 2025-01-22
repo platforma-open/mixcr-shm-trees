@@ -43,8 +43,8 @@ catalogs:
       specifier: ^1.21.20
       version: 1.21.20
     '@platforma-sdk/ui-vue':
-      specifier: ^1.21.21
-      version: 1.21.21
+      specifier: ^1.22.2
+      version: 1.22.2
     '@platforma-sdk/workflow-tengo':
       specifier: ^2.9.6
       version: 2.9.6
@@ -55,11 +55,11 @@ catalogs:
       specifier: ^12.3.0
       version: 12.3.0
     ag-grid-enterprise:
-      specifier: ^33.0.3
-      version: 33.0.3
+      specifier: ^33.0.4
+      version: 33.0.4
     ag-grid-vue3:
-      specifier: ^33.0.3
-      version: 33.0.3
+      specifier: ^33.0.4
+      version: 33.0.4
     canonicalize:
       specifier: ^2.0.0
       version: 2.0.0
@@ -178,16 +178,16 @@ importers:
         version: 1.21.20
       '@platforma-sdk/ui-vue':
         specifier: 'catalog:'
-        version: 1.21.21(typescript@5.6.3)
+        version: 1.22.2(typescript@5.6.3)
       '@vueuse/core':
         specifier: 'catalog:'
         version: 12.3.0(typescript@5.6.3)
       ag-grid-enterprise:
         specifier: 'catalog:'
-        version: 33.0.3
+        version: 33.0.4
       ag-grid-vue3:
         specifier: 'catalog:'
-        version: 33.0.3(vue@3.5.13(typescript@5.6.3))
+        version: 33.0.4(vue@3.5.13(typescript@5.6.3))
       canonicalize:
         specifier: 'catalog:'
         version: 2.0.0
@@ -1098,6 +1098,9 @@ packages:
   '@milaboratories/pl-model-common@1.10.3':
     resolution: {integrity: sha512-H+yKsSZh69ZYVozBuJJ3evSfPTMqnMPmAbnws/iFMANhJjUftMlaAbmCZmOvUlcj/GKJnSKmj7/LMEsRb05X4g==}
 
+  '@milaboratories/pl-model-common@1.10.4':
+    resolution: {integrity: sha512-W75+vkF0XyYi/4FNe80EPear3KEsSv6aEp8EB925f938IxeLp5DMGCAwQ3eAWeDt/mAAyCKMJHW3J+6LkhvivA==}
+
   '@milaboratories/pl-model-middle-layer@1.6.10':
     resolution: {integrity: sha512-UYGSr/8SaXAB/7YxyAv2ecHJBfmizMH8HbFDbgE+r1IUERJBPgpB10tNlZFEtO+sMFP54TkuLj+h9q1kGR+qhw==}
 
@@ -1123,9 +1126,6 @@ packages:
 
   '@milaboratories/ts-helpers@1.1.3':
     resolution: {integrity: sha512-6eBGVodry75ZQlg7n9oPEpDblu/5mHW3Tci7smOt/Nd7IH1zSrZRcNUc18oGY1nj1Vx+Kx+TkVw+9rIgp6HVVg==}
-
-  '@milaboratories/uikit@2.2.45':
-    resolution: {integrity: sha512-xUC7ehmVFYMuEf3ElKvGyCXoKs++Xnv/mnNo23V5KRCWQfYACdNhxH3HUj3WN4BfkIamBiIszoGv0Mc6HyqyfA==}
 
   '@milaboratories/uikit@2.2.50':
     resolution: {integrity: sha512-+D4ZCSIQig8TiwUccSyYG3EIxW6OqfE4AfOIh1rDx37M8/c9bwfUvcS4hCv2KHKrNPGjgWA6+PsjLxNTXTsmjA==}
@@ -1205,6 +1205,9 @@ packages:
   '@platforma-sdk/model@1.21.20':
     resolution: {integrity: sha512-+HnuCbhxrxKoZ3WzvAl5D78JelZ3YmkY3CfoRscz9m1aOm/K4/UI6kYHmSa4ghYR+M1htr5Yioh0jBGzXh4+AQ==}
 
+  '@platforma-sdk/model@1.22.2':
+    resolution: {integrity: sha512-mGfKpBHLxzlt3f2VoYB7jFyMeAmQOUVyEt+1zeuWpZGErvyH5apNzS+itTzS/bJFvlJSFuHLbUKRsxWrfYps2Q==}
+
   '@platforma-sdk/tengo-builder@1.17.5':
     resolution: {integrity: sha512-9nhNUIZFvPPoX6K4+d26pV9UicKafCG2vSH2nizDgoYt0GNL9FfYUPt52L+i/hHEY4ezHjOBGoZQa9tWLwqN9g==}
     hasBin: true
@@ -1212,11 +1215,11 @@ packages:
   '@platforma-sdk/test@1.21.20':
     resolution: {integrity: sha512-GTJ4ut37nJc1kYIavxYBFCl32vy7vGanBUsuJe+2H8aV/HUi8XqKO8BWik769rOvQvuJbcQhq+eEYxESbmvvkw==}
 
-  '@platforma-sdk/ui-vue@1.21.21':
-    resolution: {integrity: sha512-+pcq9PRiA+XzEK9yZmc8OJA/yZIT2g3KZpb/FyTxXoPhSZL3VcAGGOrUsgfP3qfJIjDGu1k6g1iqCqjawSEXmQ==}
-
   '@platforma-sdk/ui-vue@1.21.30':
     resolution: {integrity: sha512-pB+jEGi0EUjMDyR5qD4zvPvzaVyWwtOqSe+LyNm9ZrSEZQ2cmj+6OQVysPaLf6XeU+3eRDSPJGOYxVzIO2VumQ==}
+
+  '@platforma-sdk/ui-vue@1.22.2':
+    resolution: {integrity: sha512-4tRn+/iz15k1QcrVX1sahFwHBr9KxyhD8Hvo69dSgCLMCvsqXmzoOr99kMZdVcmkwG0CndLQLxi5G4TtaXFHUw==}
 
   '@platforma-sdk/workflow-tengo@2.9.6':
     resolution: {integrity: sha512-8PjlA6zr/7f96i1c9WvkDif2IAvIJtVe40IPzhAQRJNBSBF8VTKUKel6noB1yK/qspS8ikLziFJGOG9FpFVz5Q==}
@@ -3121,14 +3124,14 @@ packages:
   abbrev@1.1.1:
     resolution: {integrity: sha512-nne9/IiQ/hzIhY6pdDnbBtz7DjPTKrY00P/zvPSm5pOFkl6xuGrGnXn/VtTNNfNtAfZ9/1RtehkszU9qcTii0Q==}
 
-  ag-charts-community@11.0.3:
-    resolution: {integrity: sha512-S3+gGxJSCSqMyyM8x2US1XBpS++UXLqcMu/Ne/PPXK0uyY7Ca4c6cjEj+ne+p0MTzSdgL0NaeGKxnzEyRpma1A==}
+  ag-charts-community@11.0.4:
+    resolution: {integrity: sha512-TFShWfZaA1yJ/hb3jwtNAqBG2Qy9VvoQ9mWLr29ilT6+2R2e30RSk2oH7FAQ2l5nS1367dRf137Td9tUTTuVLg==}
 
-  ag-charts-enterprise@11.0.3:
-    resolution: {integrity: sha512-wr4VZg6nWroNNiEcJLvmaP5V6Pi9Qb2cYrDvHrVNzQCD5pXeqfL0kDWBtulFvSn/ZygMT4Tt8oZtdQPbC3emtw==}
+  ag-charts-enterprise@11.0.4:
+    resolution: {integrity: sha512-3jKKbzei4hzSSbPih0EFyIBJ/VvLDZAi+5QsbzxRHfsjfAuqQFYCNXx55FqOzOGg1KSa8sAwmpmTSGdLPxBfDw==}
 
-  ag-charts-locale@11.0.3:
-    resolution: {integrity: sha512-DaHGu22bOrS+2WngwlAGwru7gQECMm9rkulGS0CxveNMwXkw42of6R81zcHZYWYRNuxqg00XKuWfa7nzakoO/w==}
+  ag-charts-locale@11.0.4:
+    resolution: {integrity: sha512-xCQA8CtcUyqU4qYg7u9oUQ+SghIsWAQvY60Bu0ghJJ/bDeW8+ptEU0ogBapuDqfb9B9kqWKgASxbX6diqb+HVQ==}
 
   ag-charts-types@10.3.3:
     resolution: {integrity: sha512-8rmyquaTkwfP4Lzei/W/cbkq9wwEl8+grIo3z97mtxrMIXh9sHJK1oJipd/u08MmBZrca5Jjtn5F1+UNPu/4fQ==}
@@ -3136,14 +3139,25 @@ packages:
   ag-charts-types@11.0.3:
     resolution: {integrity: sha512-q7O2viQXPyO014QVH7KjFCUmQ/NvMBx9ReZtramQ44u+/aAa0ttLi/coK+V0Hse4/MG1eB/2XhgymdooQ0Kalg==}
 
+  ag-charts-types@11.0.4:
+    resolution: {integrity: sha512-K/Mi7FXvSCoABLSrqQ70k1QrIL5R6RNCt2NAppOxMEir+DVFPqKZtghruobc2MGVUUKkT9MCn6Dun+fL6yZjfA==}
+
   ag-grid-community@33.0.3:
     resolution: {integrity: sha512-HZeVmVieZ5Gm9j09Itecqm+OIX8X6cU4TJToUbsXv3DxdO9SK5/s8aAJAwBHtNRXOhHrhqQYwrY2yc3OtzWwcQ==}
 
-  ag-grid-enterprise@33.0.3:
-    resolution: {integrity: sha512-Xdp89+s6vqiAOL3C07XRWKOb5EBeTe1SC21sH4bAtt3cfDvoZatUVZutBN6k/kdKJIE72G7TABjriUyvxwUuMA==}
+  ag-grid-community@33.0.4:
+    resolution: {integrity: sha512-iBD8g8bNIl95w9CzCQpDid+eTdmOoT39204sPUOhE9eE50vfoDHIaF5U4fRYQHbLsT4bwbXfQYdsqBAOLJL24w==}
+
+  ag-grid-enterprise@33.0.4:
+    resolution: {integrity: sha512-Ig4mBWanf2NAJWF1DDiRJAMwbxaxqhIf4rvr/ub5iFksHyvtk5GNrDHsT5PGGZX7xMjOqZoyFYBNJtK0OfUFWQ==}
 
   ag-grid-vue3@33.0.3:
     resolution: {integrity: sha512-YHqgsUS3/EQO1F69uX+TIYoUfzyO4spMqy2HBsTd3gZcdzF6wZFOLiFKsV/MZ6R8EH2RcuAKD+IZGoaZSOfGrg==}
+    peerDependencies:
+      vue: ^3.5.0
+
+  ag-grid-vue3@33.0.4:
+    resolution: {integrity: sha512-aqAd+xGMbi/nnWGhaclKBjHa1NbIpIqVdAUE+hHyGHGD2a6KK3zftPL2TokrBkWCEhKbseHz1blVNT1q67O3nQ==}
     peerDependencies:
       vue: ^3.5.0
 
@@ -6086,6 +6100,10 @@ snapshots:
     dependencies:
       zod: 3.23.8
 
+  '@milaboratories/pl-model-common@1.10.4':
+    dependencies:
+      zod: 3.23.8
+
   '@milaboratories/pl-model-middle-layer@1.6.10':
     dependencies:
       '@milaboratories/pl-model-common': 1.10.3
@@ -6125,12 +6143,6 @@ snapshots:
   '@milaboratories/ts-helpers@1.1.3':
     dependencies:
       denque: 2.1.0
-
-  '@milaboratories/uikit@2.2.45(typescript@5.6.3)':
-    dependencies:
-      vue: 3.5.13(typescript@5.6.3)
-    transitivePeerDependencies:
-      - typescript
 
   '@milaboratories/uikit@2.2.50(typescript@5.6.3)':
     dependencies:
@@ -6247,6 +6259,12 @@ snapshots:
       utility-types: 3.11.0
       zod: 3.23.8
 
+  '@platforma-sdk/model@1.22.2':
+    dependencies:
+      '@milaboratories/pl-model-common': 1.10.4
+      utility-types: 3.11.0
+      zod: 3.23.8
+
   '@platforma-sdk/tengo-builder@1.17.5':
     dependencies:
       '@milaboratories/pl-model-backend': 1.0.1
@@ -6285,24 +6303,24 @@ snapshots:
       - supports-color
       - terser
 
-  '@platforma-sdk/ui-vue@1.21.21(typescript@5.6.3)':
+  '@platforma-sdk/ui-vue@1.21.30(typescript@5.6.3)':
     dependencies:
-      '@milaboratories/uikit': 2.2.45(typescript@5.6.3)
+      '@milaboratories/uikit': 2.2.50(typescript@5.6.3)
       '@platforma-sdk/model': 1.21.20
-      ag-grid-enterprise: 33.0.3
-      ag-grid-vue3: 33.0.3(vue@3.5.13(typescript@5.6.3))
+      ag-grid-enterprise: 33.0.4
+      ag-grid-vue3: 33.0.4(vue@3.5.13(typescript@5.6.3))
       canonicalize: 2.0.0
       lru-cache: 11.0.2
       vue: 3.5.13(typescript@5.6.3)
     transitivePeerDependencies:
       - typescript
 
-  '@platforma-sdk/ui-vue@1.21.30(typescript@5.6.3)':
+  '@platforma-sdk/ui-vue@1.22.2(typescript@5.6.3)':
     dependencies:
       '@milaboratories/uikit': 2.2.50(typescript@5.6.3)
-      '@platforma-sdk/model': 1.21.20
-      ag-grid-enterprise: 33.0.3
-      ag-grid-vue3: 33.0.3(vue@3.5.13(typescript@5.6.3))
+      '@platforma-sdk/model': 1.22.2
+      ag-grid-enterprise: 33.0.4
+      ag-grid-vue3: 33.0.4(vue@3.5.13(typescript@5.6.3))
       canonicalize: 2.0.0
       lru-cache: 11.0.2
       vue: 3.5.13(typescript@5.6.3)
@@ -9028,38 +9046,49 @@ snapshots:
 
   abbrev@1.1.1: {}
 
-  ag-charts-community@11.0.3:
+  ag-charts-community@11.0.4:
     dependencies:
-      ag-charts-locale: 11.0.3
-      ag-charts-types: 11.0.3
+      ag-charts-locale: 11.0.4
+      ag-charts-types: 11.0.4
     optional: true
 
-  ag-charts-enterprise@11.0.3:
+  ag-charts-enterprise@11.0.4:
     dependencies:
-      ag-charts-community: 11.0.3
+      ag-charts-community: 11.0.4
     optional: true
 
-  ag-charts-locale@11.0.3:
+  ag-charts-locale@11.0.4:
     optional: true
 
   ag-charts-types@10.3.3: {}
 
   ag-charts-types@11.0.3: {}
 
+  ag-charts-types@11.0.4: {}
+
   ag-grid-community@33.0.3:
     dependencies:
       ag-charts-types: 11.0.3
 
-  ag-grid-enterprise@33.0.3:
+  ag-grid-community@33.0.4:
     dependencies:
-      ag-grid-community: 33.0.3
+      ag-charts-types: 11.0.4
+
+  ag-grid-enterprise@33.0.4:
+    dependencies:
+      ag-grid-community: 33.0.4
     optionalDependencies:
-      ag-charts-community: 11.0.3
-      ag-charts-enterprise: 11.0.3
+      ag-charts-community: 11.0.4
+      ag-charts-enterprise: 11.0.4
 
   ag-grid-vue3@33.0.3(vue@3.5.13(typescript@5.6.3)):
     dependencies:
       ag-grid-community: 33.0.3
+      vue: 3.5.13(typescript@5.6.3)
+
+  ag-grid-vue3@33.0.4(vue@3.5.13(typescript@5.6.3)):
+    dependencies:
+      ag-grid-community: 33.0.4
       vue: 3.5.13(typescript@5.6.3)
 
   agent-base@6.0.2:
