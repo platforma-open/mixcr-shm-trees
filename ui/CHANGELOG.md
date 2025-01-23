@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.8
+
+### Patch Changes
+
+- 1b3c9e9: Custom message for empty table
+
 ## 3.4.7
 
 ### Patch Changes
