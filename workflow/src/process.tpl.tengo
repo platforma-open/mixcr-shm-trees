@@ -32,6 +32,7 @@ self.body(func(inputs) {
 		hasCellTags: false,
 		// will be filled
 		coveredFeatures: [],
+		assemblingFeature: undefined,
 		cellsAssembled: false
 	}
 
@@ -65,8 +66,8 @@ self.body(func(inputs) {
 		}
 	}
 
-	// adding assembling feature to the list of covered features
-	dataDescription.coveredFeatures = append(dataDescription.coveredFeatures, assemblingFeature)
+	// adding assembling feature
+	dataDescription.assemblingFeature = assemblingFeature
 
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)

@@ -16,11 +16,14 @@ self.defineOutputs(
     "allelesReportJson", "treesReportJson"
 )
 
+//// import function for aggregating by-nodes output to make it uniquely addressable by it's native key
+tablesAggregation := import(":tablesAggregation")
+
 // import MiXCR as a software to use
 mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
 
 // used to postprocess some tables
-paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-paggregate:main")
+paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
 
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
@@ -148,7 +151,7 @@ self.body(func(inputs) {
 
     shmTrees := shmTreesCmdBuilder.run()
     outputShmt := shmTrees.getFile("output.shmt")
-
+    
     // export trees without nodes
     shmTreeExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -170,6 +173,7 @@ self.body(func(inputs) {
     shmTreeExports := shmTreeExportsCmdBuilder.run()
     shmTreeTsv := shmTreeExports.getFile("output.tsv")
 
+    //shmTreeTsv := ensureUniqueness(shmTreeTsvRaw, inputs.shmTreeTableOptions.pfconvParams, "max_by", "totalReadsCountInTree")
 
     // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
@@ -192,42 +196,7 @@ self.body(func(inputs) {
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
     shmTreeNodesTsvRaw := shmTreeNodesExports.getFile("output.tsv")
 
-    // aggregating by-nodes output to make it uniquely addressable by it's native key
-
-    ensureUniqueness := func(inputTsv, pfConvParams) {
-        aggregations := []
-        for col in pfConvParams.columns {
-            aggregations = append(aggregations, {
-                type: "first",
-                src: col.column,
-                dst: col.column
-            })
-        }
-
-        keyColumns := []
-        for axis in pfConvParams.axes {
-            keyColumns = append(keyColumns, axis.column)
-        }
-
-        aggregationWorkflow := { steps: [ {
-                type: "aggregate",
-                groupBy: keyColumns,
-                aggregations: aggregations
-            } ] }
-
-        aggregateCmd := exec.builder().
-            printErrStreamToStdout().
-            software(paggregateSw).
-            arg("--workflow").arg("wf.json").
-            writeFile("wf.json", json.encode(aggregationWorkflow)).
-            arg("input.tsv").addFile("input.tsv", inputTsv).
-            arg("output.tsv").saveFile("output.tsv").
-            run()
-
-        return aggregateCmd.getFile("output.tsv")
-    }
-
-	shmTreeNodesTsv := ensureUniqueness(shmTreeNodesTsvRaw, inputs.shmTreeNodesTableOptions.pfconvParams)
+	shmTreeNodesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesTsvRaw, inputs.shmTreeNodesTableOptions.pfconvParams, "first")
 
     // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
@@ -253,7 +222,7 @@ self.body(func(inputs) {
     shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
     shmTreeNodesWithClonesTsvRaw := shmTreeNodesWithClonesExports.getFile("output.tsv")
 
-    shmTreeNodesWithClonesTsv := ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams)
+    shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams, "max_by", "readCount")
 
     return {
         trees: shmTreeTsv,

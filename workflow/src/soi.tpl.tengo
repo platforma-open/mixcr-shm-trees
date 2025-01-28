@@ -12,7 +12,7 @@ self.defineOutputs("nodesResult", "treesResult")
 
 // import MiXCR as a software to use
 mitoolSw := assets.importSoftware("@platforma-open/milaboratories.software-mitool:main")
-paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-paggregate:main")
+paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
 
 inferPartitionKeyLength := func(data) {
 	rType := data.info().Type.Name
