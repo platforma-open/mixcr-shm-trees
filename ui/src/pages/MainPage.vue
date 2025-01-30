@@ -99,7 +99,8 @@ const gridOptions: GridOptions<TreeResult> = {
 
     <div :style="{ flex: 1 }">
       <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :defaultColDef="defaultColDef"
-        :columnDefs="columnDefs" :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true }"
+        :columnDefs="columnDefs" :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true, message: `Configure the settings and click
+    'Run' to see the data` }"
         :loadingOverlayComponent=PlAgOverlayLoading :noRowsOverlayComponent=PlAgOverlayNoRows />
     </div>
 

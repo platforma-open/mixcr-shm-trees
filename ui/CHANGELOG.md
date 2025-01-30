@@ -1,5 +1,35 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.8
+
+### Patch Changes
+
+- 1b3c9e9: Custom message for empty table
+
+## 3.4.7
+
+### Patch Changes
+
+- 2f7c712: Packages were updated up to versions: '@platforma-sdk/ui-vue': ^1.22.2 and 'ag-grid-enterprise': &ag-grid ^33.0.4
+
+## 3.4.6
+
+### Patch Changes
+
+- e358841: update graph-maker version
+
+## 3.4.5
+
+### Patch Changes
+
+- 88c8769: Improved automatic alphabet detection in sequence search import
+
+## 3.4.4
+
+### Patch Changes
+
+- 69e5f73: add graph delete confirmation
+
 ## 3.4.3
 
 ### Patch Changes

@@ -1,5 +1,41 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.1.9
+
+### Patch Changes
+
+- Updated dependencies [1b3c9e9]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.8
+
+## 3.1.8
+
+### Patch Changes
+
+- 2f7c712: Packages were updated up to versions: '@platforma-sdk/ui-vue': ^1.22.2 and 'ag-grid-enterprise': &ag-grid ^33.0.4
+- Updated dependencies [2f7c712]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.7
+
+## 3.1.7
+
+### Patch Changes
+
+- Updated dependencies [e358841]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.6
+
+## 3.1.6
+
+### Patch Changes
+
+- Updated dependencies [88c8769]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.5
+
+## 3.1.5
+
+### Patch Changes
+
+- Updated dependencies [69e5f73]
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.4.4
+
 ## 3.1.4
 
 ### Patch Changes

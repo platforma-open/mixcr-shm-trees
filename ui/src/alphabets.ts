@@ -1,23 +1,29 @@
 import { Alphabet } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 
 export type SequenceValidationResult = {
+  readonly alphabetHelper: AlphabetHelper;
   length: number;
   wildcards: number;
   unknownSymbols: number;
+  score: number;
 };
 
-function initialValidationStats(): SequenceValidationResult {
-  return { length: 0, unknownSymbols: 0, wildcards: 0 };
+function initialValidationStats(alphabetHelper: AlphabetHelper): SequenceValidationResult {
+  return { alphabetHelper, length: 0, unknownSymbols: 0, wildcards: 0, score: 0 };
 }
 
 export class AlphabetHelper {
   /** true for main symbols, false for wildcards */
   public readonly symbols: Map<string, boolean>;
+
   constructor(
     public readonly type: Alphabet,
     public readonly humanReadableName: string,
     mainSymbols: string,
-    wildcards: string
+    wildcards: string,
+    private readonly lengthReward: number,
+    private readonly wildcardPenalty: number,
+    private readonly unknownPenalty: number
   ) {
     this.symbols = new Map();
     for (let i = 0; i < mainSymbols.length; ++i)
@@ -28,16 +34,24 @@ export class AlphabetHelper {
 
   validate(
     sequence: string,
-    initialValue: SequenceValidationResult = initialValidationStats()
+    initialValue: SequenceValidationResult = initialValidationStats(this)
   ): SequenceValidationResult {
-    let { length, wildcards, unknownSymbols } = initialValue;
+    if (initialValue.alphabetHelper !== this)
+      throw new Error('Initial value from different alphabet helper.');
+    let { length, wildcards, unknownSymbols, score } = initialValue;
     length += sequence.length;
+    score += this.lengthReward * sequence.length;
     for (let i = 0; i < sequence.length; ++i) {
       const cv = this.symbols.get(sequence.charAt(i).toLocaleLowerCase());
-      if (cv === false) wildcards++;
-      else if (cv === undefined) unknownSymbols++;
+      if (cv === false) {
+        wildcards++;
+        score += this.wildcardPenalty;
+      } else if (cv === undefined) {
+        unknownSymbols++;
+        score += this.unknownPenalty;
+      }
     }
-    return { length, wildcards, unknownSymbols };
+    return { alphabetHelper: this, length, wildcards, unknownSymbols, score };
   }
 }
 
@@ -45,39 +59,38 @@ const NucleotideAlphabetHelper = new AlphabetHelper(
   'nucleotide',
   'Nucleotide',
   'ACGT',
-  'RYSWKMBDHVN'
+  'RYSWKMBDHVN',
+  10, -20, -200
 );
 const AminoAcidAlphabetHelper = new AlphabetHelper(
   'amino-acid',
   'Amino Acid',
   'ACDEFGHIKLMNPQRSTVWY',
-  'X'
+  'X',
+  1, -2, -20
 );
 
 const AllAlphabetHelpers = [NucleotideAlphabetHelper, AminoAcidAlphabetHelper];
 
 export function detectAlphabet(sequences: string[]): AlphabetHelper | undefined {
-  let validationStats = AllAlphabetHelpers.map((_) => initialValidationStats());
+  let validationStats = AllAlphabetHelpers.map((h) => initialValidationStats(h));
   for (let ai = 0; ai < AllAlphabetHelpers.length; ++ai)
     for (const s of sequences)
       validationStats[ai] = AllAlphabetHelpers[ai].validate(s, validationStats[ai]);
   let bestAIdx = 0;
-  for (let ai = 1; ai < AllAlphabetHelpers.length; ++ai)
-    if (
-      validationStats[bestAIdx].unknownSymbols + validationStats[bestAIdx].wildcards >
-      validationStats[ai].unknownSymbols + validationStats[ai].wildcards
-    )
+  let bestScore = validationStats[bestAIdx].score;
+  for (let ai = 1; ai < AllAlphabetHelpers.length; ++ai) {
+    const currentScore = validationStats[ai].score;
+    if (bestScore < currentScore) {
       bestAIdx = ai;
-  const bestStats = validationStats[bestAIdx];
-  if (
-    bestStats.length === 0 ||
-    bestStats.unknownSymbols > bestStats.length * 0.05 ||
-    bestStats.wildcards > bestStats.length * 0.15
-  )
-    return undefined;
+      bestScore = currentScore;
+    }
+  }
+  if (bestScore <= 0) return undefined;
   return AllAlphabetHelpers[bestAIdx];
 }
 
+// noinspection JSUnusedLocalSymbols
 const GC_Bases = [
   'TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG',
   'TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG',

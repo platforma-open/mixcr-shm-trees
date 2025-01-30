@@ -3,9 +3,9 @@ import { GraphMaker, PredefinedGraphOption } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
 import { FullNodeId, FullTreeId, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { AxisSpec, getRawPlatformaInstance, pValueToStringOrNumber, PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
-import { PlBtnGhost, PlDropdown } from '@platforma-sdk/ui-vue';
+import { PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown } from '@platforma-sdk/ui-vue';
 import { computedAsync } from '@vueuse/core';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useApp } from '../app';
 
 const emit = defineEmits<{
@@ -187,6 +187,7 @@ const subtreeOptions = computedAsync(async () => {
   return Array.from(options.values());
 })
 
+const removeConfirmationWindowOpen = ref(false);
 const removeSection = async () => {
   await app.updateUiState(ui => {
     ui.dendrograms = ui.dendrograms.filter(it => it.id !== app.queryParams.id);
@@ -215,7 +216,7 @@ const goToNode = (a: any) => {
 <template>
   <div v-if="dendro" class="container_graph_page">
     <GraphMaker chart-type='dendro' v-model="dendro.state" :p-frame="app.model.outputs.treeNodesPFrame"
-      @delete-this-graph="removeSection" @tooltip-btn-click="goToNode" :fixed-options="fixedOptions"
+      @delete-this-graph="removeConfirmationWindowOpen = true" @tooltip-btn-click="goToNode" :fixed-options="fixedOptions"
       tooltip-button="Show in Table" :default-options="defaultOptions">
       <template #titleLineSlot>
         <PlDropdown v-if="subtreeAxis" v-model="dendro.subtreeId" :options="subtreeOptions"
@@ -225,6 +226,13 @@ const goToNode = (a: any) => {
     </GraphMaker>
   </div>
   <div v-else>Loading</div>
+  <PlDialogModal v-model="removeConfirmationWindowOpen">
+    <template #title>Confirm delete graph</template>
+    <template #actions>
+      <PlBtnPrimary @click="() => removeSection()">Delete</PlBtnPrimary>
+      <PlBtnSecondary @click="() => removeConfirmationWindowOpen = false">Cancel</PlBtnSecondary>
+    </template>
+  </PlDialogModal>
 </template>
 
 <style lang="css">
