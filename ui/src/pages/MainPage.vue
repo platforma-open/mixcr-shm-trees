@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { ColDef, GridOptions } from 'ag-grid-enterprise';
+import { type ColDef, type GridOptions } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
 import { AgGridTheme, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
-import { reactive, } from 'vue';
+import { reactive, watch, ref } from 'vue';
 import { useApp } from '../app';
 import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
@@ -69,10 +69,6 @@ const columnDefs: ColDef<TreeResult>[] = [
   }
 ];
 
-// watch(result, rd => {
-//     console.dir(rd, { depth: 5 })
-// }, { immediate: true })
-
 const gridOptions: GridOptions<TreeResult> = {
   getRowId: (row) => String(row.data.donor),
   onRowDoubleClicked: (e) => {
@@ -84,6 +80,10 @@ const gridOptions: GridOptions<TreeResult> = {
   }
 };
 
+const reloadKey = ref(0);
+watch(() => model.outputs.calculating, () => {
+  ++reloadKey.value;
+}, { immediate: true });
 </script>
 
 <template>
@@ -98,10 +98,19 @@ const gridOptions: GridOptions<TreeResult> = {
     </template>
 
     <div :style="{ flex: 1 }">
-      <AgGridVue :theme="AgGridTheme" :style="{ height: '100%' }" :rowData="result" :defaultColDef="defaultColDef"
-        :columnDefs="columnDefs" :grid-options="gridOptions" :loadingOverlayComponentParams="{ notReady: true, message: `Configure the settings and click
-    'Run' to see the data` }"
-        :loadingOverlayComponent=PlAgOverlayLoading :noRowsOverlayComponent=PlAgOverlayNoRows />
+      <AgGridVue 
+        :theme="AgGridTheme" 
+        :style="{ height: '100%' }" 
+        :rowData="result" 
+        :defaultColDef="defaultColDef"
+        :columnDefs="columnDefs" 
+        :grid-options="gridOptions" 
+        :loadingOverlayComponentParams="{ notReady: !model.outputs.calculating, message: `Configure the settings and click
+      'Run' to see the data` }"
+        :loadingOverlayComponent=PlAgOverlayLoading 
+        :noRowsOverlayComponent=PlAgOverlayNoRows 
+        :key="reloadKey"
+      />
     </div>
 
     <PlSlideModal v-model="data.settingsOpen">
