@@ -24,9 +24,9 @@ catalogs:
     '@platforma-open/milaboratories.software-mixcr':
       specifier: 4.7.0-139-develop
       version: 4.7.0-139-develop
-    '@platforma-open/milaboratories.software-paggregate':
-      specifier: ^1.0.1
-      version: 1.0.1
+    '@platforma-open/milaboratories.software-ptransform':
+      specifier: ^1.1.0
+      version: 1.1.0
     '@platforma-open/milaboratories.software-small-binaries':
       specifier: ^1.15.6
       version: 1.15.6
@@ -231,9 +231,9 @@ importers:
       '@platforma-open/milaboratories.software-mixcr':
         specifier: 'catalog:'
         version: 4.7.0-139-develop
-      '@platforma-open/milaboratories.software-paggregate':
+      '@platforma-open/milaboratories.software-ptransform':
         specifier: 'catalog:'
-        version: 1.0.1
+        version: 1.1.0
       '@platforma-open/milaboratories.software-small-binaries':
         specifier: 'catalog:'
         version: 1.15.6
@@ -1150,8 +1150,8 @@ packages:
   '@platforma-open/milaboratories.software-mixcr@4.7.0-139-develop':
     resolution: {integrity: sha512-vEdukd81P2jQYMGfnRBqkZt/dECcVm9MjRSdxVNluo/R1o/GTGRvlodeRonFvF6OEs004iUF2GwPoa6j1lHvhw==}
 
-  '@platforma-open/milaboratories.software-paggregate@1.0.1':
-    resolution: {integrity: sha512-Y0zdivjFqcm4id9/h13Ha1xdK963gHbTilhcEhLe//frNIWpiF+zGHn4rz3fzSFnsPaJVlgsHSzL24yG4EL8dg==}
+  '@platforma-open/milaboratories.software-ptransform@1.1.0':
+    resolution: {integrity: sha512-iX4guha/vuxP5VCo9CTeDTDih7P94cEgF2stwgGJlMWsijNyu/fq6IjWW29KLvjUKqVP1Wbd0U9NJhNmJkMBvw==}
 
   '@platforma-open/milaboratories.software-small-binaries.guided-command@1.0.4':
     resolution: {integrity: sha512-LD8XQDnR+L9oRD7JXE0VWGmv1/0cm+J71flrwBUWeIbuaenPC8Nsza8oy7JjLJ8AX+bm8XAyyJALuqBBqkL95Q==}
@@ -6154,7 +6154,7 @@ snapshots:
 
   '@platforma-open/milaboratories.software-mixcr@4.7.0-139-develop': {}
 
-  '@platforma-open/milaboratories.software-paggregate@1.0.1': {}
+  '@platforma-open/milaboratories.software-ptransform@1.1.0': {}
 
   '@platforma-open/milaboratories.software-small-binaries.guided-command@1.0.4': {}
 

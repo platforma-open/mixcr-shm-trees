@@ -16,6 +16,7 @@ import {
   RenderCtx,
   TreeNodeAccessor,
   createPlDataTable,
+  createPFrameForGraphs,
   deriveLabels,
   getAxisId,
   isPColumnSpec,
@@ -116,11 +117,14 @@ function treeNodesColumns(
   const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
   if (treeNodesWithClonesColumns === undefined) return undefined;
 
+  const treeNodesUniqueIsotypeColumns = ctx.outputs?.resolve('treeNodesUniqueIsotype')?.getPColumns();
+  if (treeNodesUniqueIsotypeColumns === undefined) return undefined;
+
   const soiResultColumns = (
     ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
   ).flatMap((a) => a);
 
-  const targetColumns = [...soiResultColumns, ...treeNodesColumns, ...treeNodesWithClonesColumns];
+  const targetColumns = [...soiResultColumns, ...treeNodesColumns, ...treeNodesWithClonesColumns, ...treeNodesUniqueIsotypeColumns];
 
   return targetColumns;
 }
@@ -287,7 +291,13 @@ export const model = BlockModel.create()
   .output('treeNodesPFrame', (ctx) => {
     const cols = treeNodesColumns(ctx);
     if (cols === undefined) return undefined;
-    return ctx.createPFrame(cols);
+    return createPFrameForGraphs(ctx, cols);
+  })
+
+  .output('treeNodesUniqueIsotypePFrame', (ctx) => {
+    const cols = treeNodesColumns(ctx);
+    if (cols === undefined) return undefined;
+    return createPFrameForGraphs(ctx, cols);
   })
 
   .output('treeNodesPerTree', (ctx) => {

@@ -17,6 +17,7 @@ shmTreeTableOptions := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
+    assemblingFeature := dataDescription.assemblingFeature
 
     cmdArgs = append(cmdArgs, "-treeId")
     axes = append(axes, {
@@ -26,7 +27,9 @@ shmTreeTableOptions := func(dataDescription) {
             type: "Long",
             domain: { },
             annotations: {
-                "pl7.app/label": "Tree id"
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
             }
         }
     })
@@ -40,7 +43,9 @@ shmTreeTableOptions := func(dataDescription) {
                 type: "Long",
                 domain: { },
                 annotations: {
-                    "pl7.app/label": "Subtree id"
+                    "pl7.app/label": "Chain id",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "90000"
                 }
             }
         })
@@ -56,7 +61,9 @@ shmTreeTableOptions := func(dataDescription) {
                 name: "pl7.app/vdj/uniqueCellCount",
                 valueType: "Long",
                 annotations: {
-                    "pl7.app/label": "Number of cells"
+                    "pl7.app/label": "Number of cells",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "70000"
                 }
             }
         })
@@ -72,7 +79,9 @@ shmTreeTableOptions := func(dataDescription) {
                 name: "pl7.app/vdj/uniqueMoleculeCount",
                 valueType: "Long",
                 annotations: {
-                    "pl7.app/label": "Number of molecules"
+                    "pl7.app/label": "Number of molecules",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "60000"
                 }
             }
         })
@@ -87,7 +96,9 @@ shmTreeTableOptions := func(dataDescription) {
             name: "pl7.app/vdj/numberOfClonesInTree",
             valueType: "Long",
             annotations: {
-                "pl7.app/label": "Number of clones"
+                "pl7.app/label": "Number of clones",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "80000"
             }
         }
     })
@@ -101,7 +112,9 @@ shmTreeTableOptions := func(dataDescription) {
             name: "pl7.app/vdj/numberOfNodesWithClones",
             valueType: "Long",
             annotations: {
-                "pl7.app/label": "Number of nodes"
+                "pl7.app/label": "Number of nodes",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "90000"
             }
         }
     })
@@ -115,7 +128,9 @@ shmTreeTableOptions := func(dataDescription) {
             name: "pl7.app/vdj/totalReadsCountInTree",
             valueType: "Long",
             annotations: {
-                "pl7.app/label": "Total reads count"
+                "pl7.app/label": "Total reads count",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "50000"
             }
         }
     })
@@ -133,7 +148,9 @@ shmTreeTableOptions := func(dataDescription) {
             },
             annotations: {
                 type: "V gene name",
-                "pl7.app/label": "V gene"
+                "pl7.app/label": "V gene",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "30000"
             }
         }
     })
@@ -151,7 +168,9 @@ shmTreeTableOptions := func(dataDescription) {
             },
             annotations: {
                 type: "J gene name",
-                "pl7.app/label": "J gene"
+                "pl7.app/label": "J gene",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "29000"
             }
         }
     })
@@ -165,12 +184,42 @@ shmTreeTableOptions := func(dataDescription) {
             valueType: "String",
             name: "pl7.app/vdj/chain",
             annotations: {
-                "pl7.app/label": "Chain"
+                "pl7.app/label": "Chain",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "40000"
             }
         }
     })
-
+    orderPriority := 20000
+    visibility := undefined
     for feature in dataDescription.coveredFeatures {
+        cmdArgs = append(cmdArgs, "-nFeature", feature, "mrca")
+        if feature == "CDR3" {
+            visibility = "default"
+        } else {
+            visibility = "optional"
+        }
+        columns = append(columns, {
+            column: "nSeq" + feature + "OfMrca",
+            id: "n-seq-" + feature + "-mrca",
+            allowNA: allowNA,
+            spec: {
+                name: "pl7.app/vdj/sequence",
+                valueType: "String",
+                domain: {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "nucleotide"
+                },
+                annotations: {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " of MRCA nt",
+                    "pl7.app/table/visibility": visibility,
+                    "pl7.app/table/orderPriority": string(orderPriority)
+                }
+            }
+        })
+        orderPriority -= 100
+
         cmdArgs = append(cmdArgs, "-aaFeature", feature, "mrca")
         columns = append(columns, {
             column: "aaSeq" + feature + "OfMrca",
@@ -185,30 +234,56 @@ shmTreeTableOptions := func(dataDescription) {
                 },
                 annotations: {
                     "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " of MRCA aa"
+                    "pl7.app/label": feature + " of MRCA aa",
+                    "pl7.app/table/visibility": visibility,
+                    "pl7.app/table/orderPriority": string(orderPriority)
                 }
             }
         })
-
-        cmdArgs = append(cmdArgs, "-nFeature", feature, "mrca")
-        columns = append(columns, {
-            column: "nSeq" + feature + "OfMrca",
-            id: "n-seq-" + feature + "-mrca",
-            allowNA: allowNA,
-            spec: {
-                name: "pl7.app/vdj/sequence",
-                valueType: "String",
-                domain: {
-                    "pl7.app/vdj/feature": feature,
-                    "pl7.app/alphabet": "nucleotide"
-                },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " of MRCA nt"
-                }
-            }
-        })
+        orderPriority -= 100
     }
+
+    cmdArgs = append(cmdArgs, "-nFeature", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "nSeq" + assemblingFeature + "OfMrca",
+        id: "n-seq-" + assemblingFeature + "-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/sequence",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/feature": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/type": "sequence",
+                "pl7.app/label": assemblingFeature + " of MRCA nt",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "10000"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaFeature", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "aaSeq" + assemblingFeature + "OfMrca",
+        id: "aa-seq-" + assemblingFeature + "-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/sequence",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/feature": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/type": "sequence",
+                "pl7.app/label": assemblingFeature + " of MRCA aa",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "9000"
+            }
+        }
+    })
 
 	return {
         pfconvParams: {
@@ -226,6 +301,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
+    assemblingFeature := dataDescription.assemblingFeature
 
     cmdArgs = append(cmdArgs, "-treeId")
     axes = append(axes, {
@@ -235,7 +311,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             type: "Long",
             domain: { },
             annotations: {
-                "pl7.app/label": "Tree id"
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
             }
         }
     })
@@ -249,7 +327,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 type: "Long",
                 domain: { },
                 annotations: {
-                    "pl7.app/label": "Subtree id"
+                    "pl7.app/label": "Chain id",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "90000"
                 }
             }
         })
@@ -263,7 +343,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             type: "Long",
             domain: { },
             annotations: {
-                "pl7.app/label": "Node id"
+                "pl7.app/label": "Node id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "80000"
             }
         }
     })
@@ -278,7 +360,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             // TODO change to Boolean when it will be supported
             valueType: "String",
             annotations: {
-                "pl7.app/label": "Is observed in data"
+                "pl7.app/label": "Is observed in data",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "85000"
             }
         }
     })
@@ -293,7 +377,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             valueType: "Long",
             annotations: {
                 "pl7.app/label": "Parent node id",
-                "pl7.app/dendrogram/isTopology": "true"
+                "pl7.app/dendrogram/isTopology": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "10000"
             }
         }
     })
@@ -312,7 +398,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             annotations: {
                 "pl7.app/label": "Distanse from germline",
                 "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true"
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "9000"
             }
         }
     })
@@ -331,7 +419,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             annotations: {
                 "pl7.app/label": "Distanse from parent",
                 "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true"
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8900"
             }
         }
     })
@@ -349,7 +439,221 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/alphabet": "nucleotide"
             },
             annotations: {
-                "pl7.app/label": "Mutations rate nt"
+                "pl7.app/label": "Mutations rate nt",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8800"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaMutationsRate")
+    columns = append(columns, {
+        column: "aaMutationsRate",
+        id: "aa-mutations-rate",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutationsRate",
+            valueType: "Double",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/label": "Mutations rate aa",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8700"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-vBestIdentityPercent")
+    columns = append(columns, {
+        column: "vBestIdentityPercent",
+        id: "v-best-identity-percent",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/vIdentityPercent",
+            valueType: "Double",
+            annotations: {
+                "pl7.app/label": "V gene identity",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8600"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-jBestIdentityPercent")
+    columns = append(columns, {
+        column: "jBestIdentityPercent",
+        id: "j-best-identity-percent",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/jIdentityPercent",
+            valueType: "Double",
+            annotations: {
+                "pl7.app/label": "J gene identity",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8500"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-nMutations", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "nMutations"+assemblingFeature+"BasedOnMrca",
+        id: "n-mutations-" + assemblingFeature+"-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutations",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" nt mutations based on MRCA",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8400"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaMutations", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "aaMutations"+assemblingFeature+"BasedOnMrca",
+        id: "aa-mutations"+assemblingFeature+"-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutations",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" aa mutations based on MRCA",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8300"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-nMutations", assemblingFeature, "germline")
+    columns = append(columns, {
+        column: "nMutations"+assemblingFeature+"BasedOnGermline",
+        id: "n-mutations-" + assemblingFeature+"-germline",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutations",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" nt mutations based on germline",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8200"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaMutations", assemblingFeature, "germline")
+    columns = append(columns, {
+        column: "aaMutations"+assemblingFeature+"BasedOnGermline",
+        id: "aa-mutations"+assemblingFeature+"-germline",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutations",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" aa mutations based on germline",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8100"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-nMutationsCount", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "nMutationCount"+assemblingFeature+"BasedOnMrca",
+        id: "n-mutation-count-"+assemblingFeature+"-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutationCount",
+            valueType: "Long",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" nt mutations count based on MRCA",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8000"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaMutationsCount", assemblingFeature, "mrca")
+    columns = append(columns, {
+        column: "aaMutationCount"+assemblingFeature+"BasedOnMrca",
+        id: "aa-mutation-count-"+assemblingFeature+"-mrca",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutationCount",
+            valueType: "Long",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" aa mutations count based on MRCA",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "7900"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-nMutationsCount", assemblingFeature, "germline")
+    columns = append(columns, {
+        column: "nMutationCount"+assemblingFeature+"BasedOnGermline",
+        id: "n-mutation-count-"+assemblingFeature+"-germline",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutationCount",
+            valueType: "Long",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" nt mutations count based on germline",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "7800"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaMutationsCount", assemblingFeature, "germline")
+    columns = append(columns, {
+        column: "aaMutationCount"+assemblingFeature+"BasedOnGermline",
+        id: "aa-mutation-count-"+assemblingFeature+"-germline",
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/mutationCount",
+            valueType: "Long",
+            domain: {
+                "pl7.app/vdj/features": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/label": assemblingFeature+" aa mutations count based on germline",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "7700"
             }
         }
     })
@@ -367,7 +671,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
             },
             annotations: {
                 type: "V gene name",
-                "pl7.app/label": "V gene"
+                "pl7.app/label": "V gene",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "49000"
             }
         }
     })
@@ -385,12 +691,42 @@ shmTreeNodesTableOptions := func(dataDescription) {
             },
             annotations: {
                 type: "J gene name",
-                "pl7.app/label": "J gene"
+                "pl7.app/label": "J gene",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "47000"
             }
         }
     })
 
+    orderPriority := 40000
+    visibility := undefined
     for feature in dataDescription.coveredFeatures {
+        cmdArgs = append(cmdArgs, "-nFeature", feature)
+        if feature == "CDR3" {
+            visibility = "default"
+        } else {
+            visibility = "optional"
+        }
+        columns = append(columns, {
+            column: "nSeq" + feature,
+            id: "n-seq-" + feature,
+            allowNA: allowNA,
+            spec: {
+                name: "pl7.app/vdj/sequence",
+                valueType: "String",
+                domain: {
+                    "pl7.app/vdj/feature": feature,
+                    "pl7.app/alphabet": "nucleotide"
+                },
+                annotations: {
+                    "pl7.app/type": "sequence",
+                    "pl7.app/label": feature + " nt",
+                    "pl7.app/table/visibility": visibility,
+                    "pl7.app/table/orderPriority": string(orderPriority)
+                }
+            }
+        })
+        orderPriority -= 100
         cmdArgs = append(cmdArgs, "-aaFeature", feature)
         columns = append(columns, {
             column: "aaSeq" + feature,
@@ -405,30 +741,56 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 },
                 annotations: {
                     "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " aa"
+                    "pl7.app/label": feature + " aa",
+                    "pl7.app/table/visibility": visibility,
+                    "pl7.app/table/orderPriority": string(orderPriority)
                 }
             }
         })
-
-        cmdArgs = append(cmdArgs, "-nFeature", feature)
-        columns = append(columns, {
-            column: "nSeq" + feature,
-            id: "n-seq-" + feature,
-            allowNA: allowNA,
-            spec: {
-                name: "pl7.app/vdj/sequence",
-                valueType: "String",
-                domain: {
-                    "pl7.app/vdj/feature": feature,
-                    "pl7.app/alphabet": "nucleotide"
-                },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " nt"
-                }
-            }
-        })
+        orderPriority -= 100
     }
+
+    cmdArgs = append(cmdArgs, "-nFeature", assemblingFeature)
+    columns = append(columns, {
+        column: "nSeq" + assemblingFeature,
+        id: "n-seq-" + assemblingFeature,
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/sequence",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/feature": assemblingFeature,
+                "pl7.app/alphabet": "nucleotide"
+            },
+            annotations: {
+                "pl7.app/type": "sequence",
+                "pl7.app/label": assemblingFeature + " nt",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "30000"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-aaFeature", assemblingFeature)
+    columns = append(columns, {
+        column: "aaSeq" + assemblingFeature,
+        id: "aa-seq-" + assemblingFeature,
+        allowNA: allowNA,
+        spec: {
+            name: "pl7.app/vdj/sequence",
+            valueType: "String",
+            domain: {
+                "pl7.app/vdj/feature": assemblingFeature,
+                "pl7.app/alphabet": "aminoacid"
+            },
+            annotations: {
+                "pl7.app/type": "sequence",
+                "pl7.app/label": assemblingFeature + " aa",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "29000"
+            }
+        }
+    })
 
 	return {
         pfconvParams: {
@@ -458,7 +820,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             type: "Long",
             domain: { },
             annotations: {
-                "pl7.app/label": "Tree id"
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
             }
         }
     })
@@ -472,7 +836,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
                 type: "Long",
                 domain: { },
                 annotations: {
-                    "pl7.app/label": "Subtree id"
+                    "pl7.app/label": "Chain id",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "90000"
                 }
             }
         })
@@ -486,7 +852,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             type: "Long",
             domain: { },
             annotations: {
-                "pl7.app/label": "Node id"
+                "pl7.app/label": "Node id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "80000"
             }
         }
     })
@@ -503,7 +871,12 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
                 replacement: "$1"
             }
         ],
-        spec: donorColumnSpec.axesSpec[0]
+        spec: donorColumnSpec.axesSpec[0],
+        annotations: {
+            "pl7.app/label": "Sample name",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "110000"
+        }
     })
 
     cmdArgs = append(cmdArgs, "-cloneId")
@@ -518,7 +891,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             type: "Long",
             // TODO domain with blockId
             annotations: {
-                "pl7.app/label": "Clone id"
+                "pl7.app/label": "Clone id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "70000"
             }
         }
     })
@@ -533,7 +908,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
                 name: "pl7.app/vdj/uniqueCellCount",
                 valueType: "Long",
                 annotations: {
-                    "pl7.app/label": "Number of cells"
+                    "pl7.app/label": "Number of cells",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "60000"
                 }
             }
         })
@@ -549,7 +926,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
                 name: "pl7.app/vdj/uniqueMoleculeCount",
                 valueType: "Long",
                 annotations: {
-                    "pl7.app/label": "Number of molecules"
+                    "pl7.app/label": "Number of molecules",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "59000"
                 }
             }
         })
@@ -564,7 +943,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
           name: "pl7.app/vdj/readCount",
           valueType: "Long",
           annotations: {
-            "pl7.app/label": "Number of Reads"
+            "pl7.app/label": "Number of Reads",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "58000"
           }
         }
     })
@@ -578,44 +959,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
           name: "pl7.app/vdj/readFraction",
           valueType: "Double",
           annotations: {
-            "pl7.app/label": "Fraction of reads"
-          }
-        }
-    })
-
-    cmdArgs = append(cmdArgs, "-targetSequences")
-    columns = append(columns, {
-        column: "targetSequences",
-        id: "n-seq-clonal-sequences",
-        allowNA: true,
-        spec: {
-          name: "pl7.app/vdj/sequence",
-          valueType: "String",
-          domain: {
-            "pl7.app/vdj/sequence": "clonalSequence",
-            "pl7.app/alphabet": "nucleotide"
-          },
-          annotations: {
-            "pl7.app/type": "sequence",
-            "pl7.app/label": "Clonal sequences"
-          }
-        }
-    })
-
-    cmdArgs = append(cmdArgs, "-targetQualities")
-    columns = append(columns, {
-        column: "targetQualities",
-        id: "clonal-qualities",
-        allowNA: true,
-        spec: {
-          name: "pl7.app/vdj/sequenceQuality",
-          valueType: "String",
-          domain: {
-            "pl7.app/vdj/quality": "clonalQuality"
-          },
-          annotations: {
-            type: "quality string",
-            "pl7.app/label": "Clonal qualities"
+            "pl7.app/label": "Fraction of reads",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "57000"
           }
         }
     })
@@ -633,7 +979,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             },
             annotations: {
                 type: "D gene name",
-                "pl7.app/label": "Best D hit"
+                "pl7.app/label": "Best D hit",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "48000"
             }
         }
     })
@@ -651,7 +999,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             },
             annotations: {
                 type: "C gene name",
-                "pl7.app/label": "Best C hit"
+                "pl7.app/label": "Best C hit",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "46000"
             }
         }
     })
@@ -665,7 +1015,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
           valueType: "String",
           name: "pl7.app/vdj/isotype",
           annotations: {
-            "pl7.app/label": "IG isotype"
+            "pl7.app/label": "IG isotype",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "50000"
           }
         }
     })
@@ -681,9 +1033,99 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     }
 }
 
+shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
+
+    axes := []
+    columns := []
+
+    axes = append(axes, {
+        column: "treeId",
+        spec: {
+            name: "pl7.app/dendrogram/treeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
+            }
+        }
+    })
+
+    if dataDescription.cellsAssembled {
+        axes = append(axes, {
+            column: "subtreeId",
+            spec: {
+                name: "pl7.app/dendrogram/subtreeId",
+                type: "Long",
+                domain: { },
+                annotations: {
+                    "pl7.app/label": "Chain id",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "90000"
+                }
+            }
+        })
+    }
+
+    axes = append(axes, {
+        column: "nodeId",
+        spec: {
+            name: "pl7.app/dendrogram/nodeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Node id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "80000"
+            }
+        }
+    })
+
+    columns = append(columns, {
+        column: "readCount",
+        id: "read-count",
+        allowNA: true,
+        spec: {
+          name: "pl7.app/vdj/readCount",
+          valueType: "Long",
+          annotations: {
+            "pl7.app/label": "Top clone reads number",
+            "pl7.app/table/visibility": "optional",
+            "pl7.app/table/orderPriority": "58000"
+          }
+        }
+    })
+
+    columns = append(columns, {
+        column: "isotype",
+        id: "isotype",
+        allowNA: true,
+        spec: {
+          valueType: "String",
+          name: "pl7.app/vdj/isotype",
+          annotations: {
+            "pl7.app/label": "Top IG isotype",
+            "pl7.app/table/visibility": "optional",
+            "pl7.app/table/orderPriority": "50000"
+          }
+        }
+    })
+
+	return {
+        pfconvParams: {
+            axes: axes,
+            columns: columns,
+            storageFormat: "Binary",
+            partitionKeyLength: 0
+        }
+    }
+}
+
 // to use the file as a library, we should explicitly export functions
 export ll.toStrict({
 	shmTreeTableOptions: shmTreeTableOptions,
     shmTreeNodesTableOptions: shmTreeNodesTableOptions,
-    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions
+    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
+    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions
 })

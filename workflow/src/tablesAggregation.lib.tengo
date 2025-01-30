@@ -1,0 +1,75 @@
+ll := import("@platforma-sdk/workflow-tengo:ll")
+exec := import("@platforma-sdk/workflow-tengo:exec")
+assets := import("@platforma-sdk/workflow-tengo:assets")
+json := import("json")
+paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
+
+//// aggregating by-nodes output to make it uniquely addressable by it's native key
+ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
+    keyColumns := []
+    for axis in pfConvParams.axes {
+        keyColumns = append(keyColumns, axis.column)
+    }
+
+    aggregationWorkflow := undefined
+    if len(aggParams) > 1 {
+        pickCols := []
+        for col in pfConvParams.columns {
+            pickCols = append(pickCols, [
+                col.column,
+                col.column
+                ]
+            )
+        }
+
+        rankingCol := aggParams[1]
+        aggregationWorkflow = { 
+            steps: [
+                {
+                    type: "aggregate",
+                    groupBy: keyColumns,
+                    aggregations: [
+                        {
+                            type: aggParams[0],
+                            rankingCol: rankingCol,
+                            pickCols: pickCols
+                        }           
+                    ]
+                }
+            ] 
+        }
+    } else {
+        aggregations := []
+        for col in pfConvParams.columns {
+            aggregations = append(aggregations, {
+                type: aggParams[0],
+                src: col.column,
+                dst: col.column
+            })
+        }
+
+        aggregationWorkflow = { steps: [ 
+            {
+                type: "aggregate",
+                groupBy: keyColumns,
+                aggregations: aggregations
+                } 
+            ]
+        }
+    }
+
+    aggregateCmd := exec.builder().
+        printErrStreamToStdout().
+        software(paggregateSw).
+        arg("--workflow").arg("wf.json").
+        writeFile("wf.json", json.encode(aggregationWorkflow)).
+        arg("input.tsv").addFile("input.tsv", inputTsv).
+        arg("output.tsv").saveFile("output.tsv").
+        run()
+
+    return aggregateCmd.getFile("output.tsv")
+}
+
+export ll.toStrict({
+	ensureUniqueness: ensureUniqueness
+})

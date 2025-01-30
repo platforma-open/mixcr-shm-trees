@@ -32,6 +32,7 @@ self.body(func(inputs) {
 		hasCellTags: false,
 		// will be filled
 		coveredFeatures: [],
+		assemblingFeature: undefined,
 		cellsAssembled: false
 	}
 
@@ -65,8 +66,8 @@ self.body(func(inputs) {
 		}
 	}
 
-	// adding assembling feature to the list of covered features
-	dataDescription.coveredFeatures = append(dataDescription.coveredFeatures, assemblingFeature)
+	// adding assembling feature
+	dataDescription.assemblingFeature = assemblingFeature
 
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
@@ -75,6 +76,7 @@ self.body(func(inputs) {
 	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription)
 	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription)
 	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn)
+	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotypeTableOptions(dataDescription)
 
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
@@ -93,6 +95,9 @@ self.body(func(inputs) {
 				type: "Resource"
 			}, {
 				name: "treeNodesWithClones",
+				type: "Resource"
+			}, {
+				name: "treeNodesUniqueIsotype",
 				type: "Resource"
 			}, {
 				name: "tsvs",
@@ -120,10 +125,12 @@ self.body(func(inputs) {
 		false,
 		// inputs
 		{
+			shmTreeTableOptions: shmTreeTableOptions,
 			shmTreeTableArgs: shmTreeTableOptions.cmdArgs,
 			shmTreeNodesTableOptions: shmTreeNodesTableOptions,
 			shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
 			shmTreeNodesWithClonesTableArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
+			shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions,
 			globalParams: maps.merge(
 				inputs.params,
 				{ datasetTypes: datasetTypes }
@@ -158,6 +165,13 @@ self.body(func(inputs) {
         shmTreeNodesWithClonesTableOptions.pfconvParams,
         additionalArgsForImportTsv
     )
+
+	treeNodesUniqueIsotype := xsv.importFileMap(
+        mixcrResults.output("treeNodesUniqueIsotype"),
+        "tsv",
+        shmTreeNodesUniqueIsotypeTableOptions.pfconvParams,
+        additionalArgsForImportTsv
+	)
 
 	// Running SOI search for the data
 	soiNodesResults := {}
@@ -207,6 +221,8 @@ self.body(func(inputs) {
         treeNodes: pframes.exportFrame(treeNodes),
         // combine columns into pFrame
         treeNodesWithClones: pframes.exportFrame(treeNodesWithClones),
+		// combine columns into pFrame
+		treeNodesUniqueIsotype: pframes.exportFrame(treeNodesUniqueIsotype),
 
 		soiNodesResults: maps.mapValues(soiNodesResults, pframes.exportFrame),
 		soiTreesResults: maps.mapValues(soiTreesResults, pframes.exportFrame),
