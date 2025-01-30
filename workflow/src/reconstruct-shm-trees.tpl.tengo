@@ -9,7 +9,7 @@ json := import("json")
 
 // for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
-    "trees", "treeNodes", "treeNodesWithClones",
+    "trees", "treeNodes", "treeNodesWithClones", "treeNodesUniqueIsotype",
     "tsvs",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport",
@@ -171,9 +171,9 @@ self.body(func(inputs) {
         saveFile("output.tsv")
 
     shmTreeExports := shmTreeExportsCmdBuilder.run()
-    shmTreeTsv := shmTreeExports.getFile("output.tsv")
+    shmTreeTsvRaw := shmTreeExports.getFile("output.tsv")
 
-    //shmTreeTsv := ensureUniqueness(shmTreeTsvRaw, inputs.shmTreeTableOptions.pfconvParams, "max_by", "totalReadsCountInTree")
+    shmTreeTsv := tablesAggregation.ensureUniqueness(shmTreeTsvRaw, inputs.shmTreeTableOptions.pfconvParams, "max_by", "totalReadsCountInTree")
 
     // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
@@ -223,16 +223,19 @@ self.body(func(inputs) {
     shmTreeNodesWithClonesTsvRaw := shmTreeNodesWithClonesExports.getFile("output.tsv")
 
     shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams, "max_by", "readCount")
+    shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeNodesUniqueIsotypeTableOptions.pfconvParams, "max_by", "readCount")
 
     return {
         trees: shmTreeTsv,
         treeNodes: shmTreeNodesTsv,
         treeNodesWithClones: shmTreeNodesWithClonesTsv,
+        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv,
 
         tsvs: {
             trees: shmTreeTsv,
             treeNodes: shmTreeNodesTsv,
-            treeNodesWithClones: shmTreeNodesWithClonesTsv
+            treeNodesWithClones: shmTreeNodesWithClonesTsv,
+            treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv
         },
 
         allelesLog: alleles.getStdoutStream(),

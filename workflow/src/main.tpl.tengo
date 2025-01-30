@@ -45,6 +45,7 @@ wf.body(func(args) {
 			trees: results.output("trees"),
 			treeNodes: results.output("treeNodes"),
 			treeNodesWithClones: results.output("treeNodesWithClones"),
+			treeNodesUniqueIsotype: results.output("treeNodesUniqueIsotype"),
 
 			soiNodesResults: results.output("soiNodesResults"),
 			soiTreesResults: results.output("soiTreesResults"),

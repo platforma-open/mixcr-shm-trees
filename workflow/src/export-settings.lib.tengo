@@ -1033,9 +1033,99 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     }
 }
 
+shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
+
+    axes := []
+    columns := []
+
+    axes = append(axes, {
+        column: "treeId",
+        spec: {
+            name: "pl7.app/dendrogram/treeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
+            }
+        }
+    })
+
+    if dataDescription.cellsAssembled {
+        axes = append(axes, {
+            column: "subtreeId",
+            spec: {
+                name: "pl7.app/dendrogram/subtreeId",
+                type: "Long",
+                domain: { },
+                annotations: {
+                    "pl7.app/label": "Chain id",
+                    "pl7.app/table/visibility": "default",
+                    "pl7.app/table/orderPriority": "90000"
+                }
+            }
+        })
+    }
+
+    axes = append(axes, {
+        column: "nodeId",
+        spec: {
+            name: "pl7.app/dendrogram/nodeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Node id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "80000"
+            }
+        }
+    })
+
+    columns = append(columns, {
+        column: "readCount",
+        id: "read-count",
+        allowNA: true,
+        spec: {
+          name: "pl7.app/vdj/readCount",
+          valueType: "Long",
+          annotations: {
+            "pl7.app/label": "Top clone reads number",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "58000"
+          }
+        }
+    })
+
+    columns = append(columns, {
+        column: "isotype",
+        id: "isotype",
+        allowNA: true,
+        spec: {
+          valueType: "String",
+          name: "pl7.app/vdj/isotype",
+          annotations: {
+            "pl7.app/label": "Top IG isotype",
+            "pl7.app/table/visibility": "default",
+            "pl7.app/table/orderPriority": "50000"
+          }
+        }
+    })
+
+	return {
+        pfconvParams: {
+            axes: axes,
+            columns: columns,
+            storageFormat: "Binary",
+            partitionKeyLength: 0
+        }
+    }
+}
+
 // to use the file as a library, we should explicitly export functions
 export ll.toStrict({
 	shmTreeTableOptions: shmTreeTableOptions,
     shmTreeNodesTableOptions: shmTreeNodesTableOptions,
-    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions
+    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
+    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions
 })
