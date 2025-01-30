@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.5.0
+
+### Minor Changes
+
+- 77a67f2: Columns name revision, added new aggregation type "max_by", isotype as a node color
+
 ## 3.4.0
 
 ### Minor Changes
