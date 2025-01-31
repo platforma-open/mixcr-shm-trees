@@ -46,6 +46,8 @@ wf.body(func(args) {
 			treeNodes: results.output("treeNodes"),
 			treeNodesWithClones: results.output("treeNodesWithClones"),
 			treeNodesUniqueIsotype: results.output("treeNodesUniqueIsotype"),
+			treeMaxDistances: results.output("treeMaxDistances"),
+			treeMaxDistancesGermline: results.output("treeMaxDistancesGermline"),
 
 			soiNodesResults: results.output("soiNodesResults"),
 			soiTreesResults: results.output("soiTreesResults"),

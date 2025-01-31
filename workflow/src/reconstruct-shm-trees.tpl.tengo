@@ -9,7 +9,7 @@ json := import("json")
 
 // for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
-    "trees", "treeNodes", "treeNodesWithClones", "treeNodesUniqueIsotype",
+    "trees", "treeNodes", "treeNodesWithClones", "treeNodesUniqueIsotype", "treeMaxDistances", "treeMaxDistancesGermline",
     "tsvs",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport",
@@ -224,18 +224,24 @@ self.body(func(inputs) {
 
     shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams, "max_by", "readCount")
     shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeNodesUniqueIsotypeTableOptions.pfconvParams, "max_by", "readCount")
+    shmTreeMaxDistancesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeMaxDistancesOptions.pfconvParams, "max_by", "DistanceFromMrca")
+    shmTreeMaxDistancesGermlineTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeMaxDistancesGermlineOptions.pfconvParams, "max_by", "DistanceFromGermline")
 
     return {
         trees: shmTreeTsv,
         treeNodes: shmTreeNodesTsv,
         treeNodesWithClones: shmTreeNodesWithClonesTsv,
-        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv,
+        treeNodesUniqueIsotype: shmTreeNodesUniqueIsotypeTsv,
+        treeMaxDistancesGermline: shmTreeMaxDistancesGermlineTsv,
+        treeMaxDistances: shmTreeMaxDistancesTsv,
 
         tsvs: {
             trees: shmTreeTsv,
             treeNodes: shmTreeNodesTsv,
             treeNodesWithClones: shmTreeNodesWithClonesTsv,
-            treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv
+            treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv,
+            treeMaxDistancesGermline: shmTreeMaxDistancesGermlineTsv,
+            treeMaxDistances: shmTreeMaxDistancesTsv
         },
 
         allelesLog: alleles.getStdoutStream(),
