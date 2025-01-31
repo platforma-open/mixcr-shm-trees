@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.10
+
+### Patch Changes
+
+- 97a9183: Changed title to Analysis Overview
+
 ## 3.4.9
 
 ### Patch Changes
