@@ -88,7 +88,7 @@ const gridOptions: GridOptions<TreeResult> = {
 
 <template>
   <PlBlockPage>
-    <template #title>Overview</template>
+    <template #title>Analysis Overview</template>
     <template #append>
       <PlBtnGhost @click.stop="() => data.settingsOpen = true">Settings
         <template #append>
