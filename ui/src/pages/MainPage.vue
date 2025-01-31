@@ -81,9 +81,12 @@ const gridOptions: GridOptions<TreeResult> = {
 };
 
 const reloadKey = ref(0);
-watch(() => model.outputs.calculating, () => {
-  ++reloadKey.value;
-}, { immediate: true });
+watch(
+  () => model.outputs.calculating, 
+  () => {
+    ++reloadKey.value;
+  },
+  { immediate: true });
 </script>
 
 <template>
