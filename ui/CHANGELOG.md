@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.11
+
+### Patch Changes
+
+- 9fa9176: Show loader when calculating
+
 ## 3.4.10
 
 ### Patch Changes
