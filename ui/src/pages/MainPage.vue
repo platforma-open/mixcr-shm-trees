@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { type ColDef, type GridOptions } from 'ag-grid-enterprise';
+import { type GridReadyEvent, type ColDef, type GridOptions } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
-import { AgGridTheme, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
+import { AgGridTheme, autoSizeRowNumberColumn, makeRowNumberColDef, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
 import { reactive, watch, ref } from 'vue';
 import { useApp } from '../app';
@@ -32,6 +32,7 @@ const defaultColDef: ColDef = {
 }
 
 const columnDefs: ColDef<TreeResult>[] = [
+  makeRowNumberColDef(),
   {
     colId: 'donor',
     field: 'donor',
@@ -80,6 +81,11 @@ const gridOptions: GridOptions<TreeResult> = {
   }
 };
 
+const onGridReady = (event: GridReadyEvent) => {
+  const api = event.api;
+  autoSizeRowNumberColumn(api);
+};
+
 const reloadKey = ref(0);
 watch(
   () => model.outputs.calculating, 
@@ -108,6 +114,7 @@ watch(
         :defaultColDef="defaultColDef"
         :columnDefs="columnDefs" 
         :grid-options="gridOptions" 
+        @grid-ready="onGridReady"
         :loadingOverlayComponentParams="{ notReady: !model.outputs.calculating, message: `Configure the settings and click
       'Run' to see the data` }"
         :loadingOverlayComponent=PlAgOverlayLoading 
