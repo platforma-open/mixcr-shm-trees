@@ -79,9 +79,9 @@ const columnDefs: ColDef<TreeResult>[] = [
 
 const isArgsValid = computed(() =>  model.args.donorColumn !== undefined && model.args.datasetColumns.length > 0);
 
-const notReady = computed(() => !isArgsValid.value);
+const notReady = computed(() => !isArgsValid.value || (!model.outputs.started));
 
-const loading = computed(() => notReady.value || (model.outputs.started && result.value === undefined));
+const loading = computed(() => notReady.value || result.value === undefined);
 
 const notReadyText = `Configure the settings and click 'Run' to see the data`;
 
