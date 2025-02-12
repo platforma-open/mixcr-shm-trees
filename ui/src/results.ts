@@ -34,7 +34,7 @@ function integrateData<T>(
   if (data)
     for (const d of data.data) {
       if (d.key.length !== 1 || !isNotNAPValue(d.key[0]))
-        throw new Error(`assertion error, key = ${d.key[0]}}`);
+        throw new Error(`assertion error, key = ${d.key[0]}}`); // @TODO (this kills ui)
       const donor = d.key[0];
       const result = resultMap.get(donor);
       if (!result) throw new Error(`No result for key: ${donor}`);
@@ -111,7 +111,7 @@ export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
   const rawMap = TreeResultsMap.value;
   if (rawMap === undefined) return undefined;
 
-  // shellow cloning the map and it's values
+  // shallow cloning the map and it's values
   const resultMap = new Map([...rawMap].map((v) => [v[0], { ...v[1] }]));
 
   // adding alleles and trees progress information

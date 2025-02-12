@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import { type GridReadyEvent, type ColDef, type GridOptions } from 'ag-grid-enterprise';
+import type { ColDef } from 'ag-grid-enterprise';
 import { AgGridVue } from 'ag-grid-vue3';
-import { AgGridTheme, autoSizeRowNumberColumn, makeRowNumberColDef, PlAgOverlayLoading, PlAgOverlayNoRows, PlBlockPage, PlBtnGhost, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
+import {
+  makeRowNumberColDef, 
+  PlBlockPage, 
+  PlBtnGhost, 
+  PlMaskIcon24, 
+  PlSlideModal,
+  useAgGridOptionsSimple 
+} from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
-import { reactive, watch, ref } from 'vue';
+import { computed, reactive } from 'vue';
 import { useApp } from '../app';
 import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
@@ -32,7 +39,7 @@ const defaultColDef: ColDef = {
 }
 
 const columnDefs: ColDef<TreeResult>[] = [
-  makeRowNumberColDef(),
+  makeRowNumberColDef(), // @TODO encapsulate into useAgGridOptions
   {
     colId: 'donor',
     field: 'donor',
@@ -70,29 +77,40 @@ const columnDefs: ColDef<TreeResult>[] = [
   }
 ];
 
-const gridOptions: GridOptions<TreeResult> = {
-  getRowId: (row) => String(row.data.donor),
-  onRowDoubleClicked: (e) => {
-    data.selectedDonor = e.data?.donor
-    data.donorReportOpen = data.selectedDonor !== undefined;
-  },
-  components: {
-    ProgressCell
-  }
-};
+const isArgsValid = computed(() =>  model.args.donorColumn !== undefined && model.args.datasetColumns.length > 0);
 
-const onGridReady = (event: GridReadyEvent) => {
-  const api = event.api;
-  autoSizeRowNumberColumn(api);
-};
+const notReady = computed(() => !isArgsValid.value);
 
-const reloadKey = ref(0);
-watch(
-  () => model.outputs.calculating, 
-  () => {
-    ++reloadKey.value;
-  },
-  { immediate: true });
+const loading = computed(() => notReady.value || (model.outputs.started && result.value === undefined));
+
+const notReadyText = `Configure the settings and click 'Run' to see the data`;
+
+const { gridOptions } = useAgGridOptionsSimple<TreeResult>(() => {
+  return {
+    columnDefs,
+    defaultColDef,
+    getRowId: (row) => String(row.data.donor),
+    onRowDoubleClicked: (e) => {
+      data.selectedDonor = e.data?.donor
+      data.donorReportOpen = data.selectedDonor !== undefined;
+    },
+    rowSelection: {
+      mode: 'multiRow' as const,
+      checkboxes: false,
+      headerCheckbox: false,
+    },
+    rowData: result.value,
+    // @TODO (Obviously API should be like: notReady true, now we should pass loading `true` in order to activate loadingOverlay component)
+    loading: loading.value,
+    loadingOverlayComponentParams: {
+      notReady: notReady.value,
+      notReadyText
+    },
+    components: {
+      ProgressCell,
+    },
+  };
+});
 </script>
 
 <template>
@@ -107,19 +125,10 @@ watch(
     </template>
 
     <div :style="{ flex: 1 }">
+      <!-- @TODO (ag grid type conflicts with graph-maker ag grid dependencies)  -->
       <AgGridVue 
-        :theme="AgGridTheme" 
-        :style="{ height: '100%' }" 
-        :rowData="result" 
-        :defaultColDef="defaultColDef"
-        :columnDefs="columnDefs" 
-        :grid-options="gridOptions" 
-        @grid-ready="onGridReady"
-        :loadingOverlayComponentParams="{ notReady: !model.outputs.calculating, message: `Configure the settings and click
-      'Run' to see the data` }"
-        :loadingOverlayComponent=PlAgOverlayLoading 
-        :noRowsOverlayComponent=PlAgOverlayNoRows 
-        :key="reloadKey"
+        :style="{ height: '100%' }"
+        v-bind="gridOptions as {}"
       />
     </div>
 
