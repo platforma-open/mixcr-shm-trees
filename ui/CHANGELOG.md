@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.13
+
+### Patch Changes
+
+- 8467cad: Fix loading/not ready state
+
 ## 3.4.12
 
 ### Patch Changes
