@@ -1,5 +1,12 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.4.12
+
+### Patch Changes
+
+- 549aa50: Add row number column
+- 6c0be0c: Use new Ag Grid Loading Overlay
+
 ## 3.4.11
 
 ### Patch Changes
