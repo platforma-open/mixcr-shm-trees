@@ -7,21 +7,21 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^1.17.5
-  '@platforma-sdk/block-tools': ^2.5.7
+  '@platforma-sdk/block-tools': ^2.5.10
 
   '@platforma-sdk/model': ^1.22.18
-  '@platforma-sdk/ui-vue': ^1.22.30
+  '@platforma-sdk/ui-vue': ^1.22.39
 
-  '@platforma-sdk/test': ^1.22.6
-  '@milaboratories/graph-maker': ^1.1.41
+  '@platforma-sdk/test': ^1.22.40
+  '@milaboratories/graph-maker': ^1.1.43
 
-  '@platforma-sdk/workflow-tengo': ^2.9.9
+  '@platforma-sdk/workflow-tengo': ^2.11.0
 
-  '@milaboratories/software-pframes-conv': ^2.1.8
-  '@platforma-open/milaboratories.software-small-binaries': ^1.15.6
+  '@milaboratories/software-pframes-conv': ^2.1.9
+  '@platforma-open/milaboratories.software-small-binaries': ^1.15.7
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-139-develop
   '@platforma-open/milaboratories.software-mitool': 2.3.1-5-main
-  '@platforma-open/milaboratories.software-ptransform': ^1.1.0
+  '@platforma-open/milaboratories.software-ptransform': ^1.1.1
 
   '@milaboratories/helpers': ^1.6.11
 
@@ -29,14 +29,14 @@ catalog:
   'vue-tsc': ^2.2.0
   '@vueuse/core': ^12.3.0
 
-  'zod': ^3.24.1
+  'zod': ^3.24.2
   'utility-types': ^3.11.0
   
   'canonicalize': ^2.0.0
 
   'typescript': ~5.6.3
   'tsup': ~8.3.5
-  'turbo': ^2.3.4
+  'turbo': ^2.4.2
 
   'vite': ^6.0.11
   'vitest': ^2.1.8
