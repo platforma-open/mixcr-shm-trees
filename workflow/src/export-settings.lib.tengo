@@ -149,6 +149,7 @@ shmTreeTableOptions := func(dataDescription) {
             annotations: {
                 type: "V gene name",
                 "pl7.app/label": "V gene",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "30000"
             }
@@ -169,6 +170,7 @@ shmTreeTableOptions := func(dataDescription) {
             annotations: {
                 type: "J gene name",
                 "pl7.app/label": "J gene",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "29000"
             }
@@ -185,6 +187,8 @@ shmTreeTableOptions := func(dataDescription) {
             name: "pl7.app/vdj/chain",
             annotations: {
                 "pl7.app/label": "Chain",
+                "pl7.app/isDiscreteFilter": "true",
+                "pl7.app/discreteValues": "['TRA', 'TRB', 'TRG', 'TRD', 'IGH', 'IGK', 'IGL']",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "40000"
             }
@@ -361,6 +365,8 @@ shmTreeNodesTableOptions := func(dataDescription) {
             valueType: "String",
             annotations: {
                 "pl7.app/label": "Is observed in data",
+                "pl7.app/isDiscreteFilter": "true",
+                "pl7.app/discreteValues": "['true', 'false']",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "85000"
             }
@@ -672,6 +678,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
             annotations: {
                 type: "V gene name",
                 "pl7.app/label": "V gene",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "49000"
             }
@@ -692,6 +699,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
             annotations: {
                 type: "J gene name",
                 "pl7.app/label": "J gene",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "47000"
             }
@@ -874,6 +882,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: donorColumnSpec.axesSpec[0],
         annotations: {
             "pl7.app/label": "Sample name",
+            "pl7.app/isDiscreteFilter": "true",
             "pl7.app/table/visibility": "default",
             "pl7.app/table/orderPriority": "110000"
         }
@@ -980,6 +989,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             annotations: {
                 type: "D gene name",
                 "pl7.app/label": "Best D hit",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "48000"
             }
@@ -1000,6 +1010,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             annotations: {
                 type: "C gene name",
                 "pl7.app/label": "Best C hit",
+                "pl7.app/isDiscreteFilter": "true",
                 "pl7.app/table/visibility": "default",
                 "pl7.app/table/orderPriority": "46000"
             }
@@ -1016,6 +1027,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
           name: "pl7.app/vdj/isotype",
           annotations: {
             "pl7.app/label": "IG isotype",
+            "pl7.app/isDiscreteFilter": "true",
             "pl7.app/table/visibility": "default",
             "pl7.app/table/orderPriority": "50000"
           }
@@ -1106,6 +1118,7 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
           name: "pl7.app/vdj/isotype",
           annotations: {
             "pl7.app/label": "Top IG isotype",
+            "pl7.app/isDiscreteFilter": "true",
             "pl7.app/table/visibility": "optional",
             "pl7.app/table/orderPriority": "50000"
           }
