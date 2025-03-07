@@ -77,6 +77,8 @@ self.body(func(inputs) {
 	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription)
 	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn)
 	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotypeTableOptions(dataDescription)
+	shmTreeMaxDistancesOptions := exportSettings.shmTreeMaxDistancesOptions()
+	shmTreeMaxDistancesGermlineOptions := exportSettings.shmTreeMaxDistancesGermlineOptions()
 
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
@@ -98,6 +100,12 @@ self.body(func(inputs) {
 				type: "Resource"
 			}, {
 				name: "treeNodesUniqueIsotype",
+				type: "Resource"
+			}, {
+				name: "treeMaxDistances",
+				type: "Resource"
+			}, {
+				name: "treeMaxDistancesGermline",
 				type: "Resource"
 			}, {
 				name: "tsvs",
@@ -131,6 +139,8 @@ self.body(func(inputs) {
 			shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
 			shmTreeNodesWithClonesTableArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
 			shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions,
+			shmTreeMaxDistancesGermlineOptions: shmTreeMaxDistancesGermlineOptions,
+			shmTreeMaxDistancesOptions: shmTreeMaxDistancesOptions,
 			globalParams: maps.merge(
 				inputs.params,
 				{ datasetTypes: datasetTypes }
@@ -170,6 +180,20 @@ self.body(func(inputs) {
         mixcrResults.output("treeNodesUniqueIsotype"),
         "tsv",
         shmTreeNodesUniqueIsotypeTableOptions.pfconvParams,
+        additionalArgsForImportTsv
+	)
+
+	treeMaxDistances := xsv.importFileMap(
+        mixcrResults.output("treeMaxDistances"),
+        "tsv",
+        shmTreeMaxDistancesOptions.pfconvParams,
+        additionalArgsForImportTsv
+	)
+
+	treeMaxDistancesGermline := xsv.importFileMap(
+        mixcrResults.output("treeMaxDistancesGermline"),
+        "tsv",
+        shmTreeMaxDistancesGermlineOptions.pfconvParams,
         additionalArgsForImportTsv
 	)
 
@@ -223,6 +247,10 @@ self.body(func(inputs) {
         treeNodesWithClones: pframes.exportFrame(treeNodesWithClones),
 		// combine columns into pFrame
 		treeNodesUniqueIsotype: pframes.exportFrame(treeNodesUniqueIsotype),
+		// combine columns into pFrame
+		treeMaxDistances: pframes.exportFrame(treeMaxDistances),
+		// combine columns into pFrame
+		treeMaxDistancesGermline: pframes.exportFrame(treeMaxDistancesGermline),
 
 		soiNodesResults: maps.mapValues(soiNodesResults, pframes.exportFrame),
 		soiTreesResults: maps.mapValues(soiTreesResults, pframes.exportFrame),

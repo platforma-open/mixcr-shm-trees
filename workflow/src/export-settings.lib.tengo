@@ -390,48 +390,6 @@ shmTreeNodesTableOptions := func(dataDescription) {
         }
     })
 
-    cmdArgs = append(cmdArgs, "-distance", "germline")
-    columns = append(columns, {
-        column: "DistanceFromGermline",
-        id: "distance-from-germline",
-        allowNA: true,
-        spec: {
-            name: "pl7.app/dendrogram/distance",
-            valueType: "Double",
-            domain: {
-                "pl7.app/dendrogram/distance/from": "germline"
-            },
-            annotations: {
-                "pl7.app/label": "Distanse from germline",
-                "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "9000"
-            }
-        }
-    })
-
-    cmdArgs = append(cmdArgs, "-distance", "parent")
-    columns = append(columns, {
-        column: "DistanceFromParent",
-        id: "distance-from-parent",
-        allowNA: true,
-        spec: {
-            name: "pl7.app/dendrogram/distance",
-            valueType: "Double",
-            domain: {
-                "pl7.app/dendrogram/distance/from": "parent"
-            },
-            annotations: {
-                "pl7.app/label": "Distanse from parent",
-                "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8900"
-            }
-        }
-    })
-
     cmdArgs = append(cmdArgs, "-nMutationsRate")
     columns = append(columns, {
         column: "nMutationsRate",
@@ -640,6 +598,27 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/label": assemblingFeature+" nt mutations count based on germline",
                 "pl7.app/table/visibility": "optional",
                 "pl7.app/table/orderPriority": "7800"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-distance", "parent")
+    columns = append(columns, {
+        column: "DistanceFromParent",
+        id: "distance-from-parent",
+        allowNA: true,
+        spec: {
+            name: "pl7.app/dendrogram/distance",
+            valueType: "Double",
+            domain: {
+                "pl7.app/dendrogram/distance/from": "parent"
+            },
+            annotations: {
+                "pl7.app/label": "Distanse from parent",
+                "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8900"
             }
         }
     })
@@ -1017,6 +996,48 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         }
     })
 
+    cmdArgs = append(cmdArgs, "-distance", "germline")
+    columns = append(columns, {
+        column: "DistanceFromGermline",
+        id: "distance-from-germline",
+        allowNA: true,
+        spec: {
+            name: "pl7.app/dendrogram/distance",
+            valueType: "Double",
+            domain: {
+                "pl7.app/dendrogram/distance/from": "germline"
+            },
+            annotations: {
+                "pl7.app/label": "Distanse from germline",
+                "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "9000"
+            }
+        }
+    })
+
+    cmdArgs = append(cmdArgs, "-distance", "mrca")
+    columns = append(columns, {
+        column: "DistanceFromMrca",
+        id: "distance-from-mrca",
+        allowNA: true,
+        spec: {
+            name: "pl7.app/dendrogram/distance",
+            valueType: "Double",
+            domain: {
+                "pl7.app/dendrogram/distance/from": "MRCA"
+            },
+            annotations: {
+                "pl7.app/label": "Distanse from MRCA",
+                "pl7.app/dendrogram/distance/from": "MRCA", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8950"
+            }
+        }
+    })
+
     cmdArgs = append(cmdArgs, "-isotype")
     columns = append(columns, {
         column: "isotype",
@@ -1135,10 +1156,110 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
     }
 }
 
+shmTreeMaxDistancesGermlineOptions := func() {
+
+    axes := []
+    columns := []
+
+    axes = append(axes, {
+        column: "treeId",
+        spec: {
+            name: "pl7.app/dendrogram/treeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
+            }
+        }
+    })
+
+    columns = append(columns, {
+        column: "DistanceFromGermline",
+        id: "distance-from-germline",
+        allowNA: true,
+        spec: {
+            name: "pl7.app/dendrogram/distance",
+            valueType: "Double",
+            domain: {
+                "pl7.app/dendrogram/distance/from": "germline"
+            },
+            annotations: {
+                "pl7.app/label": "Max distance from germline",
+                "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8940"
+            }
+        }
+    })
+
+	return {
+        pfconvParams: {
+            axes: axes,
+            columns: columns,
+            storageFormat: "Binary",
+            partitionKeyLength: 0
+        }
+    }
+}
+
+shmTreeMaxDistancesOptions := func() {
+
+    axes := []
+    columns := []
+
+    axes = append(axes, {
+        column: "treeId",
+        spec: {
+            name: "pl7.app/dendrogram/treeId",
+            type: "Long",
+            domain: { },
+            annotations: {
+                "pl7.app/label": "Tree id",
+                "pl7.app/table/visibility": "default",
+                "pl7.app/table/orderPriority": "100000"
+            }
+        }
+    })
+
+    columns = append(columns, {
+        column: "DistanceFromMrca",
+        id: "distance-from-mrca",
+        allowNA: true,
+        spec: {
+            name: "pl7.app/dendrogram/distance",
+            valueType: "Double",
+            domain: {
+                "pl7.app/dendrogram/distance/from": "MRCA"
+            },
+            annotations: {
+                "pl7.app/label": "Max distance from MRCA",
+                "pl7.app/dendrogram/distance/from": "MRCA", // change to domain only, once can be selected in graphmaker
+                "pl7.app/dendrogram/isDistance": "true",
+                "pl7.app/table/visibility": "optional",
+                "pl7.app/table/orderPriority": "8950"
+            }
+        }
+    })
+
+	return {
+        pfconvParams: {
+            axes: axes,
+            columns: columns,
+            storageFormat: "Binary",
+            partitionKeyLength: 0
+        }
+    }
+}
+
 // to use the file as a library, we should explicitly export functions
 export ll.toStrict({
 	shmTreeTableOptions: shmTreeTableOptions,
     shmTreeNodesTableOptions: shmTreeNodesTableOptions,
     shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
-    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions
+    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions,
+    shmTreeMaxDistancesGermlineOptions: shmTreeMaxDistancesGermlineOptions,
+    shmTreeMaxDistancesOptions: shmTreeMaxDistancesOptions
 })
