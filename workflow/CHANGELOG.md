@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.5.0
+
+### Minor Changes
+
+- 591630e: Descrete columns annotation
+
 ## 3.4.0
 
 ### Minor Changes
