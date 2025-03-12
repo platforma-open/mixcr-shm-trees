@@ -17,7 +17,7 @@ catalog:
 
   '@platforma-sdk/workflow-tengo': ^2.11.0
 
-  '@milaboratories/software-pframes-conv': ^2.1.9
+  '@milaboratories/software-pframes-conv': ^2.1.16
   '@platforma-open/milaboratories.software-small-binaries': ^1.15.7
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-139-develop
   '@platforma-open/milaboratories.software-mitool': 2.3.1-5-main
@@ -36,7 +36,7 @@ catalog:
 
   'typescript': ~5.6.3
   'tsup': ~8.3.5
-  'turbo': ^2.4.2
+  'turbo': ^2.4.4
 
   'vite': ^6.0.11
   'vitest': ^2.1.8
@@ -45,4 +45,4 @@ catalog:
   'ag-grid-enterprise': &ag-grid ^33.0.4
   'ag-grid-vue3': *ag-grid
 
-  '@changesets/cli': ^2.27.12
+  '@changesets/cli': ^2.28.1
