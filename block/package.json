@@ -33,21 +33,16 @@
       "longDescription": "file:../docs/description.md",
       "changelog": "file:./CHANGELOG.md",
       "tags": [
-        "SHM",
-        "lineage",
-        "immunology",
-        "repertoire",
-        "VDJ",
-        "tree",
-        "track",
-        "immunization"
+        "airr",
+        "downstream",
+        "repertoire"
       ],
       "organization": {
         "name": "MiLaboratories Inc",
         "url": "https://milaboratories.com/",
         "logo": "file:../logos/organization-logo.png"
       },
-      "marketplaceRanking": 10000
+      "marketplaceRanking": 16500
     }
   },
   "devDependencies": {
