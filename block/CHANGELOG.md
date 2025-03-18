@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.1.17
+
+### Patch Changes
+
+- c001f11: Updated tags and ranking
+
 ## 3.1.16
 
 ### Patch Changes
