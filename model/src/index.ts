@@ -124,7 +124,12 @@ function treeNodesColumns(
     ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
   ).flatMap((a) => a);
 
-  const targetColumns = [...soiResultColumns, ...treeNodesColumns, ...treeNodesWithClonesColumns, ...treeNodesUniqueIsotypeColumns];
+  const targetColumns = [
+    ...soiResultColumns, 
+    ...treeNodesColumns, 
+    ...treeNodesWithClonesColumns, 
+    ...treeNodesUniqueIsotypeColumns, 
+  ];
 
   return targetColumns;
 }
@@ -271,12 +276,18 @@ export const model = BlockModel.create()
       ctx.outputs?.resolve('soiTreesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
     ).flatMap((a) => a);
 
+    const treeMaxDistancesColumns = ctx.outputs?.resolve('treeMaxDistances')?.getPColumns();
+    if (treeMaxDistancesColumns === undefined) return undefined;
+
+    const treeMaxDistancesGermlineColumns = ctx.outputs?.resolve('treeMaxDistancesGermline')?.getPColumns();
+    if (treeMaxDistancesGermlineColumns === undefined) return undefined;
+
     // wait until sheet filters are set
     const sheetFilters = ctx.uiState?.treeTableState.pTableParams?.filters;
     if (!sheetFilters) return undefined;
 
     return ctx.createPTable({
-      columns: [...pCols, ...soiResultColumns],
+      columns: [...pCols, ...treeMaxDistancesColumns, ...treeMaxDistancesGermlineColumns, ...soiResultColumns],
       filters: [...sheetFilters, ...(ctx.uiState?.filterModel?.filters ?? [])],
       sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
     });
