@@ -7,7 +7,7 @@ import {
   PlBtnGhost, 
   PlMaskIcon24, 
   PlSlideModal,
-  useAgGridOptionsSimple 
+  useAgGridOptions
 } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
 import { computed, reactive } from 'vue';
@@ -85,7 +85,7 @@ const loading = computed(() => notReady.value || result.value === undefined);
 
 const notReadyText = `Configure the settings and click 'Run' to see the data`;
 
-const { gridOptions } = useAgGridOptionsSimple<TreeResult>(() => {
+const { gridOptions } = useAgGridOptions<TreeResult>(() => {
   return {
     columnDefs,
     defaultColDef,
