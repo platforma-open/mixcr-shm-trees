@@ -1,7 +1,7 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees.test",
   "private": true,
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Block tests",
   "type": "module",
   "scripts": {},

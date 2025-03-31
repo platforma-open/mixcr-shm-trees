@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.test
 
+## 1.2.1
+
+### Patch Changes
+
+- 089219e: dependency upgrade
+
 ## 1.2.0
 
 ### Minor Changes
