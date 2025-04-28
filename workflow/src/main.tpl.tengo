@@ -6,6 +6,7 @@ ll := import("@platforma-sdk/workflow-tengo:ll")
 pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 processTpl := assets.importTemplate(":process")
+requestLibraryTpl := assets.importTemplate(":request-library")
 
 wf.body(func(args) {
 	if is_undefined(args.donorColumn) {
@@ -19,12 +20,14 @@ wf.body(func(args) {
 	// we could not use array as request for waiting (see below), so we store datasets in a dictionary
 	datasets := {}
 	for datasetRef in args.datasetColumns {
-		if is_undefined(datasetRef) {
-			ll.panic("Dataset is undefined")
-		}
-		// it's blockId of MiXCR, we suppose that it procuce only one clns column
+		// we assume that mixcr block produces exactly one clns column
 		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
 	}
+
+	library := render.createEphemeral(requestLibraryTpl, {
+		datasets: datasets,
+		ctx: wf.getParentBCtx()
+	}).output("library")
 
 	donorColumn := wf.resolve(args.donorColumn)
 
@@ -34,6 +37,7 @@ wf.body(func(args) {
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
 		donorColumn: donorColumn,
+		library: library,
 		params: {
 			downsampling: args.downsampling,
 			sequencesOfInterest: args.sequencesOfInterest

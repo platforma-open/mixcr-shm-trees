@@ -15,8 +15,6 @@
   },
   "devDependencies": {
     "@platforma-sdk/tengo-builder": "catalog:",
-    "@milaboratories/software-pframes-conv": "catalog:",
-    "@platforma-open/milaboratories.software-small-binaries": "catalog:",
     "@platforma-open/milaboratories.software-mixcr": "catalog:",
     "@platforma-open/milaboratories.software-mitool": "catalog:",
     "@platforma-open/milaboratories.software-ptransform": "catalog:",
