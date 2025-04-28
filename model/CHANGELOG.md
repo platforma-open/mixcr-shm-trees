@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.6.0
+
+### Minor Changes
+
+- b8af059: SDK Upgrade
+
 ## 3.5.1
 
 ### Patch Changes

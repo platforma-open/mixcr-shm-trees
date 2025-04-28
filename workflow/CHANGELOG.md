@@ -1,5 +1,12 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.6.0
+
+### Minor Changes
+
+- b8af059: SDK Upgrade
+- b8af059: Custom library support
+
 ## 3.5.1
 
 ### Patch Changes
