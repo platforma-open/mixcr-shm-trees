@@ -36,10 +36,6 @@ self.body(func(inputs) {
     library := inputs.library
     libraryFormat := globalParams.libraryFormat
 
-    // ll.print("__THE_LOG__ " + json.encode(datasetTypes))
-    // ll.print("__THE_LOG__ " + json.encode(downsampling))
-    // ll.print("__THE_LOG__ " + json.encode(libraryFormat))
-
     ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 
     addLibraryFile := func(cmdBuilder) {
@@ -118,8 +114,6 @@ self.body(func(inputs) {
         } else {
             ll.panic("Unknown downsampling type: " + downsampling.type)
         }
-
-        // ll.print("__THE_LOG__ " + downsamplingParam)
 
         for input in toProcess {
             if datasetTypes[input.clonotypingBlockId] == "bulk" {
