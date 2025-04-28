@@ -22,6 +22,7 @@ self.awaitState("datasets", { wildcard: "*" }, "data", "InputsLocked")
 // but we need spec already
 self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
 self.awaitState("library", "spec", "ResourceReady")
+self.awaitState("library", "data", "AllInputsSet") // change to InputsLocked after fix
 self.awaitState("donorColumn", "ResourceReady")
 self.awaitState("params", "ResourceReady")
 
