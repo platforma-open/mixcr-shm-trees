@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.6.1
+
+### Patch Changes
+
+- 9e53ea9: Fix for await criteria
+
 ## 3.6.0
 
 ### Minor Changes
