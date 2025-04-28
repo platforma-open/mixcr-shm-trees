@@ -1,0 +1,42 @@
+smart := import("@platforma-sdk/workflow-tengo:smart")
+bquery := import("@platforma-sdk/workflow-tengo:workflow.bquery")
+ll := import("@platforma-sdk/workflow-tengo:ll")
+self := import("@platforma-sdk/workflow-tengo:tpl")
+
+self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
+self.awaitState("datasets", { wildcard: "*" }, "ref", "ResourceReady")
+
+self.body(func(args) {
+	datasets := args.datasets
+	ctx := args.ctx
+
+	// undefined - not initialized
+	// "" - no custom library, built-in library will be used
+	// "...." - custom library id, to be requested from the context
+	libraryId := undefined
+
+	for _, dataset in datasets {
+		dsLibraryId := dataset.spec.annotations["pl7.app/vdj/libraryId"]
+		if is_undefined(libraryId) {
+			libraryId = !is_undefined(dsLibraryId) ? dsLibraryId : ""
+		} else {
+			if libraryId != dsLibraryId {
+				ll.panic("All datasets should have the same libraryId. Got " + libraryId + " and " + dsLibraryId)
+			}
+		}
+	}
+
+	if libraryId == "" || is_undefined(libraryId) {
+		return { library: smart.createNullResource() }
+	} else {
+		querySpec := {
+			type: "And",
+			operands: [
+				{ type: "Name", name: "pl7.app/vdj/library" },
+				{ type: "Domain", domain: { "pl7.app/vdj/libraryId": libraryId } }
+			]
+		}
+		return { library: bquery.create(querySpec, ctx, { single: true, errIfMissing: true }) }
+	}
+})
+

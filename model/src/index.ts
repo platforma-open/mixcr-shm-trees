@@ -151,7 +151,7 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
     axesSpec.push(...bigAxesSpec.slice(0, 3));
   else throw new Error(`Unexpected axes structureL: ${JSON.stringify(bigAxesSpec)}`);
 
-  const toKey = (id: FullNodeId): PColumnValue[] =>
+  const toKey = (id: FullNodeId): (number | string)[] =>
     hasSubtreeId
       ? [pValueToStringOrNumber(id.donorId), id.treeId, Number(id.subtreeId!), id.nodeId]
       : [pValueToStringOrNumber(id.donorId), id.treeId, id.nodeId];
