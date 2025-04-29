@@ -10,7 +10,7 @@ import {
   useAgGridOptions
 } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useApp } from '../app';
 import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
@@ -99,13 +99,14 @@ const { gridOptions } = useAgGridOptions<TreeResult>(() => {
       checkboxes: false,
       headerCheckbox: false,
     },
+    
     rowData: result.value,
+
     // @TODO (Obviously API should be like: notReady true, now we should pass loading `true` in order to activate loadingOverlay component)
     loading: loading.value,
-    loadingOverlayComponentParams: {
-      notReady: notReady.value,
-      notReadyText
-    },
+    notReady: notReady.value,
+    notReadyText,
+
     components: {
       ProgressCell,
     },
@@ -126,10 +127,7 @@ const { gridOptions } = useAgGridOptions<TreeResult>(() => {
 
     <div :style="{ flex: 1 }">
       <!-- @TODO (ag grid type conflicts with graph-maker ag grid dependencies)  -->
-      <AgGridVue 
-        :style="{ height: '100%' }"
-        v-bind="gridOptions as {}"
-      />
+      <AgGridVue :style="{ height: '100%' }" v-bind="gridOptions as {}" />
     </div>
 
     <PlSlideModal v-model="data.settingsOpen">
