@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.5.1
+
+### Patch Changes
+
+- e004909: Fix for table loading status with newly added block
+
 ## 3.5.0
 
 ### Minor Changes
