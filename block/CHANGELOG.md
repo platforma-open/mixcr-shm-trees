@@ -1,5 +1,16 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.2.0
+
+### Minor Changes
+
+- cf34335: Fix to work with built-in library
+
+### Patch Changes
+
+- Updated dependencies [cf34335]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@3.7.0
+
 ## 3.1.21
 
 ### Patch Changes
