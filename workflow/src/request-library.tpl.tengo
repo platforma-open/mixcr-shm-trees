@@ -17,8 +17,11 @@ self.body(func(args) {
 
 	for _, dataset in datasets {
 		dsLibraryId := dataset.spec.annotations["pl7.app/vdj/libraryId"]
+		if is_undefined(dsLibraryId) {
+			dsLibraryId = ""
+		}
 		if is_undefined(libraryId) {
-			libraryId = !is_undefined(dsLibraryId) ? dsLibraryId : ""
+			libraryId = dsLibraryId
 		} else {
 			if libraryId != dsLibraryId {
 				ll.panic("All datasets should have the same libraryId. Got " + libraryId + " and " + dsLibraryId)

@@ -21,8 +21,14 @@ self.awaitState("datasets", { wildcard: "*" }, "AllInputsSet")
 self.awaitState("datasets", { wildcard: "*" }, "data", "InputsLocked")
 // but we need spec already
 self.awaitState("datasets", { wildcard: "*" }, "spec", "ResourceReady")
-self.awaitState("library", "spec", "ResourceReady")
-self.awaitState("library", "data", "AllInputsSet") // change to InputsLocked after fix
+
+// Using match instead of exact name to make fields effectively optional,
+// in cases where built-in library is used, null resource is passed as library.
+// Match don't throw error if no fields matched, opposite to exact name.
+self.awaitState("library", { match: "^spec$" }, "ResourceReady")
+self.awaitState("library", { match: "^data$" }, "AllInputsSet") // change to InputsLocked after fix
+// self.awaitState({ match: "^library$" }, "BQueryResultMulti")
+
 self.awaitState("donorColumn", "ResourceReady")
 self.awaitState("params", "ResourceReady")
 
