@@ -31,9 +31,6 @@ wf.body(func(args) {
 
 	donorColumn := wf.resolve(args.donorColumn)
 
-	// The problem is that refs for data is not resolved.
-	// To deal with it, we should call resolve resolve that will return feature.
-	// Then to resolve feature we should call another templete where we will describe what's to wait
 	results := render.createEphemeral(processTpl, {
 		datasets: datasets,
 		donorColumn: donorColumn,
