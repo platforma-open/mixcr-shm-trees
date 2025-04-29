@@ -83,13 +83,9 @@ const notReady = computed(() => !isArgsValid.value || (!model.outputs.started));
 
 const loading = computed(() => notReady.value || result.value === undefined);
 
-watch(() => ({notReady: notReady.value, loading: loading.value}), (v) => {
-  console.log('notReady', v.notReady, 'loading', v.loading);
-}, { immediate: true });
-
 const notReadyText = `Configure the settings and click 'Run' to see the data`;
 
-const { gridApi, gridOptions } = useAgGridOptions<TreeResult>(() => {
+const { gridOptions } = useAgGridOptions<TreeResult>(() => {
   return {
     columnDefs,
     defaultColDef,
@@ -103,11 +99,14 @@ const { gridApi, gridOptions } = useAgGridOptions<TreeResult>(() => {
       checkboxes: false,
       headerCheckbox: false,
     },
+    
     rowData: result.value,
+
     // @TODO (Obviously API should be like: notReady true, now we should pass loading `true` in order to activate loadingOverlay component)
     loading: loading.value,
     notReady: notReady.value,
     notReadyText,
+
     components: {
       ProgressCell,
     },
