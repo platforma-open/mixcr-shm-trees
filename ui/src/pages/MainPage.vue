@@ -10,7 +10,7 @@ import {
   useAgGridOptions
 } from '@platforma-sdk/ui-vue';
 import { refDebounced } from '@vueuse/core';
-import { computed, reactive } from 'vue';
+import { computed, reactive, watch } from 'vue';
 import { useApp } from '../app';
 import { TreeResult, TreeResultsFull } from '../results';
 import ProgressCell from './components/ProgressCell.vue';
@@ -83,9 +83,13 @@ const notReady = computed(() => !isArgsValid.value || (!model.outputs.started));
 
 const loading = computed(() => notReady.value || result.value === undefined);
 
+watch(() => ({notReady: notReady.value, loading: loading.value}), (v) => {
+  console.log('notReady', v.notReady, 'loading', v.loading);
+}, { immediate: true });
+
 const notReadyText = `Configure the settings and click 'Run' to see the data`;
 
-const { gridOptions } = useAgGridOptions<TreeResult>(() => {
+const { gridApi, gridOptions } = useAgGridOptions<TreeResult>(() => {
   return {
     columnDefs,
     defaultColDef,
@@ -102,10 +106,8 @@ const { gridOptions } = useAgGridOptions<TreeResult>(() => {
     rowData: result.value,
     // @TODO (Obviously API should be like: notReady true, now we should pass loading `true` in order to activate loadingOverlay component)
     loading: loading.value,
-    loadingOverlayComponentParams: {
-      notReady: notReady.value,
-      notReadyText
-    },
+    notReady: notReady.value,
+    notReadyText,
     components: {
       ProgressCell,
     },
@@ -126,10 +128,7 @@ const { gridOptions } = useAgGridOptions<TreeResult>(() => {
 
     <div :style="{ flex: 1 }">
       <!-- @TODO (ag grid type conflicts with graph-maker ag grid dependencies)  -->
-      <AgGridVue 
-        :style="{ height: '100%' }"
-        v-bind="gridOptions as {}"
-      />
+      <AgGridVue :style="{ height: '100%' }" v-bind="gridOptions as {}" />
     </div>
 
     <PlSlideModal v-model="data.settingsOpen">
