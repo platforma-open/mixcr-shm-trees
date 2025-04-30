@@ -1,6 +1,7 @@
 ll := import("@platforma-sdk/workflow-tengo:ll")
 exec := import("@platforma-sdk/workflow-tengo:exec")
 assets := import("@platforma-sdk/workflow-tengo:assets")
+slices := import("@platforma-sdk/workflow-tengo:slices")
 json := import("json")
 
 paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
@@ -17,56 +18,48 @@ ensureUniquenessParamsFromPconvParams := func(pfConvParams) {
 }
 
 /** Aggregating by-nodes output to make it uniquely addressable by it's native key */
-ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
-    keyColumns := []
-    for axis in pfConvParams.axes {
-        keyColumns = append(keyColumns, axis.column)
-    }
+ensureUniqueness := func(inputTsv, params, ...aggParams) {
+    keyColumns := params.axes
+    pickCols := params.columns
 
     aggregationWorkflow := undefined
     if len(aggParams) > 1 {
         pickCols := []
-        for col in pfConvParams.columns {
+        for col in pickCols {
             pickCols = append(pickCols, [
-                col.column,
-                col.column
+                col,
+                col
                 ]
             )
         }
 
         rankingCol := aggParams[1]
         aggregationWorkflow = {
-            steps: [
-                {
-                    type: "aggregate",
-                    groupBy: keyColumns,
-                    aggregations: [
-                        {
-                            type: aggParams[0],
-                            rankingCol: rankingCol,
-                            pickCols: pickCols
-                        }
-                    ]
-                }
-            ]
+            steps: [ {
+                type: "aggregate",
+                groupBy: keyColumns,
+                aggregations: [ {
+                    type: aggParams[0],
+                    rankingCol: rankingCol,
+                    pickCols: pickCols
+                } ]
+            } ]
         }
     } else {
         aggregations := []
-        for col in pfConvParams.columns {
+        for col in pickCols {
             aggregations = append(aggregations, {
                 type: aggParams[0],
-                src: col.column,
-                dst: col.column
+                src: col,
+                dst: col
             })
         }
 
-        aggregationWorkflow = { steps: [
-            {
+        aggregationWorkflow = { steps: [ {
                 type: "aggregate",
                 groupBy: keyColumns,
                 aggregations: aggregations
-                }
-            ]
+            } ]
         }
     }
 
@@ -83,5 +76,6 @@ ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
 }
 
 export ll.toStrict({
-	ensureUniqueness: ensureUniqueness
+	ensureUniqueness: ensureUniqueness,
+    ensureUniquenessParamsFromPconvParams: ensureUniquenessParamsFromPconvParams
 })

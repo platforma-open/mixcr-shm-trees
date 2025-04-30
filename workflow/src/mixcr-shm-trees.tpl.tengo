@@ -5,13 +5,15 @@ pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 ll := import("@platforma-sdk/workflow-tengo:ll")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 exec := import("@platforma-sdk/workflow-tengo:exec")
+smart := import("@platforma-sdk/workflow-tengo:smart")
+maps := import("@platforma-sdk/workflow-tengo:maps")
 times := import("times")
 
 json := import("json")
 
 // for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
-    "alleles", "downsampled", "shmTrees",
+    "alleles", "downsampled", "shmt",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport",
     "allelesReportJson", "treesReportJson"
@@ -29,6 +31,7 @@ self.body(func(inputs) {
     datasetTypes := globalParams.datasetTypes
     library := inputs.library
     libraryFormat := globalParams.libraryFormat
+    downsampling := globalParams.downsampling
 
     ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 

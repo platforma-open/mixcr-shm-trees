@@ -454,7 +454,7 @@ export const model = BlockModel.create()
   .output('done', (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolve({ field: 'tsvs', assertFieldType: 'Input' }),
+          ctx.outputs?.resolveInput('shmt', 'data'),
           (acc) => acc.getIsReadyOrError() === true,
           false
         )

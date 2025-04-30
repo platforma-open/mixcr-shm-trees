@@ -27,19 +27,10 @@ self.body(func(inputs) {
 	shmTreeNodesArgs := params.shmTreeNodesArgs
 	shmTreeNodesWithClonesArgs := params.shmTreeNodesWithClonesArgs
 	shmTreeNodesUniqueIsotypeArgs := params.shmTreeNodesUniqueIsotypeArgs
-
-    addLibraryFile := func(cmdBuilder) {
-        if !is_undefined(library) {
-            if libraryFormat == "repseqio.json.gz" {
-                cmdBuilder.addFile("library.json.gz", library)
-            } else {
-                cmdBuilder.addFile("library.json", library)
-            }
-        }
-    }
-
-
-    ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
+	shmTreeEnsureUniquenessParams := params.shmTreeEnsureUniquenessParams
+	shmTreeNodesEnsureUniquenessParams := params.shmTreeNodesEnsureUniquenessParams
+	shmTreeNodesWithClonesEnsureUniquenessParams := params.shmTreeNodesWithClonesEnsureUniquenessParams
+	shmTreeNodesUniqueIsotypeEnsureUniquenessParams := params.shmTreeNodesUniqueIsotypeEnsureUniquenessParams
 
     addLibraryFile := func(cmdBuilder) {
         if !is_undefined(library) {
@@ -75,7 +66,7 @@ self.body(func(inputs) {
     shmTreeExports := shmTreeExportsCmdBuilder.run()
     shmTreeTsvRaw := shmTreeExports.getFile("output.tsv")
 
-    shmTreeTsv := tablesAggregation.ensureUniqueness(shmTreeTsvRaw, inputs.shmTreeTableOptions.pfconvParams, "max_by", "totalReadsCountInTree")
+    shmTreeTsv := tablesAggregation.ensureUniqueness(shmTreeTsvRaw, shmTreeEnsureUniquenessParams, "max_by", "totalReadsCountInTree")
 
     // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
@@ -101,16 +92,15 @@ self.body(func(inputs) {
     shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
     shmTreeNodesTsvRaw := shmTreeNodesExports.getFile("output.tsv")
 
-	shmTreeNodesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesTsvRaw, inputs.shmTreeNodesTableOptions.pfconvParams, "first")
+	shmTreeNodesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesTsvRaw, shmTreeNodesEnsureUniquenessParams, "first")
 
     // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
         dontSaveStdoutOrStderr().
         inLightQueue().
-        secret("MI_LICENSE", "MI_LICENSE").
-        env("MI_PROGRESS_PREFIX", progressPrefix).
-        software(mixcrSw).
+		secret("MI_LICENSE", "MI_LICENSE").
+		software(mixcrSw).
         arg("exportShmTreesWithNodes").
         // don't export nodes that don't have clones
         arg("--only-observed")
@@ -130,13 +120,13 @@ self.body(func(inputs) {
     shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
     shmTreeNodesWithClonesTsvRaw := shmTreeNodesWithClonesExports.getFile("output.tsv")
 
-    shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams, "max_by", "readCount")
-    shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeNodesUniqueIsotypeTableOptions.pfconvParams, "max_by", "readCount")
+    shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, shmTreeNodesWithClonesEnsureUniquenessParams, "max_by", "readCount")
+    shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, shmTreeNodesUniqueIsotypeEnsureUniquenessParams, "max_by", "readCount")
 
     return {
         trees: shmTreeTsv,
         treeNodes: shmTreeNodesTsv,
         treeNodesWithClones: shmTreeNodesWithClonesTsv,
-        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv,
+        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv
     }
 })
