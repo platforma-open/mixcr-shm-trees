@@ -1,0 +1,847 @@
+
+> @platforma-open/milaboratories.mixcr-shm-trees@ test:dry-run /home/runner/work/mixcr-shm-trees/mixcr-shm-trees
+> turbo run test --dry-run=json
+
+{
+  "id": "2wSO2a3BjG6d1ZkUlUGdJRAZbhZ",
+  "version": "1",
+  "turboVersion": "2.5.2",
+  "monorepo": true,
+  "globalCacheInputs": {
+    "rootKey": "I can’t see ya, but I know you’re here",
+    "files": {},
+    "hashOfExternalDependencies": "7fb90672689ac9a7",
+    "hashOfInternalDependencies": "",
+    "environmentVariables": {
+      "specified": {
+        "env": [],
+        "passThroughEnv": null
+      },
+      "configured": [],
+      "inferred": [],
+      "passthrough": null
+    },
+    "engines": null
+  },
+  "packages": [
+    "@platforma-open/milaboratories.mixcr-shm-trees",
+    "@platforma-open/milaboratories.mixcr-shm-trees.model",
+    "@platforma-open/milaboratories.mixcr-shm-trees.test",
+    "@platforma-open/milaboratories.mixcr-shm-trees.ui",
+    "@platforma-open/milaboratories.mixcr-shm-trees.workflow"
+  ],
+  "envMode": "strict",
+  "frameworkInference": true,
+  "tasks": [
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#build",
+      "task": "build",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees",
+      "hash": "9057da9150474d7f",
+      "inputs": {
+        "CHANGELOG.md": "68ed6f23a2be9f08d338550f22ab71c061e3ecf2",
+        "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
+        "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
+        "package.json": "25af5d03d9bc739379c130c605ee6d042f189549"
+      },
+      "hashOfExternalDependencies": "c0c51decfdd34388",
+      "cache": {
+        "local": true,
+        "remote": false,
+        "status": "HIT",
+        "source": "LOCAL",
+        "timeSaved": 1875
+      },
+      "command": "rm -rf ./block-pack && block-tools pack",
+      "cliArguments": [],
+      "outputs": [
+        "./block-pack/**",
+        "./dist/**"
+      ],
+      "excludedOutputs": null,
+      "logFile": "block/.turbo/turbo-build.log",
+      "directory": "block",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.model#build",
+        "@platforma-open/milaboratories.mixcr-shm-trees.ui#build",
+        "@platforma-open/milaboratories.mixcr-shm-trees.workflow#build"
+      ],
+      "dependents": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#test",
+        "@platforma-open/milaboratories.mixcr-shm-trees.test#build"
+      ],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [
+          "./block-pack/**",
+          "./dist/**"
+        ],
+        "cache": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "$TURBO_DEFAULT$"
+        ],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": null,
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": null
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": null
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#test",
+      "task": "test",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees",
+      "hash": "afb59c6278ee188b",
+      "inputs": {
+        "CHANGELOG.md": "68ed6f23a2be9f08d338550f22ab71c061e3ecf2",
+        "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
+        "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
+        "package.json": "25af5d03d9bc739379c130c605ee6d042f189549"
+      },
+      "hashOfExternalDependencies": "c0c51decfdd34388",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "<NONEXISTENT>",
+      "cliArguments": [],
+      "outputs": null,
+      "excludedOutputs": null,
+      "logFile": "block/.turbo/turbo-test.log",
+      "directory": "block",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#build"
+      ],
+      "dependents": [],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [],
+        "cache": true,
+        "dependsOn": [
+          "build"
+        ],
+        "inputs": [],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": [
+          "DEBUG",
+          "PL_ADDRESS",
+          "PL_TEST_PASSWORD",
+          "PL_TEST_PROXY",
+          "PL_TEST_USER"
+        ],
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": [
+            "DEBUG",
+            "PL_ADDRESS",
+            "PL_TEST_PASSWORD",
+            "PL_TEST_PROXY",
+            "PL_TEST_USER"
+          ]
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": [
+          "PL_ADDRESS=83f9c7fec1cc29c9c3d71b605baa76ebebe1a51c052c0bfad1e37e9883b994fa",
+          "PL_TEST_PASSWORD=c638833f69bbfb3c267afa0a74434812436b8f08a81fd263c6be6871de4f1265",
+          "PL_TEST_USER=f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3"
+        ]
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.model#build",
+      "task": "build",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.model",
+      "hash": "95aa6dcad2f91fca",
+      "inputs": {
+        "CHANGELOG.md": "b00cbbd52418db29652fa543e6cecb30f3f2b771",
+        "package.json": "3c420700b78141631352d946a0571873db59a80a",
+        "src/index.ts": "ec2e9a0e09b11a942b45a447a31d691ed8194eb4",
+        "src/progress.ts": "0c972e4faf9ed663a50aa86e26b2cd5809fdb96b",
+        "src/soi.ts": "12c019aa3673014780ab7c04fc2c974404f9fdd9",
+        "src/tree_filter.ts": "7863fc615508c9a9ffe600acd5970aa37752f0b1",
+        "src/util.ts": "0e35aebc0695c5ca7bc33c00caa42279ea56a5ab",
+        "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
+        "vite.config.mts": "a500058540e1b93dbfd5840e46f7823affd46a97"
+      },
+      "hashOfExternalDependencies": "61f83df9b8386159",
+      "cache": {
+        "local": true,
+        "remote": false,
+        "status": "HIT",
+        "source": "LOCAL",
+        "timeSaved": 5371
+      },
+      "command": "tsup && vite build && block-tools build-model",
+      "cliArguments": [],
+      "outputs": [
+        "./block-pack/**",
+        "./dist/**"
+      ],
+      "excludedOutputs": null,
+      "logFile": "model/.turbo/turbo-build.log",
+      "directory": "model",
+      "dependencies": [],
+      "dependents": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#build",
+        "@platforma-open/milaboratories.mixcr-shm-trees.model#test",
+        "@platforma-open/milaboratories.mixcr-shm-trees.ui#build"
+      ],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [
+          "./block-pack/**",
+          "./dist/**"
+        ],
+        "cache": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "$TURBO_DEFAULT$"
+        ],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": null,
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "vite",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": null
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": null
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.model#test",
+      "task": "test",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.model",
+      "hash": "3fe531d281cbe5e5",
+      "inputs": {
+        "CHANGELOG.md": "b00cbbd52418db29652fa543e6cecb30f3f2b771",
+        "package.json": "3c420700b78141631352d946a0571873db59a80a",
+        "src/index.ts": "ec2e9a0e09b11a942b45a447a31d691ed8194eb4",
+        "src/progress.ts": "0c972e4faf9ed663a50aa86e26b2cd5809fdb96b",
+        "src/soi.ts": "12c019aa3673014780ab7c04fc2c974404f9fdd9",
+        "src/tree_filter.ts": "7863fc615508c9a9ffe600acd5970aa37752f0b1",
+        "src/util.ts": "0e35aebc0695c5ca7bc33c00caa42279ea56a5ab",
+        "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
+        "vite.config.mts": "a500058540e1b93dbfd5840e46f7823affd46a97"
+      },
+      "hashOfExternalDependencies": "61f83df9b8386159",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "<NONEXISTENT>",
+      "cliArguments": [],
+      "outputs": null,
+      "excludedOutputs": null,
+      "logFile": "model/.turbo/turbo-test.log",
+      "directory": "model",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.model#build"
+      ],
+      "dependents": [],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [],
+        "cache": true,
+        "dependsOn": [
+          "build"
+        ],
+        "inputs": [],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": [
+          "DEBUG",
+          "PL_ADDRESS",
+          "PL_TEST_PASSWORD",
+          "PL_TEST_PROXY",
+          "PL_TEST_USER"
+        ],
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "vite",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": [
+            "DEBUG",
+            "PL_ADDRESS",
+            "PL_TEST_PASSWORD",
+            "PL_TEST_PROXY",
+            "PL_TEST_USER"
+          ]
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": [
+          "PL_ADDRESS=83f9c7fec1cc29c9c3d71b605baa76ebebe1a51c052c0bfad1e37e9883b994fa",
+          "PL_TEST_PASSWORD=c638833f69bbfb3c267afa0a74434812436b8f08a81fd263c6be6871de4f1265",
+          "PL_TEST_USER=f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3"
+        ]
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#build",
+      "task": "build",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
+      "hash": "c55a2878c773ca60",
+      "inputs": {
+        "CHANGELOG.md": "a97ce56c93d0d3737b9f0dcc69dd79a25d1a45ae",
+        "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "package.json": "3706d98167495b1d465dee18742a3f28651e2be8",
+        "src/wf.test.ts": "839fe906b9747b34893ca52db66556a4073dbd8e",
+        "tsconfig.json": "64ebfa332d028a50e3ddadaab4ad97b44a191599",
+        "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
+      },
+      "hashOfExternalDependencies": "0a9f1cb968d9dc23",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "<NONEXISTENT>",
+      "cliArguments": [],
+      "outputs": [
+        "./block-pack/**",
+        "./dist/**"
+      ],
+      "excludedOutputs": null,
+      "logFile": "test/.turbo/turbo-build.log",
+      "directory": "test",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#build"
+      ],
+      "dependents": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.test#test"
+      ],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [
+          "./block-pack/**",
+          "./dist/**"
+        ],
+        "cache": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "$TURBO_DEFAULT$"
+        ],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": null,
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": null
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": null
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#test",
+      "task": "test",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
+      "hash": "7195804d82880724",
+      "inputs": {
+        "CHANGELOG.md": "a97ce56c93d0d3737b9f0dcc69dd79a25d1a45ae",
+        "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+        "package.json": "3706d98167495b1d465dee18742a3f28651e2be8",
+        "src/wf.test.ts": "839fe906b9747b34893ca52db66556a4073dbd8e",
+        "tsconfig.json": "64ebfa332d028a50e3ddadaab4ad97b44a191599",
+        "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
+      },
+      "hashOfExternalDependencies": "0a9f1cb968d9dc23",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "<NONEXISTENT>",
+      "cliArguments": [],
+      "outputs": null,
+      "excludedOutputs": null,
+      "logFile": "test/.turbo/turbo-test.log",
+      "directory": "test",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.test#build"
+      ],
+      "dependents": [],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [],
+        "cache": true,
+        "dependsOn": [
+          "build"
+        ],
+        "inputs": [],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": [
+          "DEBUG",
+          "PL_ADDRESS",
+          "PL_TEST_PASSWORD",
+          "PL_TEST_PROXY",
+          "PL_TEST_USER"
+        ],
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": [
+            "DEBUG",
+            "PL_ADDRESS",
+            "PL_TEST_PASSWORD",
+            "PL_TEST_PROXY",
+            "PL_TEST_USER"
+          ]
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": [
+          "PL_ADDRESS=83f9c7fec1cc29c9c3d71b605baa76ebebe1a51c052c0bfad1e37e9883b994fa",
+          "PL_TEST_PASSWORD=c638833f69bbfb3c267afa0a74434812436b8f08a81fd263c6be6871de4f1265",
+          "PL_TEST_USER=f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3"
+        ]
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.ui#build",
+      "task": "build",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
+      "hash": "bdf049d17e5fd9b4",
+      "inputs": {
+        "CHANGELOG.md": "cc6abd552c63b6c0500140724d2e64fd4acee260",
+        "index.html": "e37ab12ef6090a1380237b55964f225b48d02cfc",
+        "package.json": "fad833648c18e958a5745c192fb4cc7ebc2f4f89",
+        "src/addDendrogram.ts": "a08fa65a18c53723410943302a9a249254983dc3",
+        "src/alphabets.test.ts": "cbdf7effdc03b9e721f83ef3bbaa4c42a55f4016",
+        "src/alphabets.ts": "fe9c8fbd706d106d89f9e5cd338db6fcf61e4f70",
+        "src/app.ts": "c533bfc2ba58777ec8add55c65ca4bdd646c446c",
+        "src/dataimport.ts": "cc80e0d9273e585e86b5fb455f18b64cce2b25ae",
+        "src/main.ts": "27163d6a653650d4b2a98c75faccb874659db798",
+        "src/pages/BasketPage.vue": "2c489fffcaee371fbdb4a7600a46200a0365fd68",
+        "src/pages/MainPage.vue": "9524b065a62a0e261e7b0af82ec81ef2ef77d802",
+        "src/pages/SOIPage.vue": "602e5f9847593dfeb58b59105d15b7480120b969",
+        "src/pages/TreePage.vue": "859c07648fdfc6b58bfed9a0a2305b2685485d47",
+        "src/pages/TreePageGraph.vue": "dac7258fd078c69d557d97979089539709c13c6b",
+        "src/pages/TreePageTable.vue": "6c4ad3673211fdb920ffc050bdacce32305be9c2",
+        "src/pages/TreeTablePage.vue": "e49e855b4b98bdb781cdcd60868d58a945617ce4",
+        "src/pages/components/AddToBasketModal.vue": "0c0795b4d50bb6f26d02cf21ae10839036d1bbcc",
+        "src/pages/components/DownsamplingSettings.vue": "993b578670d5abe5f4eff3eddef00cfac70bc8cb",
+        "src/pages/components/MainSettingsPanel.vue": "9a54f278f450b74e639892e0e62f064e4129bfc8",
+        "src/pages/components/PerStepWrapper.vue": "4850c1ce29d2c25287de27dea66b9a6fcd6b1846",
+        "src/pages/components/PlDataDialogModal.vue": "adc4c5876efdd1ccb547af598c75e27f7206cbd9",
+        "src/pages/components/ProgressCell.vue": "78a4f13d9cdd74a84a995c8d93f9ce1202b4b02d",
+        "src/pages/components/RunReportPanel.vue": "a839afd8fbd6a547788f96daa21a609be0f4e9cb",
+        "src/pages/components/RunReportPanelLogs.vue": "89424314a7150663b1dc0133e7730200d92ea2dc",
+        "src/pages/components/RunReportPanelReports.vue": "383ccfc6c772a66991bca73acc745a697d3ff4de",
+        "src/pages/components/SOIImportModal.vue": "158b54fcd143e7286391e788376f64e0aaba3da9",
+        "src/pages/components/SOISettingsPanel.vue": "2f011485e90274d7fa6e5d8c57cd0ced9cd05c21",
+        "src/pages/components/SOITable.vue": "8e0792094d6991246dda95abffd0b94bbbb34385",
+        "src/results.ts": "cdf06e19bf475ac19915c83a70f5e82ef671a7b9",
+        "src/soi_util.ts": "178e58f4ccfdb5d917879459f0ed9a07eb6eed89",
+        "src/types.ts": "bec619b53b719d767fb0b1ff95a605edbbd2e937",
+        "src/util.ts": "ad10e7c8e1edbdbf2ec4add26eb3c5e667ac848d",
+        "tsconfig.app.json": "e05d347c395d6db4dfd4d381b57a78c75397d3c8",
+        "tsconfig.json": "ea9d0cd8255683d84f125948115daf1de0f06b1f",
+        "tsconfig.node.json": "3afdd6e38438be7612befbd4b656af7bed27a31a",
+        "vite.config.ts": "034e79acb1b5c09590ed68aaa0eda291e79ecd05",
+        "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
+      },
+      "hashOfExternalDependencies": "2a1f6b1ec517901a",
+      "cache": {
+        "local": true,
+        "remote": false,
+        "status": "HIT",
+        "source": "LOCAL",
+        "timeSaved": 19070
+      },
+      "command": "vue-tsc -b && vite build",
+      "cliArguments": [],
+      "outputs": [
+        "./block-pack/**",
+        "./dist/**"
+      ],
+      "excludedOutputs": null,
+      "logFile": "ui/.turbo/turbo-build.log",
+      "directory": "ui",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.model#build"
+      ],
+      "dependents": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#build",
+        "@platforma-open/milaboratories.mixcr-shm-trees.ui#test"
+      ],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [
+          "./block-pack/**",
+          "./dist/**"
+        ],
+        "cache": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "$TURBO_DEFAULT$"
+        ],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": null,
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "vite",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": null
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": null
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.ui#test",
+      "task": "test",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
+      "hash": "48a628cf8cc364c4",
+      "inputs": {
+        "CHANGELOG.md": "cc6abd552c63b6c0500140724d2e64fd4acee260",
+        "index.html": "e37ab12ef6090a1380237b55964f225b48d02cfc",
+        "package.json": "fad833648c18e958a5745c192fb4cc7ebc2f4f89",
+        "src/addDendrogram.ts": "a08fa65a18c53723410943302a9a249254983dc3",
+        "src/alphabets.test.ts": "cbdf7effdc03b9e721f83ef3bbaa4c42a55f4016",
+        "src/alphabets.ts": "fe9c8fbd706d106d89f9e5cd338db6fcf61e4f70",
+        "src/app.ts": "c533bfc2ba58777ec8add55c65ca4bdd646c446c",
+        "src/dataimport.ts": "cc80e0d9273e585e86b5fb455f18b64cce2b25ae",
+        "src/main.ts": "27163d6a653650d4b2a98c75faccb874659db798",
+        "src/pages/BasketPage.vue": "2c489fffcaee371fbdb4a7600a46200a0365fd68",
+        "src/pages/MainPage.vue": "9524b065a62a0e261e7b0af82ec81ef2ef77d802",
+        "src/pages/SOIPage.vue": "602e5f9847593dfeb58b59105d15b7480120b969",
+        "src/pages/TreePage.vue": "859c07648fdfc6b58bfed9a0a2305b2685485d47",
+        "src/pages/TreePageGraph.vue": "dac7258fd078c69d557d97979089539709c13c6b",
+        "src/pages/TreePageTable.vue": "6c4ad3673211fdb920ffc050bdacce32305be9c2",
+        "src/pages/TreeTablePage.vue": "e49e855b4b98bdb781cdcd60868d58a945617ce4",
+        "src/pages/components/AddToBasketModal.vue": "0c0795b4d50bb6f26d02cf21ae10839036d1bbcc",
+        "src/pages/components/DownsamplingSettings.vue": "993b578670d5abe5f4eff3eddef00cfac70bc8cb",
+        "src/pages/components/MainSettingsPanel.vue": "9a54f278f450b74e639892e0e62f064e4129bfc8",
+        "src/pages/components/PerStepWrapper.vue": "4850c1ce29d2c25287de27dea66b9a6fcd6b1846",
+        "src/pages/components/PlDataDialogModal.vue": "adc4c5876efdd1ccb547af598c75e27f7206cbd9",
+        "src/pages/components/ProgressCell.vue": "78a4f13d9cdd74a84a995c8d93f9ce1202b4b02d",
+        "src/pages/components/RunReportPanel.vue": "a839afd8fbd6a547788f96daa21a609be0f4e9cb",
+        "src/pages/components/RunReportPanelLogs.vue": "89424314a7150663b1dc0133e7730200d92ea2dc",
+        "src/pages/components/RunReportPanelReports.vue": "383ccfc6c772a66991bca73acc745a697d3ff4de",
+        "src/pages/components/SOIImportModal.vue": "158b54fcd143e7286391e788376f64e0aaba3da9",
+        "src/pages/components/SOISettingsPanel.vue": "2f011485e90274d7fa6e5d8c57cd0ced9cd05c21",
+        "src/pages/components/SOITable.vue": "8e0792094d6991246dda95abffd0b94bbbb34385",
+        "src/results.ts": "cdf06e19bf475ac19915c83a70f5e82ef671a7b9",
+        "src/soi_util.ts": "178e58f4ccfdb5d917879459f0ed9a07eb6eed89",
+        "src/types.ts": "bec619b53b719d767fb0b1ff95a605edbbd2e937",
+        "src/util.ts": "ad10e7c8e1edbdbf2ec4add26eb3c5e667ac848d",
+        "tsconfig.app.json": "e05d347c395d6db4dfd4d381b57a78c75397d3c8",
+        "tsconfig.json": "ea9d0cd8255683d84f125948115daf1de0f06b1f",
+        "tsconfig.node.json": "3afdd6e38438be7612befbd4b656af7bed27a31a",
+        "vite.config.ts": "034e79acb1b5c09590ed68aaa0eda291e79ecd05",
+        "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
+      },
+      "hashOfExternalDependencies": "2a1f6b1ec517901a",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "vitest",
+      "cliArguments": [],
+      "outputs": null,
+      "excludedOutputs": null,
+      "logFile": "ui/.turbo/turbo-test.log",
+      "directory": "ui",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.ui#build"
+      ],
+      "dependents": [],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [],
+        "cache": true,
+        "dependsOn": [
+          "build"
+        ],
+        "inputs": [],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": [
+          "DEBUG",
+          "PL_ADDRESS",
+          "PL_TEST_PASSWORD",
+          "PL_TEST_PROXY",
+          "PL_TEST_USER"
+        ],
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "vite",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": [
+            "DEBUG",
+            "PL_ADDRESS",
+            "PL_TEST_PASSWORD",
+            "PL_TEST_PROXY",
+            "PL_TEST_USER"
+          ]
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": [
+          "PL_ADDRESS=83f9c7fec1cc29c9c3d71b605baa76ebebe1a51c052c0bfad1e37e9883b994fa",
+          "PL_TEST_PASSWORD=c638833f69bbfb3c267afa0a74434812436b8f08a81fd263c6be6871de4f1265",
+          "PL_TEST_USER=f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3"
+        ]
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.workflow#build",
+      "task": "build",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.workflow",
+      "hash": "2231caad8d47f4d4",
+      "inputs": {
+        "CHANGELOG.md": "cd9013e2ef32adb12355b17bf469ee2c0a9a3020",
+        "format.el": "b168a1ac097463794e06d0e92c1e11da73486887",
+        "index.d.ts": "d8645366dd3210b67111d049068b412c855c9c23",
+        "index.js": "12c7ef33ffe9d1cc4c07280cf2e7ace31120a22c",
+        "package.json": "7aaff0293fb1de15f3dc38e73f7038c4a9a864cb",
+        "src/export-settings.lib.tengo": "ef7cd86d6284e6c6276098ecfb3e45b7a3110d27",
+        "src/main.tpl.tengo": "7715560e6572198efc0135c78f4497b843cccfe4",
+        "src/mixcr-export.tpl.tengo": "480d32ff05ee248f3dc8b78ec40da4f7fb460cb9",
+        "src/mixcr-shm-trees.tpl.tengo": "cb50976852eabb5fe2f8f92af27447c6c07ddf5c",
+        "src/prepare-donor-column.lib.tengo": "3f694e9e6fa51ca2e56e9263d1d9d6d60f6a8740",
+        "src/process.tpl.tengo": "f2f7034620b36ed37682d81772711773f454909c",
+        "src/request-library.tpl.tengo": "16b45c7900b08aab95cd9922a900577332073abb",
+        "src/soi-export.lib.tengo": "4faab0791acda99e98f2c3cd88252db801644cd0",
+        "src/soi.tpl.tengo": "c4020229046b3989290eac9688e162eae8ddac5f",
+        "src/tables-aggregation.lib.tengo": "13fb9462d489786fb9ea42cd1adaec10bdadc078",
+        "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
+        "vitest.config.mts": "dc17fea1dbe2168df421989cab76b13cfe60db22"
+      },
+      "hashOfExternalDependencies": "545bd4113a74a861",
+      "cache": {
+        "local": true,
+        "remote": false,
+        "status": "HIT",
+        "source": "LOCAL",
+        "timeSaved": 4411
+      },
+      "command": "rm -rf dist && pl-tengo check && pl-tengo build",
+      "cliArguments": [],
+      "outputs": [
+        "./block-pack/**",
+        "./dist/**"
+      ],
+      "excludedOutputs": null,
+      "logFile": "workflow/.turbo/turbo-build.log",
+      "directory": "workflow",
+      "dependencies": [],
+      "dependents": [
+        "@platforma-open/milaboratories.mixcr-shm-trees#build",
+        "@platforma-open/milaboratories.mixcr-shm-trees.workflow#test"
+      ],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [
+          "./block-pack/**",
+          "./dist/**"
+        ],
+        "cache": true,
+        "dependsOn": [
+          "^build"
+        ],
+        "inputs": [
+          "$TURBO_DEFAULT$"
+        ],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": null,
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": null
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": null
+      }
+    },
+    {
+      "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.workflow#test",
+      "task": "test",
+      "package": "@platforma-open/milaboratories.mixcr-shm-trees.workflow",
+      "hash": "eb38f88203938925",
+      "inputs": {
+        "CHANGELOG.md": "cd9013e2ef32adb12355b17bf469ee2c0a9a3020",
+        "format.el": "b168a1ac097463794e06d0e92c1e11da73486887",
+        "index.d.ts": "d8645366dd3210b67111d049068b412c855c9c23",
+        "index.js": "12c7ef33ffe9d1cc4c07280cf2e7ace31120a22c",
+        "package.json": "7aaff0293fb1de15f3dc38e73f7038c4a9a864cb",
+        "src/export-settings.lib.tengo": "ef7cd86d6284e6c6276098ecfb3e45b7a3110d27",
+        "src/main.tpl.tengo": "7715560e6572198efc0135c78f4497b843cccfe4",
+        "src/mixcr-export.tpl.tengo": "480d32ff05ee248f3dc8b78ec40da4f7fb460cb9",
+        "src/mixcr-shm-trees.tpl.tengo": "cb50976852eabb5fe2f8f92af27447c6c07ddf5c",
+        "src/prepare-donor-column.lib.tengo": "3f694e9e6fa51ca2e56e9263d1d9d6d60f6a8740",
+        "src/process.tpl.tengo": "f2f7034620b36ed37682d81772711773f454909c",
+        "src/request-library.tpl.tengo": "16b45c7900b08aab95cd9922a900577332073abb",
+        "src/soi-export.lib.tengo": "4faab0791acda99e98f2c3cd88252db801644cd0",
+        "src/soi.tpl.tengo": "c4020229046b3989290eac9688e162eae8ddac5f",
+        "src/tables-aggregation.lib.tengo": "13fb9462d489786fb9ea42cd1adaec10bdadc078",
+        "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
+        "vitest.config.mts": "dc17fea1dbe2168df421989cab76b13cfe60db22"
+      },
+      "hashOfExternalDependencies": "545bd4113a74a861",
+      "cache": {
+        "local": false,
+        "remote": false,
+        "status": "MISS",
+        "timeSaved": 0
+      },
+      "command": "<NONEXISTENT>",
+      "cliArguments": [],
+      "outputs": null,
+      "excludedOutputs": null,
+      "logFile": "workflow/.turbo/turbo-test.log",
+      "directory": "workflow",
+      "dependencies": [
+        "@platforma-open/milaboratories.mixcr-shm-trees.workflow#build"
+      ],
+      "dependents": [],
+      "with": [],
+      "resolvedTaskDefinition": {
+        "outputs": [],
+        "cache": true,
+        "dependsOn": [
+          "build"
+        ],
+        "inputs": [],
+        "outputLogs": "full",
+        "persistent": false,
+        "interruptible": false,
+        "env": [],
+        "passThroughEnv": [
+          "DEBUG",
+          "PL_ADDRESS",
+          "PL_TEST_PASSWORD",
+          "PL_TEST_PROXY",
+          "PL_TEST_USER"
+        ],
+        "interactive": false
+      },
+      "expandedOutputs": [],
+      "framework": "",
+      "envMode": "strict",
+      "environmentVariables": {
+        "specified": {
+          "env": [],
+          "passThroughEnv": [
+            "DEBUG",
+            "PL_ADDRESS",
+            "PL_TEST_PASSWORD",
+            "PL_TEST_PROXY",
+            "PL_TEST_USER"
+          ]
+        },
+        "configured": [],
+        "inferred": [],
+        "passthrough": [
+          "PL_ADDRESS=83f9c7fec1cc29c9c3d71b605baa76ebebe1a51c052c0bfad1e37e9883b994fa",
+          "PL_TEST_PASSWORD=c638833f69bbfb3c267afa0a74434812436b8f08a81fd263c6be6871de4f1265",
+          "PL_TEST_USER=f85ac825d102b9f2d546aa1679ea991ae845994c1343730d564f3fcd0a2168c3"
+        ]
+      }
+    }
+  ],
+  "user": "github-merge-queue[bot]",
+  "scm": {
+    "type": "git",
+    "sha": "ef0b14981e36e3cc46bb962193895bfc855bbabf",
+    "branch": "main"
+  }
+}
+

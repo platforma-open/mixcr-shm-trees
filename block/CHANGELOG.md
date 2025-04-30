@@ -1,5 +1,18 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.3.0
+
+### Minor Changes
+
+- 2f828e7: Migration to processColumn API
+
+### Patch Changes
+
+- Updated dependencies [2f828e7]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@3.8.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.7.0
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.5.2
+
 ## 3.2.0
 
 ### Minor Changes
