@@ -22,7 +22,7 @@ addTableAnnotations := func(order, defaultVisibility, label, specAnnotations) {
 }
 
 // export of threes whithout nodes
-shmTreeTableOptions := func(dataDescription) {
+shmTree := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -259,7 +259,7 @@ shmTreeTableOptions := func(dataDescription) {
 }
 
 // export data that is uniq for node
-shmTreeNodesTableOptions := func(dataDescription) {
+shmTreeNodes := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -678,7 +678,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
 
 // export data that is unique for clones, but not unique for a node
 // (different clones could be in the same topology node, for example, different time points)
-shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
+shmTreeNodesWithClones := func(dataDescription, donorColumn) {
     donorColumnSpec := donorColumn.spec
 
     axes := []
@@ -863,7 +863,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     }
 }
 
-shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
+shmTreeNodesUniqueIsotype := func(dataDescription) {
 
     axes := []
     columns := []
@@ -933,8 +933,8 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
 
 // to use the file as a library, we should explicitly export functions
 export ll.toStrict({
-	shmTreeTableOptions: shmTreeTableOptions,
-    shmTreeNodesTableOptions: shmTreeNodesTableOptions,
-    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
-    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions
+	shmTree: shmTree,
+    shmTreeNodes: shmTreeNodes,
+    shmTreeNodesWithClones: shmTreeNodesWithClones,
+    shmTreeNodesUniqueIsotype: shmTreeNodesUniqueIsotype
 })

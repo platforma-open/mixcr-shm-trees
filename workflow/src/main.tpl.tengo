@@ -19,9 +19,14 @@ wf.body(func(args) {
 
 	// we could not use array as request for waiting (see below), so we store datasets in a dictionary
 	datasets := {}
+	firstDataset := undefined
 	for datasetRef in args.datasetColumns {
 		// we assume that mixcr block produces exactly one clns column
-		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
+		ds := wf.resolve(datasetRef)
+		datasets[datasetRef.blockId] = ds
+		if is_undefined(firstDataset) {
+			firstDataset = ds
+		}
 	}
 
 	library := render.createEphemeral(requestLibraryTpl, {
@@ -35,6 +40,10 @@ wf.body(func(args) {
 		datasets: datasets,
 		donorColumn: donorColumn,
 		library: library,
+		etc: {
+			firstDatasetSpec: firstDataset.spec,
+			blockId: wf.getBlockId()
+		},
 		params: {
 			downsampling: args.downsampling,
 			sequencesOfInterest: args.sequencesOfInterest

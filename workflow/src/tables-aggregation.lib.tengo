@@ -2,9 +2,21 @@ ll := import("@platforma-sdk/workflow-tengo:ll")
 exec := import("@platforma-sdk/workflow-tengo:exec")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 json := import("json")
+
 paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
 
-//// aggregating by-nodes output to make it uniquely addressable by it's native key
+ensureUniquenessParamsFromPconvParams := func(pfConvParams) {
+    return {
+        axes: slices.map(pfConvParams.axes, func(axis) {
+            return axis.column
+        }),
+        columns: slices.map(pfConvParams.columns, func(col) {
+            return col.column
+        })
+    }
+}
+
+/** Aggregating by-nodes output to make it uniquely addressable by it's native key */
 ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
     keyColumns := []
     for axis in pfConvParams.axes {
@@ -23,7 +35,7 @@ ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
         }
 
         rankingCol := aggParams[1]
-        aggregationWorkflow = { 
+        aggregationWorkflow = {
             steps: [
                 {
                     type: "aggregate",
@@ -33,10 +45,10 @@ ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
                             type: aggParams[0],
                             rankingCol: rankingCol,
                             pickCols: pickCols
-                        }           
+                        }
                     ]
                 }
-            ] 
+            ]
         }
     } else {
         aggregations := []
@@ -48,12 +60,12 @@ ensureUniqueness := func(inputTsv, pfConvParams, ...aggParams) {
             })
         }
 
-        aggregationWorkflow = { steps: [ 
+        aggregationWorkflow = { steps: [
             {
                 type: "aggregate",
                 groupBy: keyColumns,
                 aggregations: aggregations
-                } 
+                }
             ]
         }
     }

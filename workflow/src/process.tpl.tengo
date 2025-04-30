@@ -15,6 +15,10 @@ pframes := import("@platforma-sdk/workflow-tengo:pframes")
 
 reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
 
+mixcrShmTreesTpl := assets.importTemplate(":mixcr-shm-trees")
+mixcrExportTpl := assets.importTemplate(":mixcr-export")
+
+self.awaitState("firstDatasetSpec", "ResourceReady")
 self.awaitState("datasets", { wildcard: "*" }, "AllInputsSet")
 // this templete should run only after resolving of all inputs
 // we don't need to wait for file content, just refs
@@ -45,7 +49,10 @@ self.body(func(inputs) {
 		cellsAssembled: false
 	}
 
+	blockId := inputs.blockId
+
 	library := inputs.library
+	libraryFormat := library.spec.annotations["pl7.app/vdj/libraryFormat"]
 
 	// clonotypingBlockId -> "bulk" | "sc"
 	datasetTypes := {}
@@ -81,16 +88,130 @@ self.body(func(inputs) {
 	dataDescription.assemblingFeature = assemblingFeature
 
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
-	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
+	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets, inputs.firstDatasetSpec)
+
+	shmtResults := pframes.processColumn(
+		dataGroupedByDonorId,
+		mixcrShmTreesTpl,
+		[ {
+			name: "alleles",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/alleles",
+				valueType: "FileMap",
+			}
+		}, {
+			name: "downsampled",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/downsampled",
+				valueType: "FileMap",
+			}
+		}, {
+			name: "shmTrees",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt",
+				valueType: "File",
+			}
+		}, {
+			name: "allelesLog",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/allelesLog",
+				valueType: "Log",
+			}
+		}, {
+			name: "treesLog",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/treesLog",
+				valueType: "Log",
+		}, {
+			name: "allelesReport",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/allelesReport",
+				valueType: "File",
+			}
+		}, {
+			name: "treesReport",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/treesReport",
+				valueType: "File",
+			}
+		}, {
+			name: "allelesReportJson",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/allelesReportJson",
+				valueType: "File",
+			}
+		}, {
+			name: "treesReportJson",
+			type: "Resource",
+			spec: {
+				name: "mixcr.com/shmt/treesReportJson",
+				valueType: "File",
+			}
+		} ],
+		{
+			aggregate: [1, 2],
+			traceSteps: [{type: "milaboratories.mixcr-shm-trees", id: blockId, importance: 19, label: "SHM Trees"}],
+			extra: {
+				library: is_undefined(library) ? smart.createNullResource() : library.data,
+				globalParams: maps.merge(inputs.params, {
+					datasetTypes: datasetTypes,
+					libraryFormat: libraryFormat
+				})
+			}
+		}
+	)
 
 	// collect params for running export commands and to parse result tsv files into pColumns
-	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription)
-	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription)
-	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn)
-	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotypeTableOptions(dataDescription)
+	shmTreeTableOptions := exportSettings.shmTree(dataDescription)
+	shmTreeNodesTableOptions := exportSettings.shmTreeNodes(dataDescription)
+	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClones(dataDescription, inputs.donorColumn)
+	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotype(dataDescription)
 
-	libraryFormat := library.spec.annotations["pl7.app/vdj/libraryFormat"]
-
+	shmtResults := pframes.processColumn(
+		shmtResults.output("shmTrees"),
+		mixcrExportTpl,
+		[{
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeTableOptions.pfconvParams,
+			name: "trees"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesTableOptions.pfconvParams,
+			name: "treeNodes"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesWithClonesTableOptions.pfconvParams,
+			name: "treeNodesWithClones"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesUniqueIsotypeTableOptions.pfconvParams,
+			name: "treeNodesUniqueIsotype"
+		}],
+		{
+			extra: {
+				library: is_undefined(library) ? smart.createNullResource() : library.data,
+				params:{
+					libraryFormat: libraryFormat,
+					shmTreeArgs: shmTreeTableOptions.cmdArgs,
+					shmTreeNodesArgs: shmTreeNodesTableOptions.cmdArgs,
+					shmTreeNodesWithClonesArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
+					shmTreeNodesUniqueIsotypeArgs: shmTreeNodesUniqueIsotypeTableOptions.cmdArgs
+				}
+			}
+		}
+	)
 	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
 	mixcrResults := llPFrames.aggregate(
 		// files to iterate through
