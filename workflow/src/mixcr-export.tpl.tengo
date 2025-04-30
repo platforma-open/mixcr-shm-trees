@@ -1,0 +1,132 @@
+//tengo:hash_override 994D9444-D460-429A-9004-EADA3D49D52E
+
+self := import("@platforma-sdk/workflow-tengo:tpl")
+pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
+ll := import("@platforma-sdk/workflow-tengo:ll")
+assets := import("@platforma-sdk/workflow-tengo:assets")
+exec := import("@platforma-sdk/workflow-tengo:exec")
+times := import("times")
+
+json := import("json")
+
+self.defineOutputs(
+    "trees", "treeNodes", "treeNodesWithClones", "treeNodesUniqueIsotype"
+)
+
+tablesAggregation := import(":tables-aggregation")
+
+// import MiXCR as a software to use
+mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
+
+self.body(func(inputs) {
+	shmtFile := inputs[pConstants.VALUE_FIELD_NAME]
+	params := inputs.params
+    library := inputs.library
+    libraryFormat := params.libraryFormat
+    shmTreeArgs := params.shmTreeArgs
+	shmTreeNodesArgs := params.shmTreeNodesArgs
+	shmTreeNodesWithClonesArgs := params.shmTreeNodesWithClonesArgs
+	shmTreeNodesUniqueIsotypeArgs := params.shmTreeNodesUniqueIsotypeArgs
+	shmTreeEnsureUniquenessParams := params.shmTreeEnsureUniquenessParams
+	shmTreeNodesEnsureUniquenessParams := params.shmTreeNodesEnsureUniquenessParams
+	shmTreeNodesWithClonesEnsureUniquenessParams := params.shmTreeNodesWithClonesEnsureUniquenessParams
+	shmTreeNodesUniqueIsotypeEnsureUniquenessParams := params.shmTreeNodesUniqueIsotypeEnsureUniquenessParams
+
+    addLibraryFile := func(cmdBuilder) {
+        if !is_undefined(library) {
+            if libraryFormat == "repseqio.json.gz" {
+                cmdBuilder.addFile("library.json.gz", library)
+            } else {
+                cmdBuilder.addFile("library.json", library)
+            }
+        }
+    }
+
+    // export trees without nodes
+    shmTreeExportsCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        dontSaveStdoutOrStderr().
+        inLightQueue().
+        secret("MI_LICENSE", "MI_LICENSE").
+        software(mixcrSw).
+        arg("exportShmTrees")
+
+    addLibraryFile(shmTreeExportsCmdBuilder)
+
+    for arg in shmTreeArgs {
+        shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.arg(arg)
+    }
+
+    shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmtFile).
+        saveFile("output.tsv")
+
+    shmTreeExports := shmTreeExportsCmdBuilder.run()
+    shmTreeTsvRaw := shmTreeExports.getFile("output.tsv")
+
+    shmTreeTsv := tablesAggregation.ensureUniqueness(shmTreeTsvRaw, shmTreeEnsureUniquenessParams, "max_by", "totalReadsCountInTree")
+
+    // export tree nodes with data uniq for the node
+    shmTreeNodesExportsCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        dontSaveStdoutOrStderr().
+        inLightQueue().
+        secret("MI_LICENSE", "MI_LICENSE").
+        software(mixcrSw).
+        arg("exportShmTreesWithNodes")
+
+    addLibraryFile(shmTreeNodesExportsCmdBuilder)
+
+    for arg in shmTreeNodesArgs {
+        shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.arg(arg)
+    }
+
+    shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmtFile).
+        saveFile("output.tsv")
+
+    shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
+    shmTreeNodesTsvRaw := shmTreeNodesExports.getFile("output.tsv")
+
+	shmTreeNodesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesTsvRaw, shmTreeNodesEnsureUniquenessParams, "first")
+
+    // export nodes with clones. For each node could be several clones
+    shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
+        printErrStreamToStdout().
+        dontSaveStdoutOrStderr().
+        inLightQueue().
+		secret("MI_LICENSE", "MI_LICENSE").
+		software(mixcrSw).
+        arg("exportShmTreesWithNodes").
+        // don't export nodes that don't have clones
+        arg("--only-observed")
+
+    addLibraryFile(shmTreeNodesWithClonesExportsCmdBuilder)
+
+    for arg in shmTreeNodesWithClonesArgs {
+        shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.arg(arg)
+    }
+
+    shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.
+        arg("input.shmt").
+        arg("output.tsv").
+        addFile("input.shmt", shmtFile).
+        saveFile("output.tsv")
+
+    shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
+    shmTreeNodesWithClonesTsvRaw := shmTreeNodesWithClonesExports.getFile("output.tsv")
+
+    shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, shmTreeNodesWithClonesEnsureUniquenessParams, "max_by", "readCount")
+    shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, shmTreeNodesUniqueIsotypeEnsureUniquenessParams, "max_by", "readCount")
+
+    return {
+        trees: shmTreeTsv,
+        treeNodes: shmTreeNodesTsv,
+        treeNodesWithClones: shmTreeNodesWithClonesTsv,
+        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv
+    }
+})

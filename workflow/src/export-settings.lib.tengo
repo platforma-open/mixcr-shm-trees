@@ -1,4 +1,5 @@
 ll := import("@platforma-sdk/workflow-tengo:ll")
+maps := import("@platforma-sdk/workflow-tengo:maps")
 text := import("text")
 
 // ==============================================
@@ -12,8 +13,16 @@ text := import("text")
 // TODO: TMP
 allowNA := true
 
+addTableAnnotations := func(order, defaultVisibility, label, specAnnotations) {
+	return maps.merge(specAnnotations, {
+		"pl7.app/table/orderPriority": string(order),
+		"pl7.app/table/visibility": defaultVisibility ? "default" : "optional",
+		"pl7.app/label": label
+	})
+}
+
 // export of threes whithout nodes
-shmTreeTableOptions := func(dataDescription) {
+shmTree := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -25,12 +34,7 @@ shmTreeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/treeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Tree id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "100000"
-            }
+            annotations: addTableAnnotations(100000, true, "Tree id", {})
         }
     })
 
@@ -41,12 +45,7 @@ shmTreeTableOptions := func(dataDescription) {
             spec: {
                 name: "pl7.app/dendrogram/subtreeId",
                 type: "Long",
-                domain: { },
-                annotations: {
-                    "pl7.app/label": "Chain id",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "90000"
-                }
+                annotations: addTableAnnotations(90000, true, "Chain id", {})
             }
         })
     }
@@ -60,11 +59,7 @@ shmTreeTableOptions := func(dataDescription) {
             spec: {
                 name: "pl7.app/vdj/uniqueCellCount",
                 valueType: "Long",
-                annotations: {
-                    "pl7.app/label": "Number of cells",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "70000"
-                }
+                annotations: addTableAnnotations(70000, true, "Number of cells", {})
             }
         })
     }
@@ -78,11 +73,7 @@ shmTreeTableOptions := func(dataDescription) {
             spec: {
                 name: "pl7.app/vdj/uniqueMoleculeCount",
                 valueType: "Long",
-                annotations: {
-                    "pl7.app/label": "Number of molecules",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "60000"
-                }
+                annotations: addTableAnnotations(60000, true, "Number of molecules", {})
             }
         })
     }
@@ -95,11 +86,7 @@ shmTreeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/vdj/numberOfClonesInTree",
             valueType: "Long",
-            annotations: {
-                "pl7.app/label": "Number of clones",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "80000"
-            }
+            annotations: addTableAnnotations(80000, true, "Number of clones", {})
         }
     })
 
@@ -111,11 +98,7 @@ shmTreeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/vdj/numberOfNodesWithClones",
             valueType: "Long",
-            annotations: {
-                "pl7.app/label": "Number of nodes",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "90000"
-            }
+            annotations: addTableAnnotations(90000, true, "Number of nodes", {})
         }
     })
 
@@ -127,11 +110,7 @@ shmTreeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/vdj/totalReadsCountInTree",
             valueType: "Long",
-            annotations: {
-                "pl7.app/label": "Total reads count",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "50000"
-            }
+            annotations: addTableAnnotations(50000, true, "Total reads count", {})
         }
     })
 
@@ -146,13 +125,10 @@ shmTreeTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/vdj/reference": "VGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(30000, true, "V gene", {
                 type: "V gene name",
-                "pl7.app/label": "V gene",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "30000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -167,13 +143,10 @@ shmTreeTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/vdj/reference": "JGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(29000, true, "J gene", {
                 type: "J gene name",
-                "pl7.app/label": "J gene",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "29000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -185,13 +158,10 @@ shmTreeTableOptions := func(dataDescription) {
         spec: {
             valueType: "String",
             name: "pl7.app/vdj/chain",
-            annotations: {
-                "pl7.app/label": "Chain",
+            annotations: addTableAnnotations(40000, true, "Chain", {
                 "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/discreteValues": "['TRA', 'TRB', 'TRG', 'TRD', 'IGH', 'IGK', 'IGL']",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "40000"
-            }
+                "pl7.app/discreteValues": "['TRA', 'TRB', 'TRG', 'TRD', 'IGH', 'IGK', 'IGL']"
+            })
         }
     })
     orderPriority := 20000
@@ -214,12 +184,9 @@ shmTreeTableOptions := func(dataDescription) {
                     "pl7.app/vdj/feature": feature,
                     "pl7.app/alphabet": "nucleotide"
                 },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " of MRCA nt",
-                    "pl7.app/table/visibility": visibility,
-                    "pl7.app/table/orderPriority": string(orderPriority)
-                }
+                annotations: addTableAnnotations(orderPriority, visibility == "default", feature + " of MRCA nt", {
+                    "pl7.app/type": "sequence"
+                })
             }
         })
         orderPriority -= 100
@@ -236,12 +203,9 @@ shmTreeTableOptions := func(dataDescription) {
                     "pl7.app/vdj/feature": feature,
                     "pl7.app/alphabet": "aminoacid"
                 },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " of MRCA aa",
-                    "pl7.app/table/visibility": visibility,
-                    "pl7.app/table/orderPriority": string(orderPriority)
-                }
+                annotations: addTableAnnotations(orderPriority, visibility == "default", feature + " of MRCA aa", {
+                    "pl7.app/type": "sequence"
+                })
             }
         })
         orderPriority -= 100
@@ -259,12 +223,9 @@ shmTreeTableOptions := func(dataDescription) {
                 "pl7.app/vdj/feature": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/type": "sequence",
-                "pl7.app/label": assemblingFeature + " of MRCA nt",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "10000"
-            }
+            annotations: addTableAnnotations(10000, true, assemblingFeature + " of MRCA nt", {
+                "pl7.app/type": "sequence"
+            })
         }
     })
 
@@ -280,12 +241,9 @@ shmTreeTableOptions := func(dataDescription) {
                 "pl7.app/vdj/feature": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/type": "sequence",
-                "pl7.app/label": assemblingFeature + " of MRCA aa",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "9000"
-            }
+            annotations: addTableAnnotations(9000, true, assemblingFeature + " of MRCA aa", {
+                "pl7.app/type": "sequence"
+            })
         }
     })
 
@@ -301,7 +259,7 @@ shmTreeTableOptions := func(dataDescription) {
 }
 
 // export data that is uniq for node
-shmTreeNodesTableOptions := func(dataDescription) {
+shmTreeNodes := func(dataDescription) {
     axes := []
     columns := []
     cmdArgs := []
@@ -313,12 +271,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/treeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Tree id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "100000"
-            }
+            annotations: addTableAnnotations(100000, true, "Tree id", {})
         }
     })
 
@@ -329,12 +282,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
             spec: {
                 name: "pl7.app/dendrogram/subtreeId",
                 type: "Long",
-                domain: { },
-                annotations: {
-                    "pl7.app/label": "Chain id",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "90000"
-                }
+                annotations: addTableAnnotations(90000, true, "Chain id", {})
             }
         })
     }
@@ -345,12 +293,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/nodeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Node id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "80000"
-            }
+            annotations: addTableAnnotations(80000, true, "Node id", {})
         }
     })
 
@@ -363,13 +306,10 @@ shmTreeNodesTableOptions := func(dataDescription) {
             name: "pl7.app/dendrogram/isObserved",
             // TODO change to Boolean when it will be supported
             valueType: "String",
-            annotations: {
-                "pl7.app/label": "Is observed in data",
+            annotations: addTableAnnotations(85000, true, "Is observed in data", {
                 "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/discreteValues": "['true', 'false']",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "85000"
-            }
+                "pl7.app/discreteValues": "['true', 'false']"
+            })
         }
     })
 
@@ -381,12 +321,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/topology",
             valueType: "Long",
-            annotations: {
-                "pl7.app/label": "Parent node id",
-                "pl7.app/dendrogram/isTopology": "true",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "10000"
-            }
+            annotations: addTableAnnotations(10000, false, "Parent node id", {
+                "pl7.app/dendrogram/isTopology": "true"
+            })
         }
     })
 
@@ -401,13 +338,10 @@ shmTreeNodesTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/dendrogram/distance/from": "germline"
             },
-            annotations: {
-                "pl7.app/label": "Distanse from germline",
+            annotations: addTableAnnotations(9000, false, "Distanse from germline", {
                 "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "9000"
-            }
+                "pl7.app/dendrogram/isDistance": "true"
+            })
         }
     })
 
@@ -422,13 +356,10 @@ shmTreeNodesTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/dendrogram/distance/from": "parent"
             },
-            annotations: {
-                "pl7.app/label": "Distanse from parent",
+            annotations: addTableAnnotations(8900, false, "Distanse from parent", {
                 "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
-                "pl7.app/dendrogram/isDistance": "true",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8900"
-            }
+                "pl7.app/dendrogram/isDistance": "true"
+            })
         }
     })
 
@@ -444,11 +375,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": text.join(dataDescription.coveredFeatures, ","),
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/label": "Mutations rate nt",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8800"
-            }
+            annotations: addTableAnnotations(8800, false, "Mutations rate nt", {})
         }
     })
 
@@ -464,11 +391,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/label": "Mutations rate aa",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8700"
-            }
+            annotations: addTableAnnotations(8700, false, "Mutations rate aa", {})
         }
     })
 
@@ -480,11 +403,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/vdj/vIdentityPercent",
             valueType: "Double",
-            annotations: {
-                "pl7.app/label": "V gene identity",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8600"
-            }
+            annotations: addTableAnnotations(8600, false, "V gene identity", {})
         }
     })
 
@@ -496,11 +415,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/vdj/jIdentityPercent",
             valueType: "Double",
-            annotations: {
-                "pl7.app/label": "J gene identity",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8500"
-            }
+            annotations: addTableAnnotations(8500, false, "J gene identity", {})
         }
     })
 
@@ -516,11 +431,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" nt mutations based on MRCA",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8400"
-            }
+            annotations: addTableAnnotations(8400, false, assemblingFeature+" nt mutations based on MRCA", {})
         }
     })
 
@@ -536,11 +447,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" aa mutations based on MRCA",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8300"
-            }
+            annotations: addTableAnnotations(8300, false, assemblingFeature+" aa mutations based on MRCA", {})
         }
     })
 
@@ -556,11 +463,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" nt mutations based on germline",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8200"
-            }
+            annotations: addTableAnnotations(8200, false, assemblingFeature+" nt mutations based on germline", {})
         }
     })
 
@@ -576,11 +479,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" aa mutations based on germline",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8100"
-            }
+            annotations: addTableAnnotations(8100, false, assemblingFeature+" aa mutations based on germline", {})
         }
     })
 
@@ -596,11 +495,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" nt mutations count based on MRCA",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "8000"
-            }
+            annotations: addTableAnnotations(8000, false, assemblingFeature+" nt mutations count based on MRCA", {})
         }
     })
 
@@ -616,11 +511,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" aa mutations count based on MRCA",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "7900"
-            }
+            annotations: addTableAnnotations(7900, false, assemblingFeature+" aa mutations count based on MRCA", {})
         }
     })
 
@@ -636,11 +527,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" nt mutations count based on germline",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "7800"
-            }
+            annotations: addTableAnnotations(7800, false, assemblingFeature+" nt mutations count based on germline", {})
         }
     })
 
@@ -656,11 +543,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/features": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/label": assemblingFeature+" aa mutations count based on germline",
-                "pl7.app/table/visibility": "optional",
-                "pl7.app/table/orderPriority": "7700"
-            }
+            annotations: addTableAnnotations(7700, false, assemblingFeature+" aa mutations count based on germline", {})
         }
     })
 
@@ -675,13 +558,10 @@ shmTreeNodesTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/vdj/reference": "VGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(49000, true, "V gene", {
                 type: "V gene name",
-                "pl7.app/label": "V gene",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "49000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -696,13 +576,10 @@ shmTreeNodesTableOptions := func(dataDescription) {
             domain: {
                 "pl7.app/vdj/reference": "JGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(47000, true, "J gene", {
                 type: "J gene name",
-                "pl7.app/label": "J gene",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "47000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -726,12 +603,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
                     "pl7.app/vdj/feature": feature,
                     "pl7.app/alphabet": "nucleotide"
                 },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " nt",
-                    "pl7.app/table/visibility": visibility,
-                    "pl7.app/table/orderPriority": string(orderPriority)
-                }
+                annotations: addTableAnnotations(orderPriority, visibility == "default", feature + " nt", {
+                    "pl7.app/type": "sequence"
+                })
             }
         })
         orderPriority -= 100
@@ -747,12 +621,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
                     "pl7.app/vdj/feature": feature,
                     "pl7.app/alphabet": "aminoacid"
                 },
-                annotations: {
-                    "pl7.app/type": "sequence",
-                    "pl7.app/label": feature + " aa",
-                    "pl7.app/table/visibility": visibility,
-                    "pl7.app/table/orderPriority": string(orderPriority)
-                }
+                annotations: addTableAnnotations(orderPriority, visibility == "default", feature + " aa", {
+                    "pl7.app/type": "sequence"
+                })
             }
         })
         orderPriority -= 100
@@ -770,12 +641,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/feature": assemblingFeature,
                 "pl7.app/alphabet": "nucleotide"
             },
-            annotations: {
-                "pl7.app/type": "sequence",
-                "pl7.app/label": assemblingFeature + " nt",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "30000"
-            }
+            annotations: addTableAnnotations(30000, true, assemblingFeature + " nt", {
+                "pl7.app/type": "sequence"
+            })
         }
     })
 
@@ -791,12 +659,9 @@ shmTreeNodesTableOptions := func(dataDescription) {
                 "pl7.app/vdj/feature": assemblingFeature,
                 "pl7.app/alphabet": "aminoacid"
             },
-            annotations: {
-                "pl7.app/type": "sequence",
-                "pl7.app/label": assemblingFeature + " aa",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "29000"
-            }
+            annotations: addTableAnnotations(29000, true, assemblingFeature + " aa", {
+                "pl7.app/type": "sequence"
+            })
         }
     })
 
@@ -813,7 +678,7 @@ shmTreeNodesTableOptions := func(dataDescription) {
 
 // export data that is unique for clones, but not unique for a node
 // (different clones could be in the same topology node, for example, different time points)
-shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
+shmTreeNodesWithClones := func(dataDescription, donorColumn) {
     donorColumnSpec := donorColumn.spec
 
     axes := []
@@ -826,12 +691,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: {
             name: "pl7.app/dendrogram/treeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Tree id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "100000"
-            }
+            annotations: addTableAnnotations(100000, true, "Tree id", {})
         }
     })
 
@@ -842,12 +702,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             spec: {
                 name: "pl7.app/dendrogram/subtreeId",
                 type: "Long",
-                domain: { },
-                annotations: {
-                    "pl7.app/label": "Chain id",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "90000"
-                }
+                annotations: addTableAnnotations(90000, true, "Chain id", {})
             }
         })
     }
@@ -858,12 +713,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: {
             name: "pl7.app/dendrogram/nodeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Node id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "80000"
-            }
+            annotations: addTableAnnotations(80000, true, "Node id", {})
         }
     })
 
@@ -880,12 +730,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             }
         ],
         spec: donorColumnSpec.axesSpec[0],
-        annotations: {
-            "pl7.app/label": "Sample name",
-            "pl7.app/isDiscreteFilter": "true",
-            "pl7.app/table/visibility": "default",
-            "pl7.app/table/orderPriority": "110000"
-        }
+        annotations: addTableAnnotations(110000, true, "Sample name", {
+            "pl7.app/isDiscreteFilter": "true"
+        })
     })
 
     cmdArgs = append(cmdArgs, "-cloneId")
@@ -899,11 +746,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             name: "pl7.app/vdj/cloneId",
             type: "Long",
             // TODO domain with blockId
-            annotations: {
-                "pl7.app/label": "Clone id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "70000"
-            }
+            annotations: addTableAnnotations(70000, true, "Clone id", {})
         }
     })
 
@@ -916,11 +759,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             spec: {
                 name: "pl7.app/vdj/uniqueCellCount",
                 valueType: "Long",
-                annotations: {
-                    "pl7.app/label": "Number of cells",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "60000"
-                }
+                annotations: addTableAnnotations(60000, true, "Number of cells", {})
             }
         })
     }
@@ -934,11 +773,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             spec: {
                 name: "pl7.app/vdj/uniqueMoleculeCount",
                 valueType: "Long",
-                annotations: {
-                    "pl7.app/label": "Number of molecules",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "59000"
-                }
+                annotations: addTableAnnotations(59000, true, "Number of molecules", {})
             }
         })
     }
@@ -951,11 +786,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: {
           name: "pl7.app/vdj/readCount",
           valueType: "Long",
-          annotations: {
-            "pl7.app/label": "Number of Reads",
-            "pl7.app/table/visibility": "default",
-            "pl7.app/table/orderPriority": "58000"
-          }
+          annotations: addTableAnnotations(58000, true, "Number of Reads", {})
         }
     })
 
@@ -967,11 +798,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: {
           name: "pl7.app/vdj/readFraction",
           valueType: "Double",
-          annotations: {
-            "pl7.app/label": "Fraction of reads",
-            "pl7.app/table/visibility": "default",
-            "pl7.app/table/orderPriority": "57000"
-          }
+          annotations: addTableAnnotations(57000, true, "Fraction of reads", {})
         }
     })
 
@@ -986,13 +813,10 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             domain: {
                 "pl7.app/vdj/reference": "DGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(48000, true, "Best D hit", {
                 type: "D gene name",
-                "pl7.app/label": "Best D hit",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "48000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -1007,13 +831,10 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
             domain: {
                 "pl7.app/vdj/reference": "CGene"
             },
-            annotations: {
+            annotations: addTableAnnotations(46000, true, "Best C hit", {
                 type: "C gene name",
-                "pl7.app/label": "Best C hit",
-                "pl7.app/isDiscreteFilter": "true",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "46000"
-            }
+                "pl7.app/isDiscreteFilter": "true"
+            })
         }
     })
 
@@ -1025,12 +846,9 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
         spec: {
           valueType: "String",
           name: "pl7.app/vdj/isotype",
-          annotations: {
-            "pl7.app/label": "IG isotype",
-            "pl7.app/isDiscreteFilter": "true",
-            "pl7.app/table/visibility": "default",
-            "pl7.app/table/orderPriority": "50000"
-          }
+          annotations: addTableAnnotations(50000, true, "IG isotype", {
+            "pl7.app/isDiscreteFilter": "true"
+          })
         }
     })
 
@@ -1045,7 +863,7 @@ shmTreeNodesWithClonesTableOptions := func(dataDescription, donorColumn) {
     }
 }
 
-shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
+shmTreeNodesUniqueIsotype := func(dataDescription) {
 
     axes := []
     columns := []
@@ -1055,12 +873,7 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/treeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Tree id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "100000"
-            }
+            annotations: addTableAnnotations(100000, true, "Tree id", {})
         }
     })
 
@@ -1070,12 +883,7 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
             spec: {
                 name: "pl7.app/dendrogram/subtreeId",
                 type: "Long",
-                domain: { },
-                annotations: {
-                    "pl7.app/label": "Chain id",
-                    "pl7.app/table/visibility": "default",
-                    "pl7.app/table/orderPriority": "90000"
-                }
+                annotations: addTableAnnotations(90000, true, "Chain id", {})
             }
         })
     }
@@ -1085,12 +893,7 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
         spec: {
             name: "pl7.app/dendrogram/nodeId",
             type: "Long",
-            domain: { },
-            annotations: {
-                "pl7.app/label": "Node id",
-                "pl7.app/table/visibility": "default",
-                "pl7.app/table/orderPriority": "80000"
-            }
+            annotations: addTableAnnotations(80000, true, "Node id", {})
         }
     })
 
@@ -1101,11 +904,7 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
         spec: {
           name: "pl7.app/vdj/readCount",
           valueType: "Long",
-          annotations: {
-            "pl7.app/label": "Top clone reads number",
-            "pl7.app/table/visibility": "optional",
-            "pl7.app/table/orderPriority": "58000"
-          }
+          annotations: addTableAnnotations(58000, false, "Top clone reads number", {})
         }
     })
 
@@ -1116,12 +915,9 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
         spec: {
           valueType: "String",
           name: "pl7.app/vdj/isotype",
-          annotations: {
-            "pl7.app/label": "Top IG isotype",
-            "pl7.app/isDiscreteFilter": "true",
-            "pl7.app/table/visibility": "optional",
-            "pl7.app/table/orderPriority": "50000"
-          }
+          annotations: addTableAnnotations(50000, false, "Top IG isotype", {
+            "pl7.app/isDiscreteFilter": "true"
+          })
         }
     })
 
@@ -1137,8 +933,8 @@ shmTreeNodesUniqueIsotypeTableOptions := func(dataDescription) {
 
 // to use the file as a library, we should explicitly export functions
 export ll.toStrict({
-	shmTreeTableOptions: shmTreeTableOptions,
-    shmTreeNodesTableOptions: shmTreeNodesTableOptions,
-    shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
-    shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions
+	shmTree: shmTree,
+    shmTreeNodes: shmTreeNodes,
+    shmTreeNodesWithClones: shmTreeNodesWithClones,
+    shmTreeNodesUniqueIsotype: shmTreeNodesUniqueIsotype
 })

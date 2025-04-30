@@ -19,9 +19,14 @@ wf.body(func(args) {
 
 	// we could not use array as request for waiting (see below), so we store datasets in a dictionary
 	datasets := {}
+	firstDataset := undefined
 	for datasetRef in args.datasetColumns {
 		// we assume that mixcr block produces exactly one clns column
-		datasets[datasetRef.blockId] = wf.resolve(datasetRef)
+		ds := wf.resolve(datasetRef)
+		datasets[datasetRef.blockId] = ds
+		if is_undefined(firstDataset) {
+			firstDataset = ds
+		}
 	}
 
 	library := render.createEphemeral(requestLibraryTpl, {
@@ -35,6 +40,10 @@ wf.body(func(args) {
 		datasets: datasets,
 		donorColumn: donorColumn,
 		library: library,
+		etc: {
+			firstDatasetSpec: firstDataset.spec,
+			blockId: wf.getBlockId()
+		},
 		params: {
 			downsampling: args.downsampling,
 			sequencesOfInterest: args.sequencesOfInterest
@@ -43,15 +52,18 @@ wf.body(func(args) {
 
 	return {
 		outputs: {
-			trees: results.output("trees"),
-			treeNodes: results.output("treeNodes"),
-			treeNodesWithClones: results.output("treeNodesWithClones"),
-			treeNodesUniqueIsotype: results.output("treeNodesUniqueIsotype"),
+			trees: pframes.exportFrame(results.output("trees")),
+			treeNodes: pframes.exportFrame(results.output("treeNodes")),
+			treeNodesWithClones: pframes.exportFrame(results.output("treeNodesWithClones")),
+			treeNodesUniqueIsotype: pframes.exportFrame(results.output("treeNodesUniqueIsotype")),
+
+			alleles: results.output("alleles"),
+			downsampled: results.output("downsampled"),
+			shmt: results.output("shmt"),
 
 			soiNodesResults: results.output("soiNodesResults"),
 			soiTreesResults: results.output("soiTreesResults"),
 
-			tsvs: results.output("tsvs"),
 			allelesLogs: results.output("allelesLogs"),
 			treesLogs: results.output("treesLogs"),
 

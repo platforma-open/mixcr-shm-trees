@@ -1,29 +1,26 @@
+//tengo:hash_override 33125CD9-6F67-46B3-AA68-0FCD825B51BA
+
 self := import("@platforma-sdk/workflow-tengo:tpl")
 pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 ll := import("@platforma-sdk/workflow-tengo:ll")
 assets := import("@platforma-sdk/workflow-tengo:assets")
 exec := import("@platforma-sdk/workflow-tengo:exec")
+smart := import("@platforma-sdk/workflow-tengo:smart")
+maps := import("@platforma-sdk/workflow-tengo:maps")
 times := import("times")
 
 json := import("json")
 
 // for usage in aggregate function, we should specify all outputs that will be used
 self.defineOutputs(
-    "trees", "treeNodes", "treeNodesWithClones", "treeNodesUniqueIsotype",
-    "tsvs",
+    "alleles", "downsampled", "shmt",
     "allelesLog", "treesLog",
     "allelesReport", "treesReport",
     "allelesReportJson", "treesReportJson"
 )
 
-//// import function for aggregating by-nodes output to make it uniquely addressable by it's native key
-tablesAggregation := import(":tablesAggregation")
-
 // import MiXCR as a software to use
 mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
-
-// used to postprocess some tables
-paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
 
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
@@ -32,9 +29,9 @@ self.body(func(inputs) {
 	inputData := inputs[pConstants.VALUE_FIELD_NAME]
     globalParams := inputs.globalParams
     datasetTypes := globalParams.datasetTypes
-    downsampling := globalParams.downsampling
     library := inputs.library
     libraryFormat := globalParams.libraryFormat
+    downsampling := globalParams.downsampling
 
     ll.assert(!is_undefined(datasetTypes), "datasetTypes undefined")
 
@@ -49,6 +46,10 @@ self.body(func(inputs) {
     }
 
     // seed := times.time_string(times.now())
+
+    //
+    // Alleles inference
+    //
 
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -70,14 +71,14 @@ self.body(func(inputs) {
         allelesCmdBuilder.env("SEED", globalParams.seed)
     }
 
-    toProcess := []
+    entries := []
     for sKey, inputFile in inputData.inputs() {
         key := json.decode(sKey)
         sampleId := key[0]
         clonotypingBlockId := key[1]
         // file name should encode axis values. It will be parsed by xsv.importFileMap afterwards to restore axis for clones data
         fileName := sampleId + "___" + clonotypingBlockId + ".clns"
-        toProcess = append(toProcess, {
+        entries = append(entries, {
             clonotypingBlockId: clonotypingBlockId,
             sampleId: sampleId,
             fileName: fileName,
@@ -85,17 +86,22 @@ self.body(func(inputs) {
         })
     }
 
-    for input in toProcess {
-        allelesCmdBuilder.addFile(input.fileName, input.input).
-            arg(input.fileName).
-            saveFile("alleles/" + input.fileName)
+    for entry in entries {
+        allelesCmdBuilder.addFile(entry.fileName, entry.input).
+            arg(entry.fileName).
+            saveFile("alleles/" + entry.fileName)
     }
 
     alleles := allelesCmdBuilder.run()
 
-    for input in toProcess {
-        input.alleles = alleles.getFile("alleles/" + input.fileName)
+    for entry in entries {
+        entry.afterAlleles = alleles.getFile("alleles/" + entry.fileName)
+        entry.treesInput = entry.afterAlleles
     }
+
+    //
+    // Optional downsampling
+    //
 
     if !is_undefined(downsampling) {
         downsamplingParam := ""
@@ -115,8 +121,8 @@ self.body(func(inputs) {
             ll.panic("Unknown downsampling type: " + downsampling.type)
         }
 
-        for input in toProcess {
-            if datasetTypes[input.clonotypingBlockId] == "bulk" {
+        for entry in entries {
+            if datasetTypes[entry.clonotypingBlockId] == "bulk" {
                 downsamplingCmdBuilder := exec.builder().
                     printErrStreamToStdout().
                     secret("MI_LICENSE", "MI_LICENSE").
@@ -126,14 +132,20 @@ self.body(func(inputs) {
                     arg("--downsampling").
                     arg(downsamplingParam).
                     arg("clones.clns").
-                    addFile("clones.clns", input.alleles).
+                    addFile("clones.clns", entry.afterAlleles).
                     saveFile("clones.downsampled.clns")
                 addLibraryFile(downsamplingCmdBuilder)
                 downsamplingCmd := downsamplingCmdBuilder.run()
-                input.alleles = downsamplingCmd.getFile("clones.downsampled.clns")
+
+                // overriding trees input with downsampled file
+                entry.treesInput = downsamplingCmd.getFile("clones.downsampled.clns")
             }
         }
     }
+
+    //
+    // SHM trees inference
+    //
 
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
@@ -152,10 +164,10 @@ self.body(func(inputs) {
 
     addLibraryFile(shmTreesCmdBuilder)
 
-    for input in toProcess {
+    for entry in entries {
         shmTreesCmdBuilder.
-            addFile(input.fileName, input.alleles).
-            arg(input.fileName)
+            addFile(entry.fileName, entry.treesInput).
+            arg(entry.fileName)
     }
 
     shmTreesCmdBuilder.arg("output.shmt").saveFile("output.shmt")
@@ -163,107 +175,29 @@ self.body(func(inputs) {
     shmTrees := shmTreesCmdBuilder.run()
     outputShmt := shmTrees.getFile("output.shmt")
 
-    // export trees without nodes
-    shmTreeExportsCmdBuilder := exec.builder().
-        printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
-        inLightQueue().
-        secret("MI_LICENSE", "MI_LICENSE").
-        software(mixcrSw).
-        arg("exportShmTrees")
-
-    addLibraryFile(shmTreeExportsCmdBuilder)
-
-    for arg in inputs.shmTreeTableArgs {
-        shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.arg(arg)
-    }
-
-    shmTreeExportsCmdBuilder = shmTreeExportsCmdBuilder.
-        arg("input.shmt").
-        arg("output.tsv").
-        addFile("input.shmt", outputShmt).
-        saveFile("output.tsv")
-
-    shmTreeExports := shmTreeExportsCmdBuilder.run()
-    shmTreeTsvRaw := shmTreeExports.getFile("output.tsv")
-
-    shmTreeTsv := tablesAggregation.ensureUniqueness(shmTreeTsvRaw, inputs.shmTreeTableOptions.pfconvParams, "max_by", "totalReadsCountInTree")
-
-    // export tree nodes with data uniq for the node
-    shmTreeNodesExportsCmdBuilder := exec.builder().
-        printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
-        inLightQueue().
-        secret("MI_LICENSE", "MI_LICENSE").
-        software(mixcrSw).
-        arg("exportShmTreesWithNodes")
-
-    addLibraryFile(shmTreeNodesExportsCmdBuilder)
-
-    for arg in inputs.shmTreeNodesTableOptions.cmdArgs {
-        shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.arg(arg)
-    }
-
-    shmTreeNodesExportsCmdBuilder = shmTreeNodesExportsCmdBuilder.
-        arg("input.shmt").
-        arg("output.tsv").
-        addFile("input.shmt", outputShmt).
-        saveFile("output.tsv")
-
-    shmTreeNodesExports := shmTreeNodesExportsCmdBuilder.run()
-    shmTreeNodesTsvRaw := shmTreeNodesExports.getFile("output.tsv")
-
-	shmTreeNodesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesTsvRaw, inputs.shmTreeNodesTableOptions.pfconvParams, "first")
-
-    // export nodes with clones. For each node could be several clones
-    shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
-        printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
-        inLightQueue().
-        secret("MI_LICENSE", "MI_LICENSE").
-        env("MI_PROGRESS_PREFIX", progressPrefix).
-        software(mixcrSw).
-        arg("exportShmTreesWithNodes").
-        // don't export nodes that don't have clones
-        arg("--only-observed")
-
-    addLibraryFile(shmTreeNodesWithClonesExportsCmdBuilder)
-
-    for arg in inputs.shmTreeNodesWithClonesTableArgs {
-        shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.arg(arg)
-    }
-
-    shmTreeNodesWithClonesExportsCmdBuilder = shmTreeNodesWithClonesExportsCmdBuilder.
-        arg("input.shmt").
-        arg("output.tsv").
-        addFile("input.shmt", outputShmt).
-        saveFile("output.tsv")
-
-    shmTreeNodesWithClonesExports := shmTreeNodesWithClonesExportsCmdBuilder.run()
-    shmTreeNodesWithClonesTsvRaw := shmTreeNodesWithClonesExports.getFile("output.tsv")
-
-    shmTreeNodesWithClonesTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsvRaw, inputs.shmTreeNodesWithClonesTableOptions.pfconvParams, "max_by", "readCount")
-    shmTreeNodesUniqueIsotypeTsv := tablesAggregation.ensureUniqueness(shmTreeNodesWithClonesTsv, inputs.shmTreeNodesUniqueIsotypeTableOptions.pfconvParams, "max_by", "readCount")
-
     return {
-        trees: shmTreeTsv,
-        treeNodes: shmTreeNodesTsv,
-        treeNodesWithClones: shmTreeNodesWithClonesTsv,
-        treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv,
+        // returning to be cached
+        alleles: smart.createMapResource(maps.mapValues(entries, func(entry) {
+            return entry.afterAlleles
+        })),
 
-        tsvs: {
-            trees: shmTreeTsv,
-            treeNodes: shmTreeNodesTsv,
-            treeNodesWithClones: shmTreeNodesWithClonesTsv,
-            treeNodesUniqueIsotype : shmTreeNodesUniqueIsotypeTsv
-        },
+        // returning to be cached
+        downsampled: smart.createMapResource(maps.mapValues(entries, func(entry) {
+            return entry.treesInput
+        })),
 
+        // main output
+        shmt: outputShmt,
+
+        // logs
         allelesLog: alleles.getStdoutStream(),
         treesLog: shmTrees.getStdoutStream(),
 
+        // reports
         allelesReport: alleles.getFile("report.txt"),
         treesReport: shmTrees.getFile("report.txt"),
 
+        // json reports
         allelesReportJson: alleles.getFile("report.json"),
         treesReportJson: shmTrees.getFile("report.json")
     }

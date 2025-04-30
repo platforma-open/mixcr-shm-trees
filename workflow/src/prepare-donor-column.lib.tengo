@@ -1,16 +1,18 @@
 ll := import("@platforma-sdk/workflow-tengo:ll")
 smart := import("@platforma-sdk/workflow-tengo:smart")
 maps := import("@platforma-sdk/workflow-tengo:maps")
+slices := import("@platforma-sdk/workflow-tengo:slices")
+pSpec := import("@platforma-sdk/workflow-tengo:pframes.spec")
 
 json := import("json")
 
 _P_COLUMN_DATA_RESOURCE_MAP := { Name: "PColumnData/ResourceMap", Version: "1" }
 
-groupDataByDonorId := func(donorColumn, datasets) {
+groupDataByDonorId := func(donorColumn, datasets, firstDatasetSpec) {
     // we need to form a pColumn with two axes:
 	//    axes[0]: donorId
 	//    axes[1]: sampleId
-	//    axes[2]: mixcrclonotypingBlockId
+	//    axes[2]: mixcrClonotypingBlockId
 	//      value: fileRef resource
 
 	// we have:
@@ -23,9 +25,11 @@ groupDataByDonorId := func(donorColumn, datasets) {
 
     donorColumnSpec := donorColumn.spec
 
+    trace := pSpec.makeTrace(firstDatasetSpec)
+
     sampleIdAxis := donorColumnSpec.axesSpec[0]
 
-    resultSpec := maps.clone({
+    resultSpec := trace.inject(maps.clone({
         kind: "PColumn",
         name: "mixcr.com/clns",
         valueType: "File",
@@ -47,7 +51,7 @@ groupDataByDonorId := func(donorColumn, datasets) {
                 }
             }
         ]
-    }, { removeUndefs: true })
+    }, { removeUndefs: true }))
 
     // creating sample to donor map
 

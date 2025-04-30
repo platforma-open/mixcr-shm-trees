@@ -12,8 +12,12 @@ json := import("json")
 exportSettings := import(":export-settings")
 prepareDonorColumn := import(":prepare-donor-column")
 pframes := import("@platforma-sdk/workflow-tengo:pframes")
+tablesAggregation := import(":tables-aggregation")
 
-reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
+// reconstructShmTreesTpl := assets.importTemplate(":reconstruct-shm-trees")
+
+mixcrShmTreesTpl := assets.importTemplate(":mixcr-shm-trees")
+mixcrExportTpl := assets.importTemplate(":mixcr-export")
 
 self.awaitState("datasets", { wildcard: "*" }, "AllInputsSet")
 // this templete should run only after resolving of all inputs
@@ -31,6 +35,7 @@ self.awaitState("library", { match: "^data$" }, "AllInputsSet") // change to Inp
 
 self.awaitState("donorColumn", "ResourceReady")
 self.awaitState("params", "ResourceReady")
+self.awaitState("etc", "ResourceReady")
 
 soiTpl := assets.importTemplate(":soi")
 
@@ -45,7 +50,11 @@ self.body(func(inputs) {
 		cellsAssembled: false
 	}
 
+	blockId := inputs.etc.blockId
+	firstDatasetSpec := inputs.etc.firstDatasetSpec
+
 	library := inputs.library
+	libraryFormat := library.spec.annotations["pl7.app/vdj/libraryFormat"]
 
 	// clonotypingBlockId -> "bulk" | "sc"
 	datasetTypes := {}
@@ -81,77 +90,142 @@ self.body(func(inputs) {
 	dataDescription.assemblingFeature = assemblingFeature
 
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
-	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets)
+	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets, firstDatasetSpec)
 
-	// collect params for running export commands and to parse result tsv files into pColumns
-	shmTreeTableOptions := exportSettings.shmTreeTableOptions(dataDescription)
-	shmTreeNodesTableOptions := exportSettings.shmTreeNodesTableOptions(dataDescription)
-	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClonesTableOptions(dataDescription, inputs.donorColumn)
-	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotypeTableOptions(dataDescription)
-
-	libraryFormat := library.spec.annotations["pl7.app/vdj/libraryFormat"]
-
-	// TODO that call is too low level. Should be replaced with something that works with pColumns, not data only
-	mixcrResults := llPFrames.aggregate(
-		// files to iterate through
-		dataGroupedByDonorId.data,
-		// columns not to combine - sampleId and mixcrBlockId
-		[1, 2],
-		reconstructShmTreesTpl,
-		// all the outputs that should be gethered
-		[
-			{
-				name: "trees",
-				type: "Resource"
-			}, {
-				name: "treeNodes",
-				type: "Resource"
-			}, {
-				name: "treeNodesWithClones",
-				type: "Resource"
-			}, {
-				name: "treeNodesUniqueIsotype",
-				type: "Resource"
-			}, {
-				name: "tsvs",
-				type: "Resource"
-			}, {
-				name: "allelesLog",
-				type: "Resource"
-			}, {
-				name: "treesLog",
-				type: "Resource"
-			}, {
-				name: "allelesReport",
-				type: "Resource"
-			}, {
-				name: "treesReport",
-				type: "Resource"
-			}, {
-				name: "allelesReportJson",
-				type: "Resource"
-			}, {
-				name: "treesReportJson",
-				type: "Resource"
+	shmtResults := pframes.processColumn(
+		dataGroupedByDonorId,
+		mixcrShmTreesTpl,
+		[ {
+			name: "alleles",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/alleles",
+				valueType: "FileMap"
 			}
-		],
-		false,
-		// inputs
+		}, {
+			name: "downsampled",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/downsampled",
+				valueType: "FileMap"
+			}
+		}, {
+			name: "shmt",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt",
+				valueType: "File"
+			}
+		}, {
+			name: "allelesLog",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/allelesLog",
+				valueType: "Log"
+			}
+		}, {
+			name: "treesLog",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/treesLog",
+				valueType: "Log"
+			}
+		}, {
+			name: "allelesReport",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/allelesReport",
+				valueType: "File"
+			}
+		}, {
+			name: "treesReport",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/treesReport",
+				valueType: "File"
+			}
+		}, {
+			name: "allelesReportJson",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/allelesReportJson",
+				valueType: "File"
+			}
+		}, {
+			name: "treesReportJson",
+			type: "Resource",
+			spec: {
+				kind: "PColumn",
+				name: "mixcr.com/shmt/treesReportJson",
+				valueType: "File"
+			}
+		} ],
 		{
-			shmTreeTableOptions: shmTreeTableOptions,
-			shmTreeTableArgs: shmTreeTableOptions.cmdArgs,
-			shmTreeNodesTableOptions: shmTreeNodesTableOptions,
-			shmTreeNodesWithClonesTableOptions: shmTreeNodesWithClonesTableOptions,
-			shmTreeNodesWithClonesTableArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
-			shmTreeNodesUniqueIsotypeTableOptions: shmTreeNodesUniqueIsotypeTableOptions,
-			library: is_undefined(library) ? smart.createNullResource() : library.data,
-			globalParams: maps.merge(
-				inputs.params,
-				{
+			aggregate: [1, 2],
+			traceSteps: [{type: "milaboratories.mixcr-shm-trees", id: blockId, importance: 19, label: "SHM Trees"}],
+			extra: {
+				library: is_undefined(library) ? smart.createNullResource() : library.data,
+				globalParams: maps.merge(inputs.params, {
 					datasetTypes: datasetTypes,
 					libraryFormat: libraryFormat
+				})
+			}
+		}
+	)
+
+	// collect params for running export commands and to parse result tsv files into pColumns
+	shmTreeTableOptions := exportSettings.shmTree(dataDescription)
+	shmTreeNodesTableOptions := exportSettings.shmTreeNodes(dataDescription)
+	shmTreeNodesWithClonesTableOptions := exportSettings.shmTreeNodesWithClones(dataDescription, inputs.donorColumn)
+	shmTreeNodesUniqueIsotypeTableOptions := exportSettings.shmTreeNodesUniqueIsotype(dataDescription)
+
+	exportResults := pframes.processColumn(
+		shmtResults.output("shmt"),
+		mixcrExportTpl,
+		[ {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeTableOptions.pfconvParams,
+			name: "trees"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesTableOptions.pfconvParams,
+			name: "treeNodes"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesWithClonesTableOptions.pfconvParams,
+			name: "treeNodesWithClones"
+		}, {
+			type: "Xsv",
+			xsvType: "tsv",
+			settings: shmTreeNodesUniqueIsotypeTableOptions.pfconvParams,
+			name: "treeNodesUniqueIsotype"
+		} ],
+		{
+			extra: {
+				library: is_undefined(library) ? smart.createNullResource() : library.data,
+				params:{
+					libraryFormat: libraryFormat,
+					shmTreeArgs: shmTreeTableOptions.cmdArgs,
+					shmTreeNodesArgs: shmTreeNodesTableOptions.cmdArgs,
+					shmTreeNodesWithClonesArgs: shmTreeNodesWithClonesTableOptions.cmdArgs,
+					shmTreeNodesUniqueIsotypeArgs: shmTreeNodesUniqueIsotypeTableOptions.cmdArgs,
+					shmTreeEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeTableOptions.pfconvParams),
+					shmTreeNodesEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeNodesTableOptions.pfconvParams),
+					shmTreeNodesWithClonesEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeNodesWithClonesTableOptions.pfconvParams),
+					shmTreeNodesUniqueIsotypeEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeNodesUniqueIsotypeTableOptions.pfconvParams)
 				}
-			)
+			}
 		}
 	)
 
@@ -162,33 +236,13 @@ self.body(func(inputs) {
 
 	// ll.print("__THE_LOG__ " + string(json.encode(additionalArgsForImportTsv)))
 
-	trees := xsv.importFileMap(
-        mixcrResults.output("trees"),
-        "tsv",
-        shmTreeTableOptions.pfconvParams,
-        additionalArgsForImportTsv
-    )
+	trees := exportResults.xsvOutputFrame("trees")
 
-	treeNodes := xsv.importFileMap(
-        mixcrResults.output("treeNodes"),
-        "tsv",
-        shmTreeNodesTableOptions.pfconvParams,
-        additionalArgsForImportTsv
-    )
+	treeNodes := exportResults.xsvOutputFrame("treeNodes")
 
-	treeNodesWithClones := xsv.importFileMap(
-        mixcrResults.output("treeNodesWithClones"),
-        "tsv",
-        shmTreeNodesWithClonesTableOptions.pfconvParams,
-        additionalArgsForImportTsv
-    )
+	treeNodesWithClones := exportResults.xsvOutputFrame("treeNodesWithClones")
 
-	treeNodesUniqueIsotype := xsv.importFileMap(
-        mixcrResults.output("treeNodesUniqueIsotype"),
-        "tsv",
-        shmTreeNodesUniqueIsotypeTableOptions.pfconvParams,
-        additionalArgsForImportTsv
-	)
+	treeNodesUniqueIsotype := exportResults.xsvOutputFrame("treeNodesUniqueIsotype")
 
 	// Running SOI search for the data
 	soiNodesResults := {}
@@ -229,29 +283,25 @@ self.body(func(inputs) {
 		soiTreesResults[soiDb.parameters.id] = soiResult.output("treesResult")
 	}
 
-	tsvs := mixcrResults.output("tsvs")
-
     return {
-		// combine columns into pFrame
-        trees: pframes.exportFrame(trees),
-        // combine columns into pFrame
-        treeNodes: pframes.exportFrame(treeNodes),
-        // combine columns into pFrame
-        treeNodesWithClones: pframes.exportFrame(treeNodesWithClones),
-		// combine columns into pFrame
-		treeNodesUniqueIsotype: pframes.exportFrame(treeNodesUniqueIsotype),
+		alleles: shmtResults.output("alleles"),
+		downsampled: shmtResults.output("downsampled"),
+		shmt: shmtResults.output("shmt"),
+
+        trees: trees,
+        treeNodes: treeNodes,
+        treeNodesWithClones: treeNodesWithClones,
+		treeNodesUniqueIsotype: treeNodesUniqueIsotype,
 
 		soiNodesResults: maps.mapValues(soiNodesResults, pframes.exportFrame),
 		soiTreesResults: maps.mapValues(soiTreesResults, pframes.exportFrame),
 
-        tsvs: tsvs,
+		allelesLogs: shmtResults.outputData("allelesLog"),
+        treesLogs: shmtResults.outputData("treesLog"),
 
-		allelesLogs: mixcrResults.output("allelesLog"),
-        treesLogs: mixcrResults.output("treesLog"),
-
-		allelesReports: mixcrResults.output("allelesReport"),
-        treesReports: mixcrResults.output("treesReport"),
-		allelesReportsJson: mixcrResults.output("allelesReportJson"),
-        treesReportsJson: mixcrResults.output("treesReportJson")
+		allelesReports: shmtResults.outputData("allelesReport"),
+        treesReports: shmtResults.outputData("treesReport"),
+		allelesReportsJson: shmtResults.outputData("allelesReportJson"),
+        treesReportsJson: shmtResults.outputData("treesReportJson")
 	}
 })
