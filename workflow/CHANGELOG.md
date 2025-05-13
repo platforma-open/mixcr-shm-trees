@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.8.1
+
+### Patch Changes
+
+- b992b42: Fix for bug introduced in "Sequence Search" after migrating to new processColumn API
+
 ## 3.8.0
 
 ### Minor Changes
