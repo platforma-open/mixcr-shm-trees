@@ -62,16 +62,16 @@ watch(tableInstance, async (tiNew, tiOld) => {
 function keyToNodeId(key: PTableRowKey): FullNodeId {
   if (key.length === 6) {
     return {
-      donorId: ensureSimpleValue(key[1]),
-      treeId: ensureNumber(key[2]),
-      subtreeId: String(ensureNumber(key[3])),
-      nodeId: ensureNumber(key[4]),
+      donorId: ensureSimpleValue(key[0]),
+      treeId: ensureNumber(key[1]),
+      subtreeId: String(ensureNumber(key[2])),
+      nodeId: ensureNumber(key[3]),
     }
   } else if (key.length === 5) {
     return {
-      donorId: ensureSimpleValue(key[1]),
-      treeId: ensureNumber(key[2]),
-      nodeId: ensureNumber(key[3])
+      donorId: ensureSimpleValue(key[0]),
+      treeId: ensureNumber(key[1]),
+      nodeId: ensureNumber(key[2])
     }
   } else
     throw new Error(`Unexpected key format: ${JSON.stringify(key)}`)
