@@ -717,6 +717,21 @@ shmTreeNodesWithClones := func(dataDescription, donorColumn) {
         }
     })
 
+    cmdArgs = append(cmdArgs, "-cloneId")
+    axes = append(axes, {
+        column: "cloneId",
+        id: "clone-id",
+        // allowNA: true,
+        // filtering off records without clones because we are not interested in them here
+        filterOutRegex: "^$",
+        spec: {
+            name: "pl7.app/vdj/cloneId",
+            type: "Long",
+            // TODO domain with blockId
+            annotations: addTableAnnotations(70000, true, "Clone id", {})
+        }
+    })
+
     cmdArgs = append(cmdArgs, "-fileName")
     axes = append(axes, {
         column: "fileName",
@@ -733,21 +748,6 @@ shmTreeNodesWithClones := func(dataDescription, donorColumn) {
         annotations: addTableAnnotations(110000, true, "Sample name", {
             "pl7.app/isDiscreteFilter": "true"
         })
-    })
-
-    cmdArgs = append(cmdArgs, "-cloneId")
-    axes = append(axes, {
-        column: "cloneId",
-        id: "clone-id",
-        // allowNA: true,
-        // filtering off records without clones because we are not interested in them here
-        filterOutRegex: "^$",
-        spec: {
-            name: "pl7.app/vdj/cloneId",
-            type: "Long",
-            // TODO domain with blockId
-            annotations: addTableAnnotations(70000, true, "Clone id", {})
-        }
     })
 
     if dataDescription.hasCellTags {
