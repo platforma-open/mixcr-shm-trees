@@ -236,14 +236,6 @@ self.body(func(inputs) {
 
 	// ll.print("__THE_LOG__ " + string(json.encode(additionalArgsForImportTsv)))
 
-	trees := exportResults.xsvOutputFrame("trees")
-
-	treeNodes := exportResults.xsvOutputFrame("treeNodes")
-
-	treeNodesWithClones := exportResults.xsvOutputFrame("treeNodesWithClones")
-
-	treeNodesUniqueIsotype := exportResults.xsvOutputFrame("treeNodesUniqueIsotype")
-
 	// Running SOI search for the data
 	soiNodesResults := {}
 	soiTreesResults := {}
@@ -270,8 +262,8 @@ self.body(func(inputs) {
 			ll.panic("unknown target feature: " + soiDb.parameters.targetFeature)
 		}
 
-		querySpec := treeNodes[columnId + ".spec"]
-		queryData := treeNodes[columnId + ".data"]
+		querySpec := exportResults.outputSpec("treeNodes", columnId)
+		queryData := exportResults.outputData("treeNodes", columnId)
 
 		soiResult := render.create(soiTpl, {
 			querySpec: querySpec,
@@ -282,6 +274,15 @@ self.body(func(inputs) {
 		soiNodesResults[soiDb.parameters.id] = soiResult.output("nodesResult")
 		soiTreesResults[soiDb.parameters.id] = soiResult.output("treesResult")
 	}
+
+
+	trees := exportResults.xsvOutputFrame("trees")
+
+	treeNodes := exportResults.xsvOutputFrame("treeNodes")
+
+	treeNodesWithClones := exportResults.xsvOutputFrame("treeNodesWithClones")
+
+	treeNodesUniqueIsotype := exportResults.xsvOutputFrame("treeNodesUniqueIsotype")
 
     return {
 		alleles: shmtResults.output("alleles"),
