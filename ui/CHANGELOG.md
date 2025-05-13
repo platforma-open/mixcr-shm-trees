@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.6.0
+
+### Minor Changes
+
+- 1ba80e7: Fix for basket feature with new axis structure
+
 ## 3.5.2
 
 ### Patch Changes
