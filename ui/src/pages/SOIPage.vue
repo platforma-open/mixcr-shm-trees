@@ -2,13 +2,12 @@
 import { ListOption, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown, PlDropdownLine, PlMaskIcon24, PlSlideModal } from '@platforma-sdk/ui-vue';
 import { useApp } from '../app';
 import { computed, reactive, watch } from 'vue';
-import { Alphabet, SequenceOfInterest, SOIList, SOIListParameters } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { SequenceOfInterest, SOIList, SOIListParameters } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import SOISettingsPanel from './components/SOISettingsPanel.vue';
 import SOITable from './components/SOITable.vue';
 import SOIImportModal from './components/SOIImportModal.vue';
 import { getRawPlatformaInstance, LocalImportFileHandle, PlId, uniquePlId } from '@platforma-sdk/model';
 import { inferNewName } from '../util';
-import PlDataDialogModal from './components/PlDataDialogModal.vue';
 import { alphabetOptions, targetFeatureOptions } from '../soi_util';
 
 const app = useApp();

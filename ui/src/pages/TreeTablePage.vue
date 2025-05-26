@@ -3,20 +3,19 @@ import {
   AxisId,
   isPValue,
   PTableColumnSpec,
+  PTableRowKey,
 } from '@platforma-sdk/model';
 import {
   PlAgDataTable,
   PlAgDataTableToolsPanel,
   PlBlockPage,
   PlTableFilters,
-  PTableRowKey,
   type PlAgDataTableController,
   type PlDataTableSettings
 } from '@platforma-sdk/ui-vue';
 import { computed, ref, watch } from 'vue';
 import { addDendrogram } from '../addDendrogram';
 import { useApp } from '../app';
-import { deepEqual } from '@milaboratories/helpers';
 
 const app = useApp();
 

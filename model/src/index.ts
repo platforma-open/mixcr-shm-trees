@@ -6,7 +6,6 @@ import {
   NotNAPValue,
   PColumn,
   PColumnSpec,
-  PColumnValue,
   PColumnValues,
   PObjectId,
   PTableHandle,
@@ -124,7 +123,7 @@ function treeNodesColumns(
     ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
   ).flatMap((a) => a);
 
-  const targetColumns = [...soiResultColumns, ...treeNodesColumns, ...treeNodesWithClonesColumns, ...treeNodesUniqueIsotypeColumns];
+  const targetColumns = [...treeNodesColumns, ...treeNodesWithClonesColumns, ...treeNodesUniqueIsotypeColumns, ...soiResultColumns];
 
   return targetColumns;
 }
@@ -263,6 +262,22 @@ export const model = BlockModel.create()
     );
   })
 
+  .output('treeNodes', (ctx) => {
+    const treeNodes = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+    if (treeNodes === undefined) return undefined;
+    return treeNodes.map((col) => col.spec);
+  })
+  .output('treeNodesWithClones', (ctx) => {
+    const treeNodesWithClones = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+    if (treeNodesWithClones === undefined) return undefined;
+    return treeNodesWithClones.map((col) => col.spec);
+  })
+  .output('treeNodesUniqueIsotype', (ctx) => {
+    const treeNodesUniqueIsotype = ctx.outputs?.resolve('treeNodesUniqueIsotype')?.getPColumns();
+    if (treeNodesUniqueIsotype === undefined) return undefined;
+    return treeNodesUniqueIsotype.map((col) => col.spec);
+  })
+
   .output('trees', (ctx) => {
     const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
     if (pCols === undefined) return undefined;
@@ -307,18 +322,22 @@ export const model = BlockModel.create()
 
     const result: Record<string, PTableHandle> = {};
 
+    const coreColumnPredicate = (spec: PColumnSpec) =>
+      spec.name !== InBasketPColumnName &&
+      spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined;
+    
+    const coreColumn = columns.find(c => coreColumnPredicate(c.spec));
+
     for (const tree of ctx.uiState!.dendrograms) {
       const t = createPlDataTable(
         ctx,
         [...columns, ...bColumns.allColumns],
         tree.tableState.tableState,
         {
-          coreColumnPredicate: (spec) =>
-            spec.name !== InBasketPColumnName &&
-            spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined,
+          coreColumnPredicate,
           coreJoinType: 'inner',
           filters: [
-            ...treeNodesFilter(columns[0].spec, { ...tree, subtreeId: undefined }),
+            ...treeNodesFilter(coreColumn!.spec, { ...tree, subtreeId: undefined }),
             ...(tree.tableState?.filterModel?.filters ?? [])
           ]
         }

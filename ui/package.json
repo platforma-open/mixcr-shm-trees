@@ -7,6 +7,7 @@
     "watch": "vue-tsc && vite build --watch",
     "build": "vue-tsc -b && vite build",
     "test": "vitest",
+    "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -26,6 +27,7 @@
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@platforma-sdk/eslint-config": "catalog:",
     "@vitejs/plugin-vue": "catalog:",
     "typescript": "catalog:",
     "vite": "catalog:",

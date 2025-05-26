@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from 'vue';
 import { useApp } from '../app';
-import { PTableColumnSpec } from '@platforma-sdk/model';
-import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDataTableSettings, PlDialogModal, PlEditableTitle, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
+import { PTableColumnSpec, PTableRowKey } from '@platforma-sdk/model';
+import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDataTableSettings, PlDialogModal, PlEditableTitle, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
 import canonicalize from 'canonicalize';
 import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
