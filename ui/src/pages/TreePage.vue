@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { FullNodeId, FullTreeId, InitialFullTableState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { computed, reactive, ref } from 'vue';
+import { FullNodeId, InitialFullTableState } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { computed, reactive } from 'vue';
 import { useApp } from '../app';
 import TreePageTable from './TreePageTable.vue';
 import TreePageGraph from './TreePageGraph.vue';

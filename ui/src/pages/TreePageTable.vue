@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { getRawPlatformaInstance, isPTableAbsent, PColumnValue, PTableColumnSpec, pTableValue, PTableValue } from '@platforma-sdk/model';
-import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlDialogModal, PlTableFilters, PTableRowKey } from '@platforma-sdk/ui-vue';
+import { getRawPlatformaInstance, PTableColumnSpec, pTableValue, PTableRowKey } from '@platforma-sdk/model';
+import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
 import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';

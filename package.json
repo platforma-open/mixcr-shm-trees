@@ -11,6 +11,7 @@
     "version-packages": "changeset version"
   },
   "devDependencies": {
+    "typescript": "catalog:",
     "turbo": "catalog:",
     "@changesets/cli": "catalog:"
   },

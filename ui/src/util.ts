@@ -1,7 +1,5 @@
 import { Branded } from '@milaboratories/helpers';
-import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { isPTableAbsent, PlRef, PTableValue } from '@platforma-sdk/model';
-import { PTableRowKey } from '@platforma-sdk/ui-vue';
 
 export type RefString = Branded<string, 'ModelRef'>;
 
