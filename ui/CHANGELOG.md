@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.6.2
+
+### Patch Changes
+
+- 6bf32c4: Graphmaker problem fixes
+- Updated dependencies [6bf32c4]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.7.1
+
 ## 3.6.1
 
 ### Patch Changes

@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.7.1
+
+### Patch Changes
+
+- 6bf32c4: Graphmaker problem fixes
+
 ## 3.7.0
 
 ### Minor Changes
