@@ -10,10 +10,15 @@ const app = useApp();
 
 const datasetOptionsMap = computed(() => {
   const options = app.model.outputs.datasetOptions;
-  if (options === undefined)
+  if (options === undefined) {
+    app.model.args.datasetsTitles = undefined;
     return undefined;
-  else
-    return new Map(options.map(ds => [toRefString(ds.ref), ds]));
+  }
+  else {
+    const datasetMap = new Map(options.map(ds => [toRefString(ds.ref), ds]));
+    app.model.args.datasetsTitles = Array.from(datasetMap.values()).map(ds => ds?.label);
+    return datasetMap;
+  }
 });
 
 function getDatasetValue(idx: number): RefString | undefined {
