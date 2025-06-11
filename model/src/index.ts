@@ -57,6 +57,7 @@ export type BlockArgs = {
   datasetColumns: PlRef[];
   downsampling?: DownsamplingSettings;
   sequencesOfInterest?: SOIList[];
+  datasetsTitles?: string[];
 };
 
 export type FullTableState = {
@@ -515,6 +516,8 @@ export const model = BlockModel.create()
       (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
       (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0)
   )
+
+  .title((ctx) => (ctx.args.datasetsTitles ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join('-')}` : 'MiXCR SHM Trees'))
 
   .done();
 
