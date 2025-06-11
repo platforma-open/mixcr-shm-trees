@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.8.0
+
+### Minor Changes
+
+- 5013056: add datasets titles to block title
+
 ## 3.7.1
 
 ### Patch Changes
