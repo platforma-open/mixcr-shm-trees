@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.10.0
+
+### Minor Changes
+
+- f9b5aed: chore: update deps
+
 ## 3.9.0
 
 ### Minor Changes
