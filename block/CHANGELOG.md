@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.4.5
+
+### Patch Changes
+
+- 0796691: chore: revert for MSA
+
 ## 3.4.4
 
 ### Patch Changes
