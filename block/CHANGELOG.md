@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.4.6
+
+### Patch Changes
+
+- b8b736e: chore: fix version
+
 ## 3.4.5
 
 ### Patch Changes
