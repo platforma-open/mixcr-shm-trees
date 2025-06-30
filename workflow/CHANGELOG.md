@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 3.11.0
+
+### Minor Changes
+
+- 7abb3c7: CID Conflict adhoc
+
 ## 3.10.0
 
 ### Minor Changes
