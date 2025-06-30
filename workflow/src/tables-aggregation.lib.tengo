@@ -70,7 +70,7 @@ ensureUniqueness := func(inputTsv, params, ...aggParams) {
         writeFile("wf.json", json.encode(aggregationWorkflow)).
         arg("input.tsv").addFile("input.tsv", inputTsv).
         arg("output.tsv").saveFile("output.tsv").
-        arg("CIDADHOC=123").
+        env("CIDADHOC", "123").
         run()
 
     return aggregateCmd.getFile("output.tsv")

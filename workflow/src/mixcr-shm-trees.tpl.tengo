@@ -64,7 +64,7 @@ self.body(func(inputs) {
         saveFile("report.json").
         // template specifies where result files will be written
         arg("--output-template").arg("alleles/{file_name}.clns").
-        arg("CIDADHOC=123")
+        env("CIDADHOC", "123")
 
     addLibraryFile(allelesCmdBuilder)
 
@@ -135,7 +135,7 @@ self.body(func(inputs) {
                     arg("clones.clns").
                     addFile("clones.clns", entry.afterAlleles).
                     saveFile("clones.downsampled.clns").
-                    arg("CIDADHOC=123")
+                    env("CIDADHOC", "123")
                 addLibraryFile(downsamplingCmdBuilder)
                 downsamplingCmd := downsamplingCmdBuilder.run()
 
@@ -159,7 +159,7 @@ self.body(func(inputs) {
         saveFile("report.txt").
         arg("--json-report").arg("report.json").
         saveFile("report.json").
-        arg("CIDADHOC=123")
+        env("CIDADHOC", "123")
 
     if !is_undefined(globalParams.seed) {
         shmTreesCmdBuilder.env("SEED", globalParams.seed)
