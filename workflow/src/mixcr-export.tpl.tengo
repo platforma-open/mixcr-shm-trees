@@ -49,7 +49,8 @@ self.body(func(inputs) {
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
         software(mixcrSw).
-        arg("exportShmTrees")
+        arg("exportShmTrees").
+        env("CIDADHOC", "123")
 
     addLibraryFile(shmTreeExportsCmdBuilder)
 
@@ -75,7 +76,8 @@ self.body(func(inputs) {
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
         software(mixcrSw).
-        arg("exportShmTreesWithNodes")
+        arg("exportShmTreesWithNodes").
+        env("CIDADHOC", "123")
 
     addLibraryFile(shmTreeNodesExportsCmdBuilder)
 
@@ -103,7 +105,8 @@ self.body(func(inputs) {
 		software(mixcrSw).
         arg("exportShmTreesWithNodes").
         // don't export nodes that don't have clones
-        arg("--only-observed")
+        arg("--only-observed").
+        env("CIDADHOC", "123")
 
     addLibraryFile(shmTreeNodesWithClonesExportsCmdBuilder)
 

@@ -141,6 +141,7 @@ self.body(func(inputs) {
 		arg("--target-column").arg("query").
         arg("input.tsv").addFile("input.tsv", inputTsv).
 		arg("output.tsv").saveFile("output.tsv").
+        env("CIDADHOC", "123").
 		run()
 
 	resultCsv := searchCmd.getFile("output.tsv")
@@ -182,6 +183,7 @@ self.body(func(inputs) {
 		writeFile("wf.json", json.encode(aggregationWorkflow)).
 		arg("input.tsv").addFile("input.tsv", resultCsv).
 		arg("output.tsv").saveFile("output.tsv").
+        env("CIDADHOC", "123").
 		run()
 
 	aggregatedCsv := aggregateCmd.getFile("output.tsv")
