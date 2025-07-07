@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.0.0
+
+### Major Changes
+
+- 34baf68: fix next CID conflict
+
 ## 3.11.0
 
 ### Minor Changes
