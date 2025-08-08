@@ -338,7 +338,7 @@ shmTreeNodes := func(dataDescription) {
             domain: {
                 "pl7.app/dendrogram/distance/from": "germline"
             },
-            annotations: addTableAnnotations(9000, false, "Distanse from germline", {
+            annotations: addTableAnnotations(9000, false, "Distance from germline", {
                 "pl7.app/dendrogram/distance/from": "germline", // change to domain only, once can be selected in graphmaker
                 "pl7.app/dendrogram/isDistance": "true"
             })
@@ -356,7 +356,7 @@ shmTreeNodes := func(dataDescription) {
             domain: {
                 "pl7.app/dendrogram/distance/from": "parent"
             },
-            annotations: addTableAnnotations(8900, false, "Distanse from parent", {
+            annotations: addTableAnnotations(8900, false, "Distance from parent", {
                 "pl7.app/dendrogram/distance/from": "parent", // change to domain only, once can be selected in graphmaker
                 "pl7.app/dendrogram/isDistance": "true"
             })
