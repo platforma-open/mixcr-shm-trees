@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.4.9
+
+### Patch Changes
+
+- efae52c: Update MiXCR dependency to fix bug
+
 ## 3.4.8
 
 ### Patch Changes
