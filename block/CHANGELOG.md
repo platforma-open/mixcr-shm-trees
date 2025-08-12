@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.4.10
+
+### Patch Changes
+
+- 457eb89: Minimal sdk bump
+
 ## 3.4.9
 
 ### Patch Changes
