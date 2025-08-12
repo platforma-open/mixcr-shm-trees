@@ -7,7 +7,7 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^2.1.7
-  '@platforma-sdk/block-tools': ^2.5.52
+  '@platforma-sdk/block-tools': ^2.5.83
   '@platforma-sdk/eslint-config': ^1.0.3
 
   '@platforma-sdk/model': 1.31.6
@@ -16,7 +16,7 @@ catalog:
   '@platforma-sdk/test': 1.31.13
   '@milaboratories/graph-maker': 1.1.98
 
-  '@platforma-sdk/workflow-tengo': ^4.7.1
+  '@platforma-sdk/workflow-tengo': ^5.0.3
 
   '@platforma-open/milaboratories.software-small-binaries': ^1.15.19
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-223-develop
