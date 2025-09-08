@@ -1,33 +1,33 @@
 import { GraphMakerState } from '@milaboratories/graph-maker';
 import {
-  AxesSpec,
-  BlockModel,
-  InferOutputsType,
-  NotNAPValue,
-  PColumn,
-  PColumnSpec,
-  PColumnValues,
-  PObjectId,
-  PTableHandle,
-  PlDataTableState,
-  PlId,
-  PlRef,
-  RenderCtx,
-  TreeNodeAccessor,
-  createPlDataTable,
-  createPFrameForGraphs,
-  deriveLabels,
-  getAxisId,
-  isPColumnSpec,
-  isPColumnSpecResult,
-  pValueToStringOrNumber,
-  parseResourceMap,
-  type PlTableFiltersModel
+    AxesSpec,
+    BlockModel,
+    InferOutputsType,
+    NotNAPValue,
+    PColumn,
+    PColumnSpec,
+    PColumnValues,
+    PObjectId,
+    PTableHandle,
+    PlDataTableState,
+    PlId,
+    PlRef,
+    RenderCtx,
+    TreeNodeAccessor,
+    createPFrameForGraphs,
+    createPlDataTable,
+    deriveLabels,
+    getAxisId,
+    isPColumnSpec,
+    isPColumnSpecResult,
+    pValueToStringOrNumber,
+    parseResourceMap,
+    type PlTableFiltersModel
 } from '@platforma-sdk/model';
 import { ProgressPrefix } from './progress';
-import { matchAxesId } from './util';
 import { SOIList } from './soi';
 import { FullNodeId, FullTreeId, treeNodesFilter } from './tree_filter';
+import { matchAxesId } from './util';
 
 export type DownsamplingByCount = {
   type: 'CountReadsFixed' | 'CountMoleculesFixed';
@@ -519,10 +519,11 @@ export const model = BlockModel.create()
 
   .title((ctx) => (ctx.args.datasetsTitles ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join('-')}` : 'MiXCR SHM Trees'))
 
-  .done();
+  .done(2);
 
 export type BlockOutputs = InferOutputsType<typeof model>;
 
 export * from './progress';
 export * from './soi';
 export * from './tree_filter';
+
