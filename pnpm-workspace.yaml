@@ -6,7 +6,7 @@ packages:
   - test
 
 catalog:
-  '@platforma-sdk/tengo-builder': ^2.1.7
+  '@platforma-sdk/tengo-builder': ^2.3.0
   '@platforma-sdk/block-tools': ^2.5.83
   '@platforma-sdk/eslint-config': ^1.0.3
 
