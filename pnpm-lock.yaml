@@ -22,8 +22,8 @@ catalogs:
       specifier: 4.7.0-223-develop
       version: 4.7.0-223-develop
     '@platforma-open/milaboratories.software-ptransform':
-      specifier: ^1.4.3
-      version: 1.4.3
+      specifier: ^1.6.6
+      version: 1.6.6
     '@platforma-sdk/block-tools':
       specifier: ^2.5.83
       version: 2.5.83
@@ -237,7 +237,7 @@ importers:
         version: 4.7.0-223-develop
       '@platforma-open/milaboratories.software-ptransform':
         specifier: 'catalog:'
-        version: 1.4.3
+        version: 1.6.6
       '@platforma-sdk/tengo-builder':
         specifier: 'catalog:'
         version: 2.3.0
@@ -1267,8 +1267,8 @@ packages:
   '@platforma-open/milaboratories.software-ptexter@1.1.1':
     resolution: {integrity: sha512-nTKuFoDm+IhlD3uCktYrpjJ1pJ8TUrGOGAACbLoPwu65iRPOjohmrBZxFux+7eill+aJmqEsy+xF41Dw4mfnkg==}
 
-  '@platforma-open/milaboratories.software-ptransform@1.4.3':
-    resolution: {integrity: sha512-tqW8u/FH+Q8m9kGeNaR2dlO7lm1VisjEBNiSEXgoHq8EHW4AxMxp8C1tfxgFHSA/pBpd+D8fzf2stnkKQ0iOPA==}
+  '@platforma-open/milaboratories.software-ptransform@1.6.6':
+    resolution: {integrity: sha512-J43RsEiEo98Hwb+ze1UO42gXa3VTDCqMdBLbkTZiEs5nOtnqetMKfFRcGcSn/uHlUAdkBLAQ6WmEtEIfAgaUcA==}
 
   '@platforma-open/milaboratories.software-small-binaries.guided-command@1.1.1':
     resolution: {integrity: sha512-UPhSOP43GAL+gQVPlE/2ymjuOiYVojhmDad1moS4SI+t6IDF9QgnAj5I7V8eP2P2x0oSY5apgjg4EeUiGBrIkw==}
@@ -6967,7 +6967,7 @@ snapshots:
 
   '@platforma-open/milaboratories.software-ptexter@1.1.1': {}
 
-  '@platforma-open/milaboratories.software-ptransform@1.4.3': {}
+  '@platforma-open/milaboratories.software-ptransform@1.6.6': {}
 
   '@platforma-open/milaboratories.software-small-binaries.guided-command@1.1.1': {}
 
