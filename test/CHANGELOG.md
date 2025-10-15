@@ -1,5 +1,14 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.test
 
+## 1.3.1
+
+### Patch Changes
+
+- 8318873: technical release
+- 3c6a689: technical release
+- 3a0d005: technical release
+- 5028f95: technical release
+
 ## 1.3.0
 
 ### Minor Changes

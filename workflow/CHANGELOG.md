@@ -1,5 +1,14 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.0.1
+
+### Patch Changes
+
+- 8318873: technical release
+- 3c6a689: technical release
+- 3a0d005: technical release
+- 5028f95: technical release
+
 ## 4.0.0
 
 ### Major Changes

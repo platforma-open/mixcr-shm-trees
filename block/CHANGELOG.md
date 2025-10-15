@@ -1,5 +1,21 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.4.11
+
+### Patch Changes
+
+- 8318873: technical release
+- 3c6a689: technical release
+- 3a0d005: technical release
+- 5028f95: technical release
+- Updated dependencies [8318873]
+- Updated dependencies [3c6a689]
+- Updated dependencies [3a0d005]
+- Updated dependencies [5028f95]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.8.1
+  - @platforma-open/milaboratories.mixcr-shm-trees.ui@3.7.1
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@4.0.1
+
 ## 3.4.10
 
 ### Patch Changes
