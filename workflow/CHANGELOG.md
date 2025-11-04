@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.1.0
+
+### Minor Changes
+
+- 2ce3a8a: SDK version update
+
 ## 4.0.1
 
 ### Patch Changes

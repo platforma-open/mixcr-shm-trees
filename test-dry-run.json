@@ -3,14 +3,14 @@
 > turbo run test --dry-run=json
 
 {
-  "id": "346CkM7ElwBdee8UxaAltDz2nx8",
+  "id": "350w9aeZTaLrNAoJBgP8ka7LYip",
   "version": "1",
   "turboVersion": "2.5.3",
   "monorepo": true,
   "globalCacheInputs": {
     "rootKey": "I can’t see ya, but I know you’re here",
     "files": {},
-    "hashOfExternalDependencies": "4df9e92b5a67419b",
+    "hashOfExternalDependencies": "e3ce7e4f4199aee6",
     "hashOfInternalDependencies": "",
     "environmentVariables": {
       "specified": {
@@ -37,20 +37,20 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees",
-      "hash": "38b4f58da7767de8",
+      "hash": "2aa323f1a1b62a6c",
       "inputs": {
-        "CHANGELOG.md": "a78bfa19795465fb5a769d4c423727a8fa5cfcea",
+        "CHANGELOG.md": "578250f0b20509c186710d831dd9b1f96cc47507",
         "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
         "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
-        "package.json": "96a3aee7f899c3802f56e018c061bf08b7398a0b"
+        "package.json": "f489db9accba90397cdcb1956c2faf1ba91feb09"
       },
-      "hashOfExternalDependencies": "3cfebb9497f56b6d",
+      "hashOfExternalDependencies": "c36b4bf2ab30cfa4",
       "cache": {
         "local": true,
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 2039
+        "timeSaved": 2069
       },
       "command": "rm -rf ./block-pack && block-tools pack",
       "cliArguments": [],
@@ -107,14 +107,14 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees",
-      "hash": "4c86eb9c560ef56a",
+      "hash": "4754f83603cd70bb",
       "inputs": {
-        "CHANGELOG.md": "a78bfa19795465fb5a769d4c423727a8fa5cfcea",
+        "CHANGELOG.md": "578250f0b20509c186710d831dd9b1f96cc47507",
         "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
         "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
-        "package.json": "96a3aee7f899c3802f56e018c061bf08b7398a0b"
+        "package.json": "f489db9accba90397cdcb1956c2faf1ba91feb09"
       },
-      "hashOfExternalDependencies": "3cfebb9497f56b6d",
+      "hashOfExternalDependencies": "c36b4bf2ab30cfa4",
       "cache": {
         "local": false,
         "remote": false,
@@ -179,7 +179,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.model#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.model",
-      "hash": "3172dba42b33cb04",
+      "hash": "e66bfe91dd7f34d9",
       "inputs": {
         "CHANGELOG.md": "65c7265015e8c8a8b2fd4adf9e5c5444f27456d1",
         "package.json": "4f8c9bbb8e1f5dc53144ff2dd4296431adfc54f9",
@@ -191,13 +191,13 @@
         "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
         "vite.config.mts": "a500058540e1b93dbfd5840e46f7823affd46a97"
       },
-      "hashOfExternalDependencies": "820ee391842a510a",
+      "hashOfExternalDependencies": "8bd3af883666c4a8",
       "cache": {
         "local": true,
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 5384
+        "timeSaved": 7906
       },
       "command": "tsup && vite build && block-tools build-model",
       "cliArguments": [],
@@ -251,7 +251,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.model#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.model",
-      "hash": "40082d95ade92ba8",
+      "hash": "69f151bce09f5699",
       "inputs": {
         "CHANGELOG.md": "65c7265015e8c8a8b2fd4adf9e5c5444f27456d1",
         "package.json": "4f8c9bbb8e1f5dc53144ff2dd4296431adfc54f9",
@@ -263,7 +263,7 @@
         "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
         "vite.config.mts": "a500058540e1b93dbfd5840e46f7823affd46a97"
       },
-      "hashOfExternalDependencies": "820ee391842a510a",
+      "hashOfExternalDependencies": "8bd3af883666c4a8",
       "cache": {
         "local": false,
         "remote": false,
@@ -328,16 +328,16 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
-      "hash": "b7ccaebbd11fdae7",
+      "hash": "9aa2938a7698cd4a",
       "inputs": {
-        "CHANGELOG.md": "99ff6d7ea0943925927b58a3260ad760cf63940a",
+        "CHANGELOG.md": "f16f707f2e5350466ddf638d9c6787681d36b1ce",
         "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
-        "package.json": "b45543ec8c49ba8856d81b9b9f7f165fcb5706d1",
+        "package.json": "d8374342b59ecd4e38d10d0e1827094db1c5113d",
         "src/wf.test.ts": "839fe906b9747b34893ca52db66556a4073dbd8e",
         "tsconfig.json": "64ebfa332d028a50e3ddadaab4ad97b44a191599",
         "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
       },
-      "hashOfExternalDependencies": "d38d1efcc53bb37b",
+      "hashOfExternalDependencies": "45c2d6c693a6c72c",
       "cache": {
         "local": false,
         "remote": false,
@@ -396,16 +396,16 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
-      "hash": "c5f1f0abff07f6c3",
+      "hash": "80424a1436c9760d",
       "inputs": {
-        "CHANGELOG.md": "99ff6d7ea0943925927b58a3260ad760cf63940a",
+        "CHANGELOG.md": "f16f707f2e5350466ddf638d9c6787681d36b1ce",
         "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
-        "package.json": "b45543ec8c49ba8856d81b9b9f7f165fcb5706d1",
+        "package.json": "d8374342b59ecd4e38d10d0e1827094db1c5113d",
         "src/wf.test.ts": "839fe906b9747b34893ca52db66556a4073dbd8e",
         "tsconfig.json": "64ebfa332d028a50e3ddadaab4ad97b44a191599",
         "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
       },
-      "hashOfExternalDependencies": "d38d1efcc53bb37b",
+      "hashOfExternalDependencies": "45c2d6c693a6c72c",
       "cache": {
         "local": false,
         "remote": false,
@@ -470,7 +470,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.ui#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
-      "hash": "e8044ff741c468d5",
+      "hash": "aec7a8e7a351d8e8",
       "inputs": {
         "CHANGELOG.md": "c7c4f1db4d79c8f1af7c6058698596917bf45f37",
         "eslint.config.mjs": "30e2871b6d4cc4776ac969c3a0e034a23e2fe766",
@@ -511,13 +511,13 @@
         "vite.config.ts": "034e79acb1b5c09590ed68aaa0eda291e79ecd05",
         "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
       },
-      "hashOfExternalDependencies": "dbbb9bc826a981de",
+      "hashOfExternalDependencies": "30e3be566b4a2204",
       "cache": {
         "local": true,
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 21452
+        "timeSaved": 22625
       },
       "command": "vue-tsc -b && vite build",
       "cliArguments": [],
@@ -572,7 +572,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.ui#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.ui",
-      "hash": "ed688861b6ed8d0d",
+      "hash": "32d93f7016a4f1b2",
       "inputs": {
         "CHANGELOG.md": "c7c4f1db4d79c8f1af7c6058698596917bf45f37",
         "eslint.config.mjs": "30e2871b6d4cc4776ac969c3a0e034a23e2fe766",
@@ -613,7 +613,7 @@
         "vite.config.ts": "034e79acb1b5c09590ed68aaa0eda291e79ecd05",
         "vitest.config.mts": "d0d1b5e288dd7913deea21698b81b68641c465a0"
       },
-      "hashOfExternalDependencies": "dbbb9bc826a981de",
+      "hashOfExternalDependencies": "30e3be566b4a2204",
       "cache": {
         "local": false,
         "remote": false,
@@ -678,13 +678,13 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.workflow#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.workflow",
-      "hash": "dd881d102b070b38",
+      "hash": "054713daca7c405c",
       "inputs": {
-        "CHANGELOG.md": "8cfb7ea12772a5df4bc8299581152a7334704799",
+        "CHANGELOG.md": "2c19d5041820d5a7c22197df3d5ae5e9ca866823",
         "format.el": "b168a1ac097463794e06d0e92c1e11da73486887",
         "index.d.ts": "d8645366dd3210b67111d049068b412c855c9c23",
         "index.js": "12c7ef33ffe9d1cc4c07280cf2e7ace31120a22c",
-        "package.json": "19e0a3911a51f9d42bd510e176a1b45f5bc73568",
+        "package.json": "ee97efe6f07f00d51cd8effd1df09045ac262618",
         "src/export-settings.lib.tengo": "25ac7495263854ed2f3a367e232ec82d63ef16ad",
         "src/main.tpl.tengo": "7715560e6572198efc0135c78f4497b843cccfe4",
         "src/mixcr-export.tpl.tengo": "f7a2da7e709d2473754f2019d0bbc24acc7d4e57",
@@ -698,13 +698,13 @@
         "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
         "vitest.config.mts": "dc17fea1dbe2168df421989cab76b13cfe60db22"
       },
-      "hashOfExternalDependencies": "14daa26468c922f8",
+      "hashOfExternalDependencies": "0547e685cbfe56ff",
       "cache": {
         "local": true,
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 3635
+        "timeSaved": 5507
       },
       "command": "rm -rf dist && pl-tengo check && pl-tengo build",
       "cliArguments": [],
@@ -757,13 +757,13 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.workflow#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.workflow",
-      "hash": "fdf1da8fde6abd5c",
+      "hash": "44f0639dc22fb97a",
       "inputs": {
-        "CHANGELOG.md": "8cfb7ea12772a5df4bc8299581152a7334704799",
+        "CHANGELOG.md": "2c19d5041820d5a7c22197df3d5ae5e9ca866823",
         "format.el": "b168a1ac097463794e06d0e92c1e11da73486887",
         "index.d.ts": "d8645366dd3210b67111d049068b412c855c9c23",
         "index.js": "12c7ef33ffe9d1cc4c07280cf2e7ace31120a22c",
-        "package.json": "19e0a3911a51f9d42bd510e176a1b45f5bc73568",
+        "package.json": "ee97efe6f07f00d51cd8effd1df09045ac262618",
         "src/export-settings.lib.tengo": "25ac7495263854ed2f3a367e232ec82d63ef16ad",
         "src/main.tpl.tengo": "7715560e6572198efc0135c78f4497b843cccfe4",
         "src/mixcr-export.tpl.tengo": "f7a2da7e709d2473754f2019d0bbc24acc7d4e57",
@@ -777,7 +777,7 @@
         "tsconfig.json": "4593cbadcd4a4144c813512c01f58573b4b0425c",
         "vitest.config.mts": "dc17fea1dbe2168df421989cab76b13cfe60db22"
       },
-      "hashOfExternalDependencies": "14daa26468c922f8",
+      "hashOfExternalDependencies": "0547e685cbfe56ff",
       "cache": {
         "local": false,
         "remote": false,
@@ -842,7 +842,7 @@
   "user": "github-merge-queue[bot]",
   "scm": {
     "type": "git",
-    "sha": "23bbf9b642a7e418236a7b95a454ab81bff67daf",
+    "sha": "fec97fcf436ce9889661bef4038642718b5b4b83",
     "branch": "main"
   }
 }
