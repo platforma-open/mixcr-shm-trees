@@ -6759,7 +6759,7 @@ snapshots:
       '@milaboratories/ts-helpers': 1.5.1
       '@platforma-sdk/block-tools': 2.6.16
       '@platforma-sdk/model': 1.45.0
-      '@platforma-sdk/workflow-tengo': 5.5.11
+      '@platforma-sdk/workflow-tengo': ^5.6.2
       canonicalize: 2.1.0
       denque: 2.1.0
       es-toolkit: 1.40.0
