@@ -7,7 +7,7 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^2.3.3
-  '@platforma-sdk/block-tools': ^2.6.16
+  '@platforma-sdk/block-tools': ^2.6.25
   '@platforma-sdk/eslint-config': ^1.1.0
   '@platforma-sdk/blocks-deps-updater': ^2.0.0
 
