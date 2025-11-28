@@ -17,7 +17,7 @@ catalog:
   '@platforma-sdk/test': ^1.45.11
   '@milaboratories/graph-maker': 1.1.98
 
-  '@platforma-sdk/workflow-tengo': ^5.6.3
+  '@platforma-sdk/workflow-tengo': ^5.5.9
 
   '@platforma-open/milaboratories.software-small-binaries': ^1.15.19
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-235-develop
