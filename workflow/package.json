@@ -4,10 +4,10 @@
   "type": "module",
   "description": "Tengo-based template",
   "//": {
-    "build": "node ./scripts/build-static.mjs src/pfconv_params.json src/pfconv_params.lib.tengo && rm -rf dist && pl-tengo check && pl-tengo build && ./create_tags.sh"
+    "build": "node ./scripts/build-static.mjs src/pfconv_params.json src/pfconv_params.lib.tengo && shx rm -rf dist && pl-tengo check && pl-tengo build && ./create_tags.sh"
   },
   "scripts": {
-    "build": "rm -rf dist && pl-tengo check && pl-tengo build",
+    "build": "shx rm -rf dist && pl-tengo check && pl-tengo build",
     "format": "/usr/bin/env emacs --script ./format.el"
   },
   "dependencies": {
