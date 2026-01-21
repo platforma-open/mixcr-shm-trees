@@ -7,7 +7,7 @@ packages:
 
 catalog:
   '@platforma-sdk/tengo-builder': ^2.3.3
-  '@platforma-sdk/block-tools': ^2.6.16
+  '@platforma-sdk/block-tools': ^2.6.29
   '@platforma-sdk/eslint-config': ^1.1.0
   '@platforma-sdk/blocks-deps-updater': ^2.0.0
 
@@ -42,6 +42,7 @@ catalog:
   'vite': ^6.3.5
   'vitest': ~2.1.8
   '@vitejs/plugin-vue': ^5.2.4
+  'shx': ^0.4.0
 
   'ag-grid-enterprise': &ag-grid ^33.0.4
   'ag-grid-vue3': *ag-grid
