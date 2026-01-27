@@ -58,6 +58,8 @@ export type BlockArgs = {
   downsampling?: DownsamplingSettings;
   sequencesOfInterest?: SOIList[];
   datasetsTitles?: string[];
+  perProcessMemGB?: number;
+  perProcessCPUs?: number;
 };
 
 export type FullTableState = {
