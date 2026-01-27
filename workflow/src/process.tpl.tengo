@@ -41,7 +41,7 @@ soiTpl := assets.importTemplate(":soi")
 
 self.body(func(inputs) {
 	// overall description of data that we have.
-    dataDescription := {
+	dataDescription := {
 		hasUmiTags: false,
 		hasCellTags: false,
 		// will be filled
@@ -49,6 +49,12 @@ self.body(func(inputs) {
 		assemblingFeature: undefined,
 		cellsAssembled: false
 	}
+
+	perProcessMemGB := inputs.params.perProcessMemGB
+	perProcessCPUs := inputs.params.perProcessCPUs
+	inputParams := inputs.params
+	delete(inputParams, "perProcessMemGB") // do not affect deduplication of results
+	delete(inputParams, "perProcessCPUs") // do not affect deduplication of results
 
 	blockId := inputs.etc.blockId
 	firstDatasetSpec := inputs.etc.firstDatasetSpec
@@ -173,10 +179,14 @@ self.body(func(inputs) {
 			traceSteps: [{type: "milaboratories.mixcr-shm-trees", id: blockId, importance: 19, label: "SHM Trees"}],
 			extra: {
 				library: is_undefined(library) ? smart.createNullResource() : library.data,
-				globalParams: maps.merge(inputs.params, {
+				globalParams: maps.merge(inputParams, {
 					datasetTypes: datasetTypes,
 					libraryFormat: libraryFormat
 				})
+			},
+			metaExtra: {
+				perProcessMemGB: perProcessMemGB,
+				perProcessCPUs: perProcessCPUs
 			}
 		}
 	)
@@ -225,6 +235,10 @@ self.body(func(inputs) {
 					shmTreeNodesWithClonesEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeNodesWithClonesTableOptions.pfconvParams),
 					shmTreeNodesUniqueIsotypeEnsureUniquenessParams: tablesAggregation.ensureUniquenessParamsFromPconvParams(shmTreeNodesUniqueIsotypeTableOptions.pfconvParams)
 				}
+			},
+			metaExtra: {
+				perProcessMemGB: perProcessMemGB,
+				perProcessCPUs: perProcessCPUs
 			}
 		}
 	)

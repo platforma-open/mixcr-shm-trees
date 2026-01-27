@@ -32,6 +32,9 @@ self.body(func(inputs) {
 	shmTreeNodesWithClonesEnsureUniquenessParams := params.shmTreeNodesWithClonesEnsureUniquenessParams
 	shmTreeNodesUniqueIsotypeEnsureUniquenessParams := params.shmTreeNodesUniqueIsotypeEnsureUniquenessParams
 
+    perProcessMemGB := inputs.perProcessMemGB
+    perProcessCPUs := inputs.perProcessCPUs
+
     addLibraryFile := func(cmdBuilder) {
         if !is_undefined(library) {
             if libraryFormat == "repseqio.json.gz" {
@@ -79,6 +82,16 @@ self.body(func(inputs) {
         arg("exportShmTreesWithNodes").
         env("CIDADHOC", "1234")
 
+    // CPUs number per process
+    if !is_undefined(perProcessCPUs) && perProcessCPUs > 0 {
+        shmTreeNodesExportsCmdBuilder.cpu(perProcessCPUs)
+    }
+
+    // Memory limit per process
+    if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
+        shmTreeNodesExportsCmdBuilder.mem(string(perProcessMemGB) + "GiB")
+    }
+
     addLibraryFile(shmTreeNodesExportsCmdBuilder)
 
     for arg in shmTreeNodesArgs {
@@ -107,6 +120,16 @@ self.body(func(inputs) {
         // don't export nodes that don't have clones
         arg("--only-observed").
         env("CIDADHOC", "1234")
+
+    // CPUs number per process
+    if !is_undefined(perProcessCPUs) && perProcessCPUs > 0 {
+        shmTreeNodesWithClonesExportsCmdBuilder.cpu(perProcessCPUs)
+    }
+
+    // Memory limit per process
+    if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
+        shmTreeNodesWithClonesExportsCmdBuilder.mem(string(perProcessMemGB) + "GiB")
+    }
 
     addLibraryFile(shmTreeNodesWithClonesExportsCmdBuilder)
 

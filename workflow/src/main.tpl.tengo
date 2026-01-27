@@ -46,7 +46,9 @@ wf.body(func(args) {
 		},
 		params: {
 			downsampling: args.downsampling,
-			sequencesOfInterest: args.sequencesOfInterest
+			sequencesOfInterest: args.sequencesOfInterest,
+			perProcessMemGB: args.perProcessMemGB,
+			perProcessCPUs: args.perProcessCPUs
 		}
 	})
 

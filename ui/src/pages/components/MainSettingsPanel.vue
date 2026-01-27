@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { notEmpty, range } from '@milaboratories/helpers';
-import { ListOption, PlAccordionSection, PlDropdown, PlDropdownRef } from '@platforma-sdk/ui-vue';
+import { ListOption, PlAccordionSection, PlDropdown, PlDropdownRef, PlNumberField, PlSectionSeparator } from '@platforma-sdk/ui-vue';
 import { computed } from 'vue';
 import { useApp } from '../../app';
 import { fromRefString, RefString, toRefString } from '../../util';
@@ -91,5 +91,22 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
 
   <PlAccordionSection label="Downsampling (Bulk Datasets Only)">
     <DownsamplingSettings v-model="app.model.args.downsampling" />
+  </PlAccordionSection>
+
+  <PlAccordionSection label="Advanced Settings">
+    <PlSectionSeparator>Resource allocation</PlSectionSeparator>
+    <PlNumberField
+      v-model="app.model.args.perProcessMemGB"
+      label="Set memory per every sample process (GB)"
+      :minValue="1"
+      :maxValue="999999"
+    />
+
+    <PlNumberField
+      v-model="app.model.args.perProcessCPUs"
+      label="Set CPUs number per every sample process"
+      :minValue="1"
+      :maxValue="999999"
+    />
   </PlAccordionSection>
 </template>
