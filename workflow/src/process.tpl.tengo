@@ -9,6 +9,7 @@ xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 smart := import("@platforma-sdk/workflow-tengo:smart")
 text := import("text")
 json := import("json")
+times := import("times")
 exportSettings := import(":export-settings")
 prepareDonorColumn := import(":prepare-donor-column")
 pframes := import("@platforma-sdk/workflow-tengo:pframes")
@@ -180,6 +181,7 @@ self.body(func(inputs) {
 			extra: {
 				library: is_undefined(library) ? smart.createNullResource() : library.data,
 				globalParams: maps.merge(inputParams, {
+					seed: times.time_string(times.now()),
 					datasetTypes: datasetTypes,
 					libraryFormat: libraryFormat
 				})
