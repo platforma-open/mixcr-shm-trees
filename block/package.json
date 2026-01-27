@@ -1,6 +1,6 @@
 {
   "name": "@platforma-open/milaboratories.mixcr-shm-trees",
-  "version": "3.5.0",
+  "version": "3.5.1",
   "scripts": {
     "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
     "build": "shx rm -rf ./block-pack && block-tools pack",

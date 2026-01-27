@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.9.0
+
+### Minor Changes
+
+- f16a929: Add ability to control CPU and MEM allocated for each sample processing via advanced settings of a block
+
 ## 3.8.1
 
 ### Patch Changes
