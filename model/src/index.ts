@@ -249,9 +249,13 @@ export const model = BlockModel.create()
           ({ obj: spec }) =>
             spec.name === 'mixcr.com/clns' &&
             matchAxesId([sampleAxisId], spec.axesSpec) &&
+            // Required: assemblingFeature must exist and not be CDR3 or [CDR3]
             spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
             spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]'
+            spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]' &&
+            // Required: coveredFeaturesOnExport must exist (needed for export settings)
+            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== undefined &&
+            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== ''
         ),
       (v) => v.obj,
       { addLabelAsSuffix: true, includeNativeLabel: true }
