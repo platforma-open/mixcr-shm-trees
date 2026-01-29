@@ -19,8 +19,8 @@ catalogs:
       specifier: 2.3.1-24-main
       version: 2.3.1-24-main
     '@platforma-open/milaboratories.software-mixcr':
-      specifier: 4.7.0-235-develop
-      version: 4.7.0-235-develop
+      specifier: 4.7.0-254-develop
+      version: 4.7.0-254-develop
     '@platforma-open/milaboratories.software-ptransform':
       specifier: ^1.6.6
       version: 1.6.6
@@ -246,7 +246,7 @@ importers:
         version: 2.3.1-24-main
       '@platforma-open/milaboratories.software-mixcr':
         specifier: 'catalog:'
-        version: 4.7.0-235-develop
+        version: 4.7.0-254-develop
       '@platforma-open/milaboratories.software-ptransform':
         specifier: 'catalog:'
         version: 1.6.6
@@ -1262,8 +1262,8 @@ packages:
   '@platforma-open/milaboratories.software-mitool@2.3.1-24-main':
     resolution: {integrity: sha512-2TxarvPNeL/+KMWQWoZJtBaNuz1sFDDaZvpLxrEc/hpDgDawLzVyqomCdlL9rBq7TZSC4SIirIEued61xQpJ4A==}
 
-  '@platforma-open/milaboratories.software-mixcr@4.7.0-235-develop':
-    resolution: {integrity: sha512-Ic0v1jFijxTvzesY7kikTkv2Uja3nnFZ8pD1P0FU0POtughplEojMre71ndip3tc+WPGg4rJC2M+T6LGw4FjHA==}
+  '@platforma-open/milaboratories.software-mixcr@4.7.0-254-develop':
+    resolution: {integrity: sha512-Hnsp2PO+2rv82SEMznh8Gth3FsiOIbu9IA3Ov1F33qsOmo+xGY7DCuip1eW4kVfRMSUExCagCysAmI7aspu9KQ==}
 
   '@platforma-open/milaboratories.software-ptabler.schema@1.12.0':
     resolution: {integrity: sha512-tQw07omRWh7XFNyGDZz1VeiRxjzprvXWxhJI3git3Yf0GlgsCMmdxwSd1gpeORwFU9ggvLTGwdlAMN5KkfFwAw==}
@@ -7025,7 +7025,7 @@ snapshots:
 
   '@platforma-open/milaboratories.software-mitool@2.3.1-24-main': {}
 
-  '@platforma-open/milaboratories.software-mixcr@4.7.0-235-develop': {}
+  '@platforma-open/milaboratories.software-mixcr@4.7.0-254-develop': {}
 
   '@platforma-open/milaboratories.software-ptabler.schema@1.12.0': {}
 

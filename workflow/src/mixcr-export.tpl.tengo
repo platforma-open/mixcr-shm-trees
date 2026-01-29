@@ -16,7 +16,7 @@ self.defineOutputs(
 tablesAggregation := import(":tables-aggregation")
 
 // import MiXCR as a software to use
-mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
+mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:memory-from-limits")
 
 self.body(func(inputs) {
 	shmtFile := inputs[pConstants.VALUE_FIELD_NAME]
