@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.model
 
+## 3.9.1
+
+### Patch Changes
+
+- b793768: Allow to select only mixcr clonotyping results for analysis
+
 ## 3.9.0
 
 ### Minor Changes
