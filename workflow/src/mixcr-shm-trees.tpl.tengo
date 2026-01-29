@@ -20,7 +20,7 @@ self.defineOutputs(
 )
 
 // import MiXCR as a software to use
-mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:main")
+mixcrSw := assets.importSoftware("@platforma-open/milaboratories.software-mixcr:memory-from-limits")
 
 // env for MiXCR to format progress messages
 progressPrefix := "[==PROGRESS==]"
