@@ -55,6 +55,13 @@ self.body(func(inputs) {
         arg("exportShmTrees").
         env("CIDADHOC", "1234")
 
+    // Memory limit per process (default 12GiB)
+    if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
+        shmTreeExportsCmdBuilder.mem(string(perProcessMemGB) + "GiB")
+    } else {
+        shmTreeExportsCmdBuilder.mem("12GiB")
+    }
+
     addLibraryFile(shmTreeExportsCmdBuilder)
 
     for arg in shmTreeArgs {
@@ -82,14 +89,11 @@ self.body(func(inputs) {
         arg("exportShmTreesWithNodes").
         env("CIDADHOC", "1234")
 
-    // CPUs number per process
-    if !is_undefined(perProcessCPUs) && perProcessCPUs > 0 {
-        shmTreeNodesExportsCmdBuilder.cpu(perProcessCPUs)
-    }
-
-    // Memory limit per process
+    // Memory limit per process (default 12GiB)
     if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
         shmTreeNodesExportsCmdBuilder.mem(string(perProcessMemGB) + "GiB")
+    } else {
+        shmTreeNodesExportsCmdBuilder.mem("12GiB")
     }
 
     addLibraryFile(shmTreeNodesExportsCmdBuilder)
@@ -121,14 +125,11 @@ self.body(func(inputs) {
         arg("--only-observed").
         env("CIDADHOC", "1234")
 
-    // CPUs number per process
-    if !is_undefined(perProcessCPUs) && perProcessCPUs > 0 {
-        shmTreeNodesWithClonesExportsCmdBuilder.cpu(perProcessCPUs)
-    }
-
-    // Memory limit per process
+    // Memory limit per process (default 12GiB)
     if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
         shmTreeNodesWithClonesExportsCmdBuilder.mem(string(perProcessMemGB) + "GiB")
+    } else {
+        shmTreeNodesWithClonesExportsCmdBuilder.mem("12GiB")
     }
 
     addLibraryFile(shmTreeNodesWithClonesExportsCmdBuilder)
