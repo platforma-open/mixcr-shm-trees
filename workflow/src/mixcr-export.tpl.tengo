@@ -33,7 +33,6 @@ self.body(func(inputs) {
 	shmTreeNodesUniqueIsotypeEnsureUniquenessParams := params.shmTreeNodesUniqueIsotypeEnsureUniquenessParams
 
     perProcessMemGB := inputs.perProcessMemGB
-    perProcessCPUs := inputs.perProcessCPUs
 
     addLibraryFile := func(cmdBuilder) {
         if !is_undefined(library) {
@@ -53,7 +52,8 @@ self.body(func(inputs) {
         secret("MI_LICENSE", "MI_LICENSE").
         software(mixcrSw).
         arg("exportShmTrees").
-        env("CIDADHOC", "1234")
+        env("CIDADHOC", "1234").
+        cpu(2)
 
     // Memory limit per process (default 12GiB)
     if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
@@ -87,7 +87,8 @@ self.body(func(inputs) {
         secret("MI_LICENSE", "MI_LICENSE").
         software(mixcrSw).
         arg("exportShmTreesWithNodes").
-        env("CIDADHOC", "1234")
+        env("CIDADHOC", "1234").
+        cpu(2)
 
     // Memory limit per process (default 12GiB)
     if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
@@ -123,7 +124,8 @@ self.body(func(inputs) {
         arg("exportShmTreesWithNodes").
         // don't export nodes that don't have clones
         arg("--only-observed").
-        env("CIDADHOC", "1234")
+        env("CIDADHOC", "1234").
+        cpu(2)
 
     // Memory limit per process (default 12GiB)
     if !is_undefined(perProcessMemGB) && perProcessMemGB > 0 {
