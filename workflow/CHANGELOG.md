@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.4
+
+### Patch Changes
+
+- 17e9000: Use --use-local-temp for findAlleles and findShmTrees to place temporary files in the working directory instead of /tmp, preventing silent hangs when system temp runs out of disk space
+
 ## 4.2.3
 
 ### Patch Changes
