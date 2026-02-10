@@ -2,4 +2,4 @@
 '@platforma-open/milaboratories.mixcr-shm-trees.workflow': patch
 ---
 
-Add missing pnpm-lock.yaml update for MiXCR 4.7.0-298-develop and block-tools 2.6.47
+Update MiXCR to 4.7.0-299-develop — adds retry limit for zero-byte async writes preventing silent hangs on disk-full
