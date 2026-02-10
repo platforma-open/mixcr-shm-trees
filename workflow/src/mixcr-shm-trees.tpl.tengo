@@ -1,4 +1,4 @@
-//tengo:hash_override 33125CD9-6F67-46B3-AA68-0FCD825B51BA
+//tengo:hash_override C034616E-1E9D-4A20-B27F-5F6D87655360
 
 self := import("@platforma-sdk/workflow-tengo:tpl")
 pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
@@ -61,6 +61,7 @@ self.body(func(inputs) {
         // env("SEED", seed).
         software(mixcrSw).
         arg("findAlleles").
+        arg("--use-local-temp").
         arg("--report").arg("report.txt").
         saveFile("report.txt").
         arg("--json-report").arg("report.json").
@@ -179,6 +180,7 @@ self.body(func(inputs) {
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findShmTrees").
+        arg("--use-local-temp").
         arg("--report").arg("report.txt").
         saveFile("report.txt").
         arg("--json-report").arg("report.json").
