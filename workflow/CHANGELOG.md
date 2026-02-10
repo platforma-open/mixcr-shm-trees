@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.5
+
+### Patch Changes
+
+- 9ffff26: Update MiXCR to 4.7.0-299-develop — adds retry limit for zero-byte async writes preventing silent hangs on disk-full
+
 ## 4.2.4
 
 ### Patch Changes
