@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.6
+
+### Patch Changes
+
+- 0b5ed95: Upgrade MiXCR to 4.7.0-300-develop, add MI_LICENSE_DEBUG env to all MiXCR processes
+
 ## 4.2.5
 
 ### Patch Changes
