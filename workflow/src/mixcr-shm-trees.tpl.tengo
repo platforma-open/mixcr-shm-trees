@@ -57,6 +57,7 @@ self.body(func(inputs) {
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
         secret("MI_LICENSE", "MI_LICENSE").
+        env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         // env("SEED", seed).
         software(mixcrSw).
@@ -141,6 +142,7 @@ self.body(func(inputs) {
                 downsamplingCmdBuilder := exec.builder().
                     printErrStreamToStdout().
                     secret("MI_LICENSE", "MI_LICENSE").
+                    env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
                     env("MI_PROGRESS_PREFIX", progressPrefix).
                     software(mixcrSw).
                     arg("downsample").
@@ -177,6 +179,7 @@ self.body(func(inputs) {
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
         secret("MI_LICENSE", "MI_LICENSE").
+        env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         env("MI_PROGRESS_PREFIX", progressPrefix).
         software(mixcrSw).
         arg("findShmTrees").

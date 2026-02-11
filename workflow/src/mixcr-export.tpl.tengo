@@ -50,6 +50,7 @@ self.body(func(inputs) {
         dontSaveStdoutOrStderr().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
+        env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         software(mixcrSw).
         arg("exportShmTrees").
         env("CIDADHOC", "1234").
@@ -85,6 +86,7 @@ self.body(func(inputs) {
         dontSaveStdoutOrStderr().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
+        env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         software(mixcrSw).
         arg("exportShmTreesWithNodes").
         env("CIDADHOC", "1234").
@@ -120,6 +122,7 @@ self.body(func(inputs) {
         dontSaveStdoutOrStderr().
         inLightQueue().
 		secret("MI_LICENSE", "MI_LICENSE").
+		env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
 		software(mixcrSw).
         arg("exportShmTreesWithNodes").
         // don't export nodes that don't have clones
