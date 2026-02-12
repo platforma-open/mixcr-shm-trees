@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.7
+
+### Patch Changes
+
+- 59e546a: Upgrade MiXCR to 4.7.0-302-develop
+
 ## 4.2.6
 
 ### Patch Changes
