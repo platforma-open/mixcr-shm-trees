@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.8
+
+### Patch Changes
+
+- d5bdf1f: Upgrade MiXCR to 4.7.0-303-develop — fix serialization hang in findShmTrees on large datasets
+
 ## 4.2.7
 
 ### Patch Changes
