@@ -12,6 +12,8 @@
   },
   "devDependencies": {
     "@platforma-sdk/test": "catalog:",
+    "@milaboratories/pl-client": "3.1.8",
+    "@milaboratories/pl-middle-layer": "1.55.22",
     "vitest": "catalog:",
     "typescript": "catalog:"
   }
