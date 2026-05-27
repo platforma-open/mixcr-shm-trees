@@ -289,9 +289,8 @@ export const model = BlockModel.create()
 
     if (hasAnyEligible) return undefined;
 
-    return 'The selected donor column has no matching clonotype datasets. '
-      + 'SHM trees needs clonotypes assembled with a feature broader than CDR3 (e.g. VDJRegion). '
-      + 'If MiXCR Clonotyping is still running, the list will update when it completes.';
+    return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
+      + 'The list updates each time an upstream clonotyping block finishes.';
   })
 
   .output('treeNodes', (ctx) => {

@@ -78,10 +78,6 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
     label="Select donor column" clearable />
 
   <template v-if="app.model.args.donorColumn !== undefined">
-    <PlAlert v-if="app.model.outputs.infoMessage" type="info">
-      {{ app.model.outputs.infoMessage }}
-    </PlAlert>
-
     <template v-for="dsIdx in range(0, app.model.args.datasetColumns.length + 1)" :key="dsIdx">
       <!-- Slot is rendered when:
            (a) it shows an existing selection (dsIdx is in range),
@@ -98,6 +94,10 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
         :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`"
       />
     </template>
+
+    <PlAlert v-if="app.model.outputs.infoMessage" type="info">
+      {{ app.model.outputs.infoMessage }}
+    </PlAlert>
   </template>
 
   <PlAccordionSection label="Downsampling (Bulk Datasets Only)">
