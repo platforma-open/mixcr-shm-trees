@@ -134,15 +134,13 @@ function treeNodesColumns(
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
-// Classification of why a mixcr.com/clns p-column might fail SHM trees' filter,
+// Classification of why a PColumnSpec might fail SHM trees' clns filter,
 // or 'eligible' if it passes. Used by datasetOptions (boolean eligibility) and
 // by infoMessage (cause-specific user messages).
-type ClnsClassification = 'eligible' | 'axes-mismatch' | 'cdr3-only' | 'missing-annotation';
+type ClnsClassification = 'eligible' | 'not-clns' | 'axes-mismatch' | 'cdr3-only' | 'missing-annotation';
 
 function classifyClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): ClnsClassification {
-  // Caller should pre-filter to name === 'mixcr.com/clns'; non-clns specs are
-  // categorised as missing-annotation to keep this total.
-  if (spec.name !== 'mixcr.com/clns') return 'missing-annotation';
+  if (spec.name !== 'mixcr.com/clns') return 'not-clns';
   if (!matchAxesId([sampleAxisId], spec.axesSpec)) return 'axes-mismatch';
   const af = spec.annotations?.['mixcr.com/assemblingFeature'];
   if (af === undefined) return 'missing-annotation';
@@ -325,15 +323,30 @@ export const model = BlockModel.create()
     const causes = new Set(classifications);
 
     if (causes.size === 1) {
-      if (causes.has('axes-mismatch'))
-        return 'Available clonotype data uses a different sample axis than this donor column. '
-          + 'Pick a donor column from the same dataset as your clonotyping.';
-      if (causes.has('cdr3-only'))
-        return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
-          + 'The list refreshes after each clonotyping run.';
-      if (causes.has('missing-annotation'))
-        return 'Available clonotype data lacks metadata SHM trees needs. '
-          + 'Re-run clonotyping with a current version.';
+      const [onlyCause] = [...causes];
+      switch (onlyCause) {
+        case 'axes-mismatch':
+          return 'Available clonotype data uses a different sample axis than this donor column. '
+            + 'Pick a donor column from the same dataset as your clonotyping.';
+        case 'cdr3-only':
+          return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
+            + 'The list refreshes after each clonotyping run.';
+        case 'missing-annotation':
+          return 'Available clonotype data lacks metadata SHM trees needs. '
+            + 'Re-run clonotyping with a current version.';
+        case 'eligible':
+        case 'not-clns':
+          // Unreachable in this branch: 'eligible' was excluded above, and clnsSpecs
+          // was already pre-filtered to spec.name === 'mixcr.com/clns'. Fall through
+          // to the mixed-causes fallback below.
+          break;
+        default: {
+          // Compile-time exhaustiveness guard: adding a new ClnsClassification
+          // variant must add a case here.
+          const _exhaustive: never = onlyCause;
+          void _exhaustive;
+        }
+      }
     }
 
     // Mixed causes — pool has clns that fail for different reasons. Fall back
