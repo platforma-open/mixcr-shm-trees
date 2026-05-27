@@ -271,10 +271,10 @@ export const model = BlockModel.create()
   })
 
   .output('infoMessage', (ctx) => {
-    // NOTE: while the result pool is still propagating clns p-columns (e.g. upstream
-    // MiXCR Clonotyping is still running), this output will briefly evaluate to the
-    // "no matching datasets" message before clearing once the eligible specs arrive.
-    // The user-facing message accounts for this — no extra UI gating is needed.
+    // NOTE: while the result pool is still propagating clns p-columns (e.g. an
+    // upstream clonotyping block is still running), this output will briefly
+    // evaluate to the empty-state message before clearing once eligible specs
+    // arrive. The user-facing message accounts for this — no extra UI gating needed.
     if (ctx.args.donorColumn === undefined) return undefined;
     if (ctx.args.datasetColumns.length > 0) return undefined;
 
