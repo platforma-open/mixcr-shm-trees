@@ -276,18 +276,31 @@ export const model = BlockModel.create()
     // evaluate to the empty-state message before clearing once eligible specs
     // arrive. The user-facing message accounts for this — no extra UI gating needed.
     if (ctx.args.donorColumn === undefined) return undefined;
-    if (ctx.args.datasetColumns.length > 0) return undefined;
 
     const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.args.donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
 
     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
-    const hasAnyEligible = ctx.resultPool
-      .getSpecs()
-      .entries.filter(isPColumnSpecResult)
-      .some(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId));
 
-    if (hasAnyEligible) return undefined;
+    if (ctx.args.datasetColumns.length > 0) {
+      // Datasets are already selected. Suppress the message only when at least
+      // one selection is still eligible for the current donor. This catches the
+      // donor-switch case where the new donor's sample axis no longer matches
+      // the previously-selected clns columns.
+      const anySelectedEligible = ctx.args.datasetColumns.some((ref) => {
+        const spec = ctx.resultPool.getSpecByRef(ref);
+        return spec !== undefined && isPColumnSpec(spec) && isEligibleClnsSpec(spec, sampleAxisId);
+      });
+      if (anySelectedEligible) return undefined;
+    } else {
+      // No datasets selected yet. Suppress the message only when the result pool
+      // has at least one eligible clns p-column the user could pick.
+      const hasAnyEligible = ctx.resultPool
+        .getSpecs()
+        .entries.filter(isPColumnSpecResult)
+        .some(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId));
+      if (hasAnyEligible) return undefined;
+    }
 
     return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
       + 'The list refreshes after each clonotyping run.';
