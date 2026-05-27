@@ -290,7 +290,7 @@ export const model = BlockModel.create()
     if (hasAnyEligible) return undefined;
 
     return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
-      + 'The list updates each time an upstream clonotyping block finishes.';
+      + 'The list refreshes after each clonotyping run.';
   })
 
   .output('treeNodes', (ctx) => {
