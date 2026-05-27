@@ -1,6 +1,7 @@
 import { GraphMakerState } from '@milaboratories/graph-maker';
 import {
   AxesSpec,
+  AxisId,
   BlockModel,
   InferOutputsType,
   NotNAPValue,
@@ -133,6 +134,17 @@ function treeNodesColumns(
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
+// Shared filter used by datasetOptions and infoMessage so they stay in lock-step.
+function isEligibleClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): boolean {
+  if (spec.name !== 'mixcr.com/clns') return false;
+  if (!matchAxesId([sampleAxisId], spec.axesSpec)) return false;
+  const af = spec.annotations?.['mixcr.com/assemblingFeature'];
+  if (af === undefined || af === 'CDR3' || af === '[CDR3]') return false;
+  const cfoe = spec.annotations?.['mixcr.com/coveredFeaturesOnExport'];
+  if (cfoe === undefined || cfoe === '') return false;
+  return true;
+}
+
 type BasketColumns = {
   allColumns: PColumn<PColumnValues>[];
   perBasket: Record<PlId, PColumn<PColumnValues>>;
@@ -245,18 +257,7 @@ export const model = BlockModel.create()
       ctx.resultPool
         .getSpecs()
         .entries.filter(isPColumnSpecResult)
-        .filter(
-          ({ obj: spec }) =>
-            spec.name === 'mixcr.com/clns' &&
-            matchAxesId([sampleAxisId], spec.axesSpec) &&
-            // Required: assemblingFeature must exist and not be CDR3 or [CDR3]
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]' &&
-            // Required: coveredFeaturesOnExport must exist (needed for export settings)
-            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== undefined &&
-            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== ''
-        ),
+        .filter(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId)),
       (v) => v.obj,
       { addLabelAsSuffix: true, includeNativeLabel: true }
     ).map(
@@ -267,6 +268,30 @@ export const model = BlockModel.create()
           assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
         } as DatasetOption)
     );
+  })
+
+  .output('infoMessage', (ctx) => {
+    // NOTE: while the result pool is still propagating clns p-columns (e.g. upstream
+    // MiXCR Clonotyping is still running), this output will briefly evaluate to the
+    // "no matching datasets" message before clearing once the eligible specs arrive.
+    // The user-facing message accounts for this — no extra UI gating is needed.
+    if (ctx.args.donorColumn === undefined) return undefined;
+    if (ctx.args.datasetColumns.length > 0) return undefined;
+
+    const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.args.donorColumn);
+    if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
+
+    const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
+    const hasAnyEligible = ctx.resultPool
+      .getSpecs()
+      .entries.filter(isPColumnSpecResult)
+      .some(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId));
+
+    if (hasAnyEligible) return undefined;
+
+    return 'The selected donor column has no matching clonotype datasets. '
+      + 'SHM trees needs clonotypes assembled with a feature broader than CDR3 (e.g. VDJRegion). '
+      + 'If MiXCR Clonotyping is still running, the list will update when it completes.';
   })
 
   .output('treeNodes', (ctx) => {
