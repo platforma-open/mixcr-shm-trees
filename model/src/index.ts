@@ -1,6 +1,7 @@
 import { GraphMakerState } from '@milaboratories/graph-maker';
 import {
   AxesSpec,
+  AxisId,
   BlockModel,
   InferOutputsType,
   NotNAPValue,
@@ -133,6 +134,28 @@ function treeNodesColumns(
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
+// Classification of why a PColumnSpec might fail SHM trees' clns filter,
+// or 'eligible' if it passes. Used by datasetOptions (boolean eligibility) and
+// by infoMessage (cause-specific user messages).
+type ClnsClassification = 'eligible' | 'not-clns' | 'axes-mismatch' | 'cdr3-only' | 'missing-annotation';
+
+function classifyClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): ClnsClassification {
+  if (spec.name !== 'mixcr.com/clns') return 'not-clns';
+  if (!matchAxesId([sampleAxisId], spec.axesSpec)) return 'axes-mismatch';
+  const af = spec.annotations?.['mixcr.com/assemblingFeature'];
+  if (af === undefined) return 'missing-annotation';
+  if (af === 'CDR3' || af === '[CDR3]') return 'cdr3-only';
+  const cfoe = spec.annotations?.['mixcr.com/coveredFeaturesOnExport'];
+  if (cfoe === undefined || cfoe === '') return 'missing-annotation';
+  return 'eligible';
+}
+
+// Boolean wrapper around classifyClnsSpec for datasetOptions, which only cares
+// about the binary outcome.
+function isEligibleClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): boolean {
+  return classifyClnsSpec(spec, sampleAxisId) === 'eligible';
+}
+
 type BasketColumns = {
   allColumns: PColumn<PColumnValues>[];
   perBasket: Record<PlId, PColumn<PColumnValues>>;
@@ -238,6 +261,9 @@ export const model = BlockModel.create()
     const donorColumn = ctx.args.donorColumn;
     const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
+    // donorOptions accepts pl7.app/metadata without enforcing axesSpec.length;
+    // guard against an axis-less metadata column so getAxisId() never sees undefined.
+    if (donorColumnSpec.axesSpec.length === 0) return undefined;
 
     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
 
@@ -245,18 +271,7 @@ export const model = BlockModel.create()
       ctx.resultPool
         .getSpecs()
         .entries.filter(isPColumnSpecResult)
-        .filter(
-          ({ obj: spec }) =>
-            spec.name === 'mixcr.com/clns' &&
-            matchAxesId([sampleAxisId], spec.axesSpec) &&
-            // Required: assemblingFeature must exist and not be CDR3 or [CDR3]
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== undefined &&
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== 'CDR3' &&
-            spec.annotations?.['mixcr.com/assemblingFeature'] !== '[CDR3]' &&
-            // Required: coveredFeaturesOnExport must exist (needed for export settings)
-            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== undefined &&
-            spec.annotations?.['mixcr.com/coveredFeaturesOnExport'] !== ''
-        ),
+        .filter(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId)),
       (v) => v.obj,
       { addLabelAsSuffix: true, includeNativeLabel: true }
     ).map(
@@ -267,6 +282,83 @@ export const model = BlockModel.create()
           assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
         } as DatasetOption)
     );
+  })
+
+  .output('infoMessage', (ctx) => {
+    // NOTE: while the result pool is still propagating clns p-columns (e.g. an
+    // upstream clonotyping block is still running), this output will briefly
+    // evaluate to the empty-state message before clearing once eligible specs
+    // arrive. The user-facing message accounts for this — no extra UI gating needed.
+    if (ctx.args.donorColumn === undefined) return undefined;
+
+    const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.args.donorColumn);
+    if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
+    if (donorColumnSpec.axesSpec.length === 0) return undefined;
+
+    const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
+
+    // Stale-selections case: dataset slots are filled, but none of the selected
+    // refs is still eligible under the current donor (e.g. donor was switched).
+    if (ctx.args.datasetColumns.length > 0) {
+      const anySelectedEligible = ctx.args.datasetColumns.some((ref) => {
+        const spec = ctx.resultPool.getSpecByRef(ref);
+        return spec !== undefined && isPColumnSpec(spec) && isEligibleClnsSpec(spec, sampleAxisId);
+      });
+      if (anySelectedEligible) return undefined;
+      return 'Selected datasets are incompatible with this donor column. '
+        + 'Clear them or switch back to the previous donor.';
+    }
+
+    // No datasets selected. Classify every clns spec in the pool so the message
+    // names the actual reason ineligibility, not just "CDR3".
+    const clnsSpecs = ctx.resultPool
+      .getSpecs()
+      .entries.filter(isPColumnSpecResult)
+      .map(({ obj: spec }) => spec)
+      .filter((spec) => spec.name === 'mixcr.com/clns');
+
+    if (clnsSpecs.length === 0) {
+      return 'No clonotype data yet. Add a clonotyping block upstream.';
+    }
+
+    const classifications = clnsSpecs.map((spec) => classifyClnsSpec(spec, sampleAxisId));
+    if (classifications.includes('eligible')) return undefined;
+
+    const causes = new Set(classifications);
+
+    if (causes.size === 1) {
+      const [onlyCause] = [...causes];
+      switch (onlyCause) {
+        case 'axes-mismatch':
+          return 'Available clonotype data uses a different sample axis than this donor column. '
+            + 'Pick a donor column from the same dataset as your clonotyping.';
+        case 'cdr3-only':
+          return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
+            + 'The list refreshes after each clonotyping run.';
+        case 'missing-annotation':
+          return 'Available clonotype data lacks metadata SHM trees needs. '
+            + 'Re-run clonotyping with a current version.';
+        case 'eligible':
+        case 'not-clns':
+          // Defensively unreachable: 'eligible' was excluded above, and clnsSpecs
+          // was already pre-filtered to spec.name === 'mixcr.com/clns'. If either
+          // ever appears here, suppress the message rather than emit a misleading
+          // mixed-causes fallback.
+          return undefined;
+        default: {
+          // Compile-time exhaustiveness guard: adding a new ClnsClassification
+          // variant must add a case here.
+          const _exhaustive: never = onlyCause;
+          void _exhaustive;
+        }
+      }
+    }
+
+    // Mixed causes — pool has clns that fail for different reasons. Fall back
+    // to a generic message that covers the dominant remediation paths.
+    return 'Available clonotype data is incompatible with this donor column. '
+      + 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion) '
+      + 'on a matching sample axis.';
   })
 
   .output('treeNodes', (ctx) => {

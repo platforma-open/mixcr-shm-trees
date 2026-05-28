@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { notEmpty, range } from '@milaboratories/helpers';
-import { ListOption, PlAccordionSection, PlDropdown, PlDropdownRef, PlNumberField, PlSectionSeparator } from '@platforma-sdk/ui-vue';
+import { ListOption, PlAccordionSection, PlAlert, PlDropdown, PlDropdownRef, PlNumberField, PlSectionSeparator } from '@platforma-sdk/ui-vue';
 import { computed } from 'vue';
 import { useApp } from '../../app';
 import { fromRefString, RefString, toRefString } from '../../util';
@@ -79,14 +79,25 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
 
   <template v-if="app.model.args.donorColumn !== undefined">
     <template v-for="dsIdx in range(0, app.model.args.datasetColumns.length + 1)" :key="dsIdx">
-      <PlDropdown 
-        v-if="getDatasetOptions(dsIdx)?.length !== 0" 
-        :options="getDatasetOptions(dsIdx)"
-        :model-value="getDatasetValue(dsIdx)" 
+      <!-- Slot is rendered when:
+           (a) it shows an existing selection (dsIdx is in range),
+           (b) the user has no datasets selected yet (always offer "Add"),
+           (c) options resolved to a non-empty list, OR
+           (d) options are still loading (?? 1 keeps the slot visible during reactive transitions). -->
+      <PlDropdown
+        v-if="dsIdx < app.model.args.datasetColumns.length
+              || app.model.args.datasetColumns.length === 0
+              || (getDatasetOptions(dsIdx)?.length ?? 1) !== 0"
+        :options="getDatasetOptions(dsIdx) ?? []"
+        :model-value="getDatasetValue(dsIdx)"
         @update:model-value="(v) => datasetValueSetter(dsIdx, v)"
-        :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`" 
+        :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`"
       />
     </template>
+
+    <PlAlert v-if="app.model.outputs.infoMessage" type="info">
+      {{ app.model.outputs.infoMessage }}
+    </PlAlert>
   </template>
 
   <PlAccordionSection label="Downsampling (Bulk Datasets Only)">
