@@ -261,6 +261,9 @@ export const model = BlockModel.create()
     const donorColumn = ctx.args.donorColumn;
     const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
+    // donorOptions accepts pl7.app/metadata without enforcing axesSpec.length;
+    // guard against an axis-less metadata column so getAxisId() never sees undefined.
+    if (donorColumnSpec.axesSpec.length === 0) return undefined;
 
     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
 
@@ -290,6 +293,7 @@ export const model = BlockModel.create()
 
     const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.args.donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
+    if (donorColumnSpec.axesSpec.length === 0) return undefined;
 
     const sampleAxisId = getAxisId(donorColumnSpec.axesSpec[0]);
 
@@ -336,10 +340,11 @@ export const model = BlockModel.create()
             + 'Re-run clonotyping with a current version.';
         case 'eligible':
         case 'not-clns':
-          // Unreachable in this branch: 'eligible' was excluded above, and clnsSpecs
-          // was already pre-filtered to spec.name === 'mixcr.com/clns'. Fall through
-          // to the mixed-causes fallback below.
-          break;
+          // Defensively unreachable: 'eligible' was excluded above, and clnsSpecs
+          // was already pre-filtered to spec.name === 'mixcr.com/clns'. If either
+          // ever appears here, suppress the message rather than emit a misleading
+          // mixed-causes fallback.
+          return undefined;
         default: {
           // Compile-time exhaustiveness guard: adding a new ClnsClassification
           // variant must add a case here.
