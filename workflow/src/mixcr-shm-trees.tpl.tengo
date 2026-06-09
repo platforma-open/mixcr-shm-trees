@@ -56,6 +56,7 @@ self.body(func(inputs) {
 
     allelesCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        saveStdoutStream().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         env("MI_PROGRESS_PREFIX", progressPrefix).
@@ -178,6 +179,7 @@ self.body(func(inputs) {
 
     shmTreesCmdBuilder := exec.builder().
         printErrStreamToStdout().
+        saveStdoutStream().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
         env("MI_PROGRESS_PREFIX", progressPrefix).

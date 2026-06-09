@@ -47,7 +47,6 @@ self.body(func(inputs) {
     // export trees without nodes
     shmTreeExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
@@ -83,7 +82,6 @@ self.body(func(inputs) {
     // export tree nodes with data uniq for the node
     shmTreeNodesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
         inLightQueue().
         secret("MI_LICENSE", "MI_LICENSE").
         env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
@@ -119,7 +117,6 @@ self.body(func(inputs) {
     // export nodes with clones. For each node could be several clones
     shmTreeNodesWithClonesExportsCmdBuilder := exec.builder().
         printErrStreamToStdout().
-        dontSaveStdoutOrStderr().
         inLightQueue().
 		secret("MI_LICENSE", "MI_LICENSE").
 		env("MI_LICENSE_DEBUG", "MI_LICENSE_DEBUG").
