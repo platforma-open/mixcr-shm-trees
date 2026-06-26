@@ -13,7 +13,7 @@ import {
   PlDropdown,
 } from "@platforma-sdk/ui-vue";
 import { computedAsync } from "@vueuse/core";
-import { computed, ref, watch } from "vue";
+import { computed, ref, toRaw, watch } from "vue";
 import { useApp } from "../app";
 
 const emit = defineEmits<{
@@ -184,12 +184,18 @@ const subtreeOptions = computedAsync(async () => {
   const pl = getRawPlatformaInstance();
 
   try {
-    const data = await pl.pFrameDriver.calculateTableData(pFrame.value, {
+    // app.model.outputs.* are reactive proxies in V3; the driver structured-clones its
+    // request to a worker, which throws on proxies. toRaw() returns the underlying plain
+    // data (reactivity is lazy, so nested values read off the raw object stay plain).
+    const data = await pl.pFrameDriver.calculateTableData(toRaw(pFrame.value), {
       src: {
         type: "inner",
-        entries: app.model.outputs.vjColumns?.map((column) => ({ type: "column", column })),
+        entries: toRaw(app.model.outputs.vjColumns)?.map((column) => ({
+          type: "column",
+          column: toRaw(column),
+        })),
       },
-      filters: treeNodesFilter(app.model.outputs.treeColumnSpec, {
+      filters: treeNodesFilter(toRaw(app.model.outputs.treeColumnSpec), {
         ...fullId.value!,
         subtreeId: undefined,
       }),
@@ -254,6 +260,7 @@ const goToNode = (a: any) => {
       chart-type="dendro"
       :p-frame="app.model.outputs.treeNodesPFrame"
       :fixed-options="fixedOptions"
+      :allow-chart-deleting="true"
       tooltip-button="Show in Table"
       :default-options="defaultOptions"
       @delete-this-graph="removeConfirmationWindowOpen = true"

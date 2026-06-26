@@ -21,7 +21,7 @@
     "check": "ts-builder check --target block-model"
   },
   "dependencies": {
-    "@milaboratories/graph-maker": "catalog:",
+    "@milaboratories/graph-maker": "file:../.graphmaker-test/gm-v2.tgz",
     "@milaboratories/helpers": "catalog:",
     "@platforma-sdk/model": "catalog:",
     "zod": "catalog:"

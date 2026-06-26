@@ -12,3 +12,4 @@ log/
 software/**/*.tgz
 .vscode/sftp.json
 test-dry-run.json
+.graphmaker-test/

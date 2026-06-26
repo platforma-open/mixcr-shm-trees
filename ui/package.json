@@ -11,8 +11,9 @@
     "check": "ts-builder check --target block-ui"
   },
   "dependencies": {
-    "@milaboratories/graph-maker": "catalog:",
+    "@milaboratories/graph-maker": "file:../.graphmaker-test/gm-v2.tgz",
     "@milaboratories/helpers": "catalog:",
+    "@milaboratories/pf-plots": "file:../.graphmaker-test/pf-v2.tgz",
     "@platforma-open/milaboratories.mixcr-shm-trees.model": "workspace:*",
     "@platforma-sdk/model": "catalog:",
     "@platforma-sdk/ui-vue": "catalog:",
