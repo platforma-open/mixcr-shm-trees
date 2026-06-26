@@ -1,23 +1,22 @@
 packages:
-  - workflow
-  - model
-  - ui
   - block
+  - model
   - test
+  - ui
+  - workflow
 
 catalog:
-  '@platforma-sdk/tengo-builder': ^3.0.5
-  '@platforma-sdk/block-tools': 2.9.2
-  '@platforma-sdk/eslint-config': ^1.1.0
+  '@platforma-sdk/tengo-builder': 4.0.10
+  '@platforma-sdk/block-tools': 2.11.3
   '@platforma-sdk/blocks-deps-updater': ^2.0.0
 
-  '@platforma-sdk/model': 1.31.6
-  '@platforma-sdk/ui-vue': 1.31.11
+  '@platforma-sdk/model': 1.79.17
+  '@platforma-sdk/ui-vue': 1.79.17
 
-  '@platforma-sdk/test': ^1.45.11
+  '@platforma-sdk/test': 1.79.19
   '@milaboratories/graph-maker': 1.1.98
 
-  '@platforma-sdk/workflow-tengo': ^5.26.0
+  '@platforma-sdk/workflow-tengo': 6.6.5
 
   '@platforma-open/milaboratories.software-small-binaries': ^1.15.19
   '@platforma-open/milaboratories.software-mixcr': 4.7.0-303-develop
@@ -26,25 +25,23 @@ catalog:
 
   '@milaboratories/helpers': ^1.12.0
 
-  'vue': ^3.5.13
-  'vue-tsc': ^2.2.10
+  'vue': 3.5.24
   '@vueuse/core': ^13.2.0
 
   'zod': ~3.23.8
   'utility-types': ^3.11.0
-  
+
   'canonicalize': ^2.1.0
 
   'typescript': ~5.5.4
-  'tsup': ~8.3.5
   'turbo': ^2.5.3
-
-  'vite': ^6.3.5
   'vitest': ~2.1.8
-  '@vitejs/plugin-vue': ^5.2.4
   'shx': ^0.4.0
 
   'ag-grid-enterprise': &ag-grid ^33.0.4
   'ag-grid-vue3': *ag-grid
 
   '@changesets/cli': ^2.29.4
+  "@platforma-sdk/package-builder": 3.14.0
+  "@milaboratories/ts-builder": 1.5.2
+  "@milaboratories/ts-configs": 1.2.3

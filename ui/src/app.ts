@@ -1,10 +1,10 @@
-import { model } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { defineApp } from '@platforma-sdk/ui-vue';
-import MainPage from './pages/MainPage.vue';
-import TreePage from './pages/TreePage.vue';
-import TreeTablePage from './pages/TreeTablePage.vue';
-import SOIPage from './pages/SOIPage.vue';
-import BasketPage from './pages/BasketPage.vue';
+import { model } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { defineApp } from "@platforma-sdk/ui-vue";
+import MainPage from "./pages/MainPage.vue";
+import TreePage from "./pages/TreePage.vue";
+import TreeTablePage from "./pages/TreeTablePage.vue";
+import SOIPage from "./pages/SOIPage.vue";
+import BasketPage from "./pages/BasketPage.vue";
 
 export const sdkPlugin = defineApp(
   model,
@@ -12,19 +12,19 @@ export const sdkPlugin = defineApp(
     return {
       progress: () => app.model.outputs.calculating,
       routes: {
-        '/': () => MainPage,
-        '/soi': () => SOIPage,
-        '/trees': () => TreeTablePage,
+        "/": () => MainPage,
+        "/soi": () => SOIPage,
+        "/trees": () => TreeTablePage,
         // '/treeNodes': () => TreeNodesTablePage,
-        '/dendrogram': (a) => TreePage,
-        '/basket': (a) => BasketPage
-      }
+        "/dendrogram": (a) => TreePage,
+        "/basket": (a) => BasketPage,
+      },
     };
   },
   {
     debug: true,
-    deepPatchModel: true
-  }
+    deepPatchModel: true,
+  },
 );
 
 export const useApp = sdkPlugin.useApp;

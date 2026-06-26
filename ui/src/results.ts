@@ -1,16 +1,16 @@
-import { ProgressPrefix } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { ProgressPrefix } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
 import {
   AnyLogHandle,
   BlobHandleAndSize,
   isLiveLog,
   isNotNAPValue,
   NotNAPValue,
-  PColumnResourceMapData
-} from '@platforma-sdk/model';
-import { ReactiveFileContent } from '@platforma-sdk/ui-vue';
-import { computed } from 'vue';
-import { useApp } from './app';
-import { ByStepIdRecord, Steps } from './types';
+  PColumnResourceMapData,
+} from "@platforma-sdk/model";
+import { ReactiveFileContent } from "@platforma-sdk/ui-vue";
+import { computed } from "vue";
+import { useApp } from "./app";
+import { ByStepIdRecord, Steps } from "./types";
 
 export type TreeResult = {
   donor: NotNAPValue;
@@ -29,7 +29,7 @@ export type TreeResult = {
 function integrateData<T>(
   resultMap: Map<NotNAPValue, TreeResult>,
   data: PColumnResourceMapData<T> | undefined,
-  integrator: (result: TreeResult, data: NonNullable<T>) => void
+  integrator: (result: TreeResult, data: NonNullable<T>) => void,
 ) {
   if (data)
     for (const d of data.data) {
@@ -59,13 +59,13 @@ export const TreeResultsMap = computed(() => {
     const result: TreeResult = {
       donor,
       progress: {
-        alleles: 'Queued',
-        trees: 'Queued'
+        alleles: "Queued",
+        trees: "Queued",
       },
-      soiReady: 'Queued',
+      soiReady: "Queued",
       jsonReport: { alleles: undefined, trees: undefined },
       txtReportHandle: { alleles: undefined, trees: undefined },
-      logHandle: { alleles: undefined, trees: undefined }
+      logHandle: { alleles: undefined, trees: undefined },
     };
     resultMap.set(donor, result);
   }
@@ -76,18 +76,18 @@ export const TreeResultsMap = computed(() => {
   integrateData(
     resultMap,
     app.model.outputs.allelesReportsJson,
-    (r, v) => (r.jsonReport.alleles = ReactiveFileContent.getContentJson(v.handle)?.value)
+    (r, v) => (r.jsonReport.alleles = ReactiveFileContent.getContentJson(v.handle)?.value),
   );
   integrateData(
     resultMap,
     app.model.outputs.treesReportsJson,
-    (r, v) => (r.jsonReport.trees = ReactiveFileContent.getContentJson(v.handle)?.value)
+    (r, v) => (r.jsonReport.trees = ReactiveFileContent.getContentJson(v.handle)?.value),
   );
 
   integrateData(
     resultMap,
     app.model.outputs.allelesReports,
-    (r, v) => (r.txtReportHandle.alleles = v)
+    (r, v) => (r.txtReportHandle.alleles = v),
   );
   integrateData(resultMap, app.model.outputs.treesReports, (r, v) => (r.txtReportHandle.trees = v));
 
@@ -116,24 +116,24 @@ export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
 
   // adding alleles and trees progress information
   for (const step of Steps)
-    integrateData(resultMap, step === 'alleles' ? allelesProgress : treesProgress, (r, v) => {
+    integrateData(resultMap, step === "alleles" ? allelesProgress : treesProgress, (r, v) => {
       r.progress[step] = isLiveLog(r.logHandle[step])
-        ? v.replace(ProgressPrefix, '')
+        ? v.replace(ProgressPrefix, "")
         : r.logHandle[step]
-        ? 'Done'
-        : 'Queued';
+          ? "Done"
+          : "Queued";
     });
 
   const soiReady = app.model.outputs.soiReady;
   for (const r of resultMap.values())
     r.soiReady =
       soiReady === undefined
-        ? 'Queued'
+        ? "Queued"
         : soiReady === true
-        ? 'Done'
-        : r.progress.alleles === 'Done' && r.progress.trees === 'Done'
-        ? 'In Progress'
-        : 'Queued';
+          ? "Done"
+          : r.progress.alleles === "Done" && r.progress.trees === "Done"
+            ? "In Progress"
+            : "Queued";
 
   return [...resultMap.values()];
 });

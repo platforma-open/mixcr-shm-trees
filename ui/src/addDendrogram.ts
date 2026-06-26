@@ -1,8 +1,8 @@
 import {
   DendrogramState,
-  InitialFullTableState
-} from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { useApp } from './app';
+  InitialFullTableState,
+} from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { useApp } from "./app";
 
 const nextId = () => {
   const app = useApp();
@@ -10,7 +10,7 @@ const nextId = () => {
   if (app.model.ui.dendrograms.length > 0) {
     return String(Math.max(...app.model.ui.dendrograms.map((g) => Number(g.id))) + 1);
   }
-  return '1';
+  return "1";
 };
 
 export async function addDendrogram(
@@ -19,7 +19,7 @@ export async function addDendrogram(
   treeId: number,
   subtreeId: string | undefined,
   vGene: string,
-  jGene: string
+  jGene: string,
 ): Promise<DendrogramState | undefined> {
   const app = useApp();
 
@@ -34,10 +34,10 @@ export async function addDendrogram(
     subtreeId,
     state: {
       title: label,
-      template: 'dendro'
+      template: "dendro",
     },
     tableState: InitialFullTableState(),
-    tab: 'Graph'
+    tab: "Graph",
   };
 
   await app.updateUiState((ui) => {

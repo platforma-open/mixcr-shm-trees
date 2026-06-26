@@ -1,17 +1,17 @@
 <script setup lang="ts">
-import { ICellRendererParams } from 'ag-grid-enterprise';
-import { ProgressPattern } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { computed, unref } from 'vue';
-import { TreeResult } from '../../results';
-import type { PlProgressCellProps } from '@platforma-sdk/ui-vue';
-import { PlAgCellProgress } from '@platforma-sdk/ui-vue';
+import { ICellRendererParams } from "ag-grid-enterprise";
+import { ProgressPattern } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { computed, unref } from "vue";
+import { TreeResult } from "../../results";
+import type { PlProgressCellProps } from "@platforma-sdk/ui-vue";
+import { PlAgCellProgress } from "@platforma-sdk/ui-vue";
 
 const props = defineProps<{
   params: ICellRendererParams<TreeResult, string>;
 }>();
 
 const progressString = computed(() => {
-  return props.params.value ?? 'Unknown';
+  return props.params.value ?? "Unknown";
 });
 
 type Parsed = {
@@ -27,7 +27,7 @@ const parsed = computed<Parsed>(() => {
   const raw = unref(progressString);
 
   const res: Parsed = {
-    raw
+    raw,
   };
 
   if (!raw) {
@@ -45,12 +45,12 @@ const parsed = computed<Parsed>(() => {
     res.stage = raw;
   }
 
-  if (res.stage === 'Done') {
-    res.percentage = '100';
+  if (res.stage === "Done") {
+    res.percentage = "100";
   }
 
   if (res.percentage) {
-    res.percentageLabel = res.percentage + '%';
+    res.percentageLabel = res.percentage + "%";
   }
 
   if (res.eta) {
@@ -62,10 +62,10 @@ const parsed = computed<Parsed>(() => {
 
 const ProgressProps = computed<PlProgressCellProps>(() => {
   return {
-    stage: parsed.value.raw === 'Queued' ? 'not_started' : 'running',
-    step: parsed.value.stage || '',
+    stage: parsed.value.raw === "Queued" ? "not_started" : "running",
+    step: parsed.value.stage || "",
     progress: parsed.value.percentage ? +parsed.value.percentage : undefined,
-    progressString: parsed.value.etaLabel || ''
+    progressString: parsed.value.etaLabel || "",
   };
 });
 </script>

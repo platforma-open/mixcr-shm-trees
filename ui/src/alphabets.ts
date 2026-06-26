@@ -1,4 +1,4 @@
-import { Alphabet } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { Alphabet } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
 
 export type SequenceValidationResult = {
   readonly alphabetHelper: AlphabetHelper;
@@ -23,7 +23,7 @@ export class AlphabetHelper {
     wildcards: string,
     private readonly lengthReward: number,
     private readonly wildcardPenalty: number,
-    private readonly unknownPenalty: number
+    private readonly unknownPenalty: number,
   ) {
     this.symbols = new Map();
     for (let i = 0; i < mainSymbols.length; ++i)
@@ -34,10 +34,10 @@ export class AlphabetHelper {
 
   validate(
     sequence: string,
-    initialValue: SequenceValidationResult = initialValidationStats(this)
+    initialValue: SequenceValidationResult = initialValidationStats(this),
   ): SequenceValidationResult {
     if (initialValue.alphabetHelper !== this)
-      throw new Error('Initial value from different alphabet helper.');
+      throw new Error("Initial value from different alphabet helper.");
     let { length, wildcards, unknownSymbols, score } = initialValue;
     length += sequence.length;
     score += this.lengthReward * sequence.length;
@@ -56,18 +56,22 @@ export class AlphabetHelper {
 }
 
 const NucleotideAlphabetHelper = new AlphabetHelper(
-  'nucleotide',
-  'Nucleotide',
-  'ACGT',
-  'RYSWKMBDHVN',
-  10, -20, -200
+  "nucleotide",
+  "Nucleotide",
+  "ACGT",
+  "RYSWKMBDHVN",
+  10,
+  -20,
+  -200,
 );
 const AminoAcidAlphabetHelper = new AlphabetHelper(
-  'amino-acid',
-  'Amino Acid',
-  'ACDEFGHIKLMNPQRSTVWY',
-  'X',
-  1, -2, -20
+  "amino-acid",
+  "Amino Acid",
+  "ACDEFGHIKLMNPQRSTVWY",
+  "X",
+  1,
+  -2,
+  -20,
 );
 
 const AllAlphabetHelpers = [NucleotideAlphabetHelper, AminoAcidAlphabetHelper];
@@ -92,25 +96,25 @@ export function detectAlphabet(sequences: string[]): AlphabetHelper | undefined 
 
 // noinspection JSUnusedLocalSymbols
 const GC_Bases = [
-  'TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG',
-  'TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG',
-  'TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG'
+  "TTTTTTTTTTTTTTTTCCCCCCCCCCCCCCCCAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGG",
+  "TTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGGTTTTCCCCAAAAGGGG",
+  "TCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAGTCAG",
 ];
-const GC_AA = 'FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG';
+const GC_AA = "FFLLSSSSYY**CC*WLLLLPPPPHHQQRRRRIIIMTTTTNNKKSSRRVVVVAAAADDEEGGGG";
 
 function nToIdx(l: string): number {
   switch (l) {
-    case 'T':
-    case 't':
+    case "T":
+    case "t":
       return 0;
-    case 'C':
-    case 'c':
+    case "C":
+    case "c":
       return 1;
-    case 'A':
-    case 'a':
+    case "A":
+    case "a":
       return 2;
-    case 'G':
-    case 'g':
+    case "G":
+    case "g":
       return 3;
     default:
       throw new Error(`Unknown nucleotide: ${l}`);
@@ -119,7 +123,7 @@ function nToIdx(l: string): number {
 
 export function translate(nSeq: string): string {
   let i = 0;
-  let result = '';
+  let result = "";
   while (i < nSeq.length - 2) {
     const triplet = [nSeq.charAt(i), nSeq.charAt(i + 1), nSeq.charAt(i + 2)];
     let hasWildcards = false;
@@ -128,7 +132,7 @@ export function translate(nSeq: string): string {
       if (cv === false) hasWildcards = true;
       else if (cv === undefined) throw new Error(`Unknown nucleotide: ${c}`);
     }
-    if (hasWildcards) result += 'X';
+    if (hasWildcards) result += "X";
     else
       result += GC_AA.charAt(nToIdx(triplet[0]) * 16 + nToIdx(triplet[1]) * 4 + nToIdx(triplet[2]));
     i += 3;

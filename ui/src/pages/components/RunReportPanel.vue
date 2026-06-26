@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { PlBtnGroup, SimpleOption } from '@platforma-sdk/ui-vue';
-import { debouncedRef } from '@vueuse/core';
-import { computed, reactive } from 'vue';
-import { TreeResultsMap } from '../../results';
-import RunReportPanelLogs from './RunReportPanelLogs.vue';
-import RunReportPanelReports from './RunReportPanelReports.vue';
-import { NotNAPValue } from '@platforma-sdk/model';
+import { PlBtnGroup, SimpleOption } from "@platforma-sdk/ui-vue";
+import { debouncedRef } from "@vueuse/core";
+import { computed, reactive } from "vue";
+import { TreeResultsMap } from "../../results";
+import RunReportPanelLogs from "./RunReportPanelLogs.vue";
+import RunReportPanelReports from "./RunReportPanelReports.vue";
+import { NotNAPValue } from "@platforma-sdk/model";
 
-const selectedDonor = defineModel<NotNAPValue | undefined>()
+const selectedDonor = defineModel<NotNAPValue | undefined>();
 
 const resultMap = debouncedRef(TreeResultsMap, 300);
 const donorData = computed(() => {
@@ -18,14 +18,14 @@ const donorData = computed(() => {
 type TabId = "logs" | "reports";
 
 const data = reactive<{
-  currentTab: TabId
+  currentTab: TabId;
 }>({
-  currentTab: 'logs'
+  currentTab: "logs",
 });
 
 const tabOptions: SimpleOption<TabId>[] = [
-  { value: 'logs', text: 'Log' },
-  { value: 'reports', text: 'Reports' },
+  { value: "logs", text: "Log" },
+  { value: "reports", text: "Reports" },
 ];
 </script>
 

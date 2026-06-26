@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { PlLogView } from '@platforma-sdk/ui-vue';
-import { TreeResult } from '../../results';
-import PerStepWrapper from './PerStepWrapper.vue';
+import { PlLogView } from "@platforma-sdk/ui-vue";
+import { TreeResult } from "../../results";
+import PerStepWrapper from "./PerStepWrapper.vue";
 
-defineProps<{ donorResult: TreeResult }>()
+defineProps<{ donorResult: TreeResult }>();
 </script>
 
 <template>

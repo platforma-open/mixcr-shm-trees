@@ -3,8 +3,8 @@ import {
   PColumnSpec,
   PTableRecordFilter,
   PValueJsonSafe,
-  pValueToStringOrNumber
-} from '@platforma-sdk/model';
+  pValueToStringOrNumber,
+} from "@platforma-sdk/model";
 
 export type FullTreeId = {
   donorId: PValueJsonSafe;
@@ -18,72 +18,74 @@ export type FullNodeId = FullTreeId & {
 
 export function treeNodesFilter(
   anchorColumnSpec: PColumnSpec,
-  fullTreeId: FullTreeId
+  fullTreeId: FullTreeId,
 ): PTableRecordFilter[] {
   const donorAxis = anchorColumnSpec.axesSpec[0];
   const treeAxis = anchorColumnSpec.axesSpec[1];
-  if (treeAxis.name !== 'pl7.app/dendrogram/treeId')
+  if (treeAxis.name !== "pl7.app/dendrogram/treeId")
     throw new Error(`Unexpected second axis name: ${treeAxis.name}`);
   const filters: PTableRecordFilter[] = [
     {
-      type: 'bySingleColumnV2',
+      type: "bySingleColumnV2",
       column: {
-        type: 'axis',
-        id: getAxisId(anchorColumnSpec.axesSpec[0])
+        type: "axis",
+        id: getAxisId(anchorColumnSpec.axesSpec[0]),
       },
       predicate: {
-        operator: 'Equal',
-        reference: pValueToStringOrNumber(fullTreeId.donorId)
-      }
+        operator: "Equal",
+        reference: pValueToStringOrNumber(fullTreeId.donorId),
+      },
     },
     {
-      type: 'bySingleColumnV2',
+      type: "bySingleColumnV2",
       column: {
-        type: 'axis',
-        id: getAxisId(anchorColumnSpec.axesSpec[1])
+        type: "axis",
+        id: getAxisId(anchorColumnSpec.axesSpec[1]),
       },
       predicate: {
-        operator: 'Equal',
-        reference: fullTreeId.treeId
-      }
-    }
+        operator: "Equal",
+        reference: fullTreeId.treeId,
+      },
+    },
   ];
   if (fullTreeId.subtreeId !== undefined && anchorColumnSpec.axesSpec.length > 2) {
     const subtreeAxisSpec = anchorColumnSpec.axesSpec[2];
-    if (subtreeAxisSpec.name !== 'pl7.app/dendrogram/subtreeId')
+    if (subtreeAxisSpec.name !== "pl7.app/dendrogram/subtreeId")
       throw new Error(`Unexpected third axis name: ${subtreeAxisSpec.name}`);
 
     filters.push({
-      type: 'bySingleColumnV2',
+      type: "bySingleColumnV2",
       column: {
-        type: 'axis',
-        id: getAxisId(anchorColumnSpec.axesSpec[2])
+        type: "axis",
+        id: getAxisId(anchorColumnSpec.axesSpec[2]),
       },
       predicate: {
-        operator: 'Equal',
-        reference: fullTreeId.subtreeId
-      }
+        operator: "Equal",
+        reference: fullTreeId.subtreeId,
+      },
     });
   }
 
-  const cloneIdAxisIdx = anchorColumnSpec.axesSpec.findIndex((a) => a.name === 'pl7.app/vdj/cloneId');
+  const cloneIdAxisIdx = anchorColumnSpec.axesSpec.findIndex(
+    (a) => a.name === "pl7.app/vdj/cloneId",
+  );
 
   if (cloneIdAxisIdx !== -1) {
     filters.push({
-      type: 'bySingleColumnV2',
+      type: "bySingleColumnV2",
       column: {
-        type: 'axis',
+        type: "axis",
         id: {
-          name: 'pl7.app/vdj/cloneId',
-          type: 'Long'
-        }
+          name: "pl7.app/vdj/cloneId",
+          type: "Long",
+        },
       },
       predicate: {
-        operator: 'Not',
+        operator: "Not",
         operand: {
-          operator: 'IsNA'
-        }
-      }
+          operator: "IsNA",
+        },
+      },
     });
   }
 

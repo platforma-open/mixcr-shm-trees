@@ -1,4 +1,4 @@
-import { GraphMakerState } from '@milaboratories/graph-maker';
+import { GraphMakerState } from "@milaboratories/graph-maker";
 import {
   AxesSpec,
   AxisId,
@@ -23,25 +23,25 @@ import {
   isPColumnSpecResult,
   pValueToStringOrNumber,
   parseResourceMap,
-  type PlTableFiltersModel
-} from '@platforma-sdk/model';
-import { ProgressPrefix } from './progress';
-import { matchAxesId } from './util';
-import { SOIList } from './soi';
-import { FullNodeId, FullTreeId, treeNodesFilter } from './tree_filter';
+  type PlTableFiltersModel,
+} from "@platforma-sdk/model";
+import { ProgressPrefix } from "./progress";
+import { matchAxesId } from "./util";
+import { SOIList } from "./soi";
+import { FullNodeId, FullTreeId, treeNodesFilter } from "./tree_filter";
 
 export type DownsamplingByCount = {
-  type: 'CountReadsFixed' | 'CountMoleculesFixed';
+  type: "CountReadsFixed" | "CountMoleculesFixed";
   number: number;
 };
 
 export type DownsamplingByTop = {
-  type: 'TopClonotypesByReads' | 'TopClonotypesByMolecules';
+  type: "TopClonotypesByReads" | "TopClonotypesByMolecules";
   number: number;
 };
 
 export type DownsamplingByCumulativeTop = {
-  type: 'CumulativeTopClonotypesByReads' | 'CumulativeTopClonotypesByMolecules';
+  type: "CumulativeTopClonotypesByReads" | "CumulativeTopClonotypesByMolecules";
   percent: number;
 };
 
@@ -74,14 +74,14 @@ export function InitialFullTableState(): FullTableState {
       gridState: {},
       pTableParams: {
         sorting: [],
-        filters: []
-      }
+        filters: [],
+      },
     },
-    filterModel: {}
+    filterModel: {},
   };
 }
 
-export type TreePageTab = 'Graph' | 'Table';
+export type TreePageTab = "Graph" | "Table";
 
 export type DendrogramState = FullTreeId & {
   id: string;
@@ -112,48 +112,60 @@ export type DatasetOption = {
 };
 
 function treeNodesColumns(
-  ctx: RenderCtx<BlockArgs, UiState>
+  ctx: RenderCtx<BlockArgs, UiState>,
 ): PColumn<TreeNodeAccessor>[] | undefined {
-  const treeNodesColumns = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+  const treeNodesColumns = ctx.outputs?.resolve("treeNodes")?.getPColumns();
   if (treeNodesColumns === undefined) return undefined;
 
-  const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+  const treeNodesWithClonesColumns = ctx.outputs?.resolve("treeNodesWithClones")?.getPColumns();
   if (treeNodesWithClonesColumns === undefined) return undefined;
 
-  const treeNodesUniqueIsotypeColumns = ctx.outputs?.resolve('treeNodesUniqueIsotype')?.getPColumns();
+  const treeNodesUniqueIsotypeColumns = ctx.outputs
+    ?.resolve("treeNodesUniqueIsotype")
+    ?.getPColumns();
   if (treeNodesUniqueIsotypeColumns === undefined) return undefined;
 
   const soiResultColumns = (
-    ctx.outputs?.resolve('soiNodesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+    ctx.outputs?.resolve("soiNodesResults")?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
   ).flatMap((a) => a);
 
-  const targetColumns = [...treeNodesColumns, ...treeNodesWithClonesColumns, ...treeNodesUniqueIsotypeColumns, ...soiResultColumns];
+  const targetColumns = [
+    ...treeNodesColumns,
+    ...treeNodesWithClonesColumns,
+    ...treeNodesUniqueIsotypeColumns,
+    ...soiResultColumns,
+  ];
 
   return targetColumns;
 }
 
-const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
+const InBasketPColumnName = "pl7.app/dendrogram/inBasket";
 
 // Classification of why a PColumnSpec might fail SHM trees' clns filter,
 // or 'eligible' if it passes. Used by datasetOptions (boolean eligibility) and
 // by infoMessage (cause-specific user messages).
-type ClnsClassification = 'eligible' | 'not-clns' | 'axes-mismatch' | 'cdr3-only' | 'missing-annotation';
+type ClnsClassification =
+  | "eligible"
+  | "not-clns"
+  | "axes-mismatch"
+  | "cdr3-only"
+  | "missing-annotation";
 
 function classifyClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): ClnsClassification {
-  if (spec.name !== 'mixcr.com/clns') return 'not-clns';
-  if (!matchAxesId([sampleAxisId], spec.axesSpec)) return 'axes-mismatch';
-  const af = spec.annotations?.['mixcr.com/assemblingFeature'];
-  if (af === undefined) return 'missing-annotation';
-  if (af === 'CDR3' || af === '[CDR3]') return 'cdr3-only';
-  const cfoe = spec.annotations?.['mixcr.com/coveredFeaturesOnExport'];
-  if (cfoe === undefined || cfoe === '') return 'missing-annotation';
-  return 'eligible';
+  if (spec.name !== "mixcr.com/clns") return "not-clns";
+  if (!matchAxesId([sampleAxisId], spec.axesSpec)) return "axes-mismatch";
+  const af = spec.annotations?.["mixcr.com/assemblingFeature"];
+  if (af === undefined) return "missing-annotation";
+  if (af === "CDR3" || af === "[CDR3]") return "cdr3-only";
+  const cfoe = spec.annotations?.["mixcr.com/coveredFeaturesOnExport"];
+  if (cfoe === undefined || cfoe === "") return "missing-annotation";
+  return "eligible";
 }
 
 // Boolean wrapper around classifyClnsSpec for datasetOptions, which only cares
 // about the binary outcome.
 function isEligibleClnsSpec(spec: PColumnSpec, sampleAxisId: AxisId): boolean {
-  return classifyClnsSpec(spec, sampleAxisId) === 'eligible';
+  return classifyClnsSpec(spec, sampleAxisId) === "eligible";
 }
 
 type BasketColumns = {
@@ -162,7 +174,7 @@ type BasketColumns = {
 };
 
 function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | undefined {
-  const treeNodesWithClonesColumns = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+  const treeNodesWithClonesColumns = ctx.outputs?.resolve("treeNodesWithClones")?.getPColumns();
   if (treeNodesWithClonesColumns === undefined) return undefined;
   const bigAxesSpec = treeNodesWithClonesColumns[0].spec.axesSpec;
 
@@ -186,24 +198,24 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
 
   for (const basket of ctx.uiState.baskets) {
     const inBasketSpec: PColumnSpec = {
-      kind: 'PColumn',
+      kind: "PColumn",
       name: InBasketPColumnName,
-      valueType: 'Int',
+      valueType: "Int",
       domain: {
-        'pl7.app/dendrogram/basket': basket.id
+        "pl7.app/dendrogram/basket": basket.id,
       },
       annotations: {
-        'pl7.app/label': `In ${basket.name}`
+        "pl7.app/label": `In ${basket.name}`,
       },
-      axesSpec
+      axesSpec,
     };
     const col: PColumn<PColumnValues> = {
       id: basket.id as string as PObjectId,
       spec: inBasketSpec,
       data: basket.nodes.map((id) => ({
         key: toKey(id),
-        val: 1
-      }))
+        val: 1,
+      })),
     };
     columns.push(col);
     columnPerBasket[basket.id] = col;
@@ -215,7 +227,7 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
 export const model = BlockModel.create()
 
   .withArgs<BlockArgs>({
-    datasetColumns: []
+    datasetColumns: [],
   })
 
   .withUiState<UiState>({
@@ -223,12 +235,12 @@ export const model = BlockModel.create()
       gridState: {},
       pTableParams: {
         sorting: [],
-        filters: []
-      }
+        filters: [],
+      },
     },
     filterModel: {},
     dendrograms: [],
-    baskets: []
+    baskets: [],
   })
 
   // for debuginf: specs for all available columns
@@ -239,23 +251,23 @@ export const model = BlockModel.create()
   //     .map( (v) => v.obj as PColumnSpec )
   // )
 
-  .output('calculating', (ctx) => ctx.outputs?.getIsReadyOrError() === false)
+  .output("calculating", (ctx) => ctx.outputs?.getIsReadyOrError() === false)
 
   // select metadata columns
-  .retentiveOutput('donorOptions', (ctx) =>
+  .retentiveOutput("donorOptions", (ctx) =>
     ctx.resultPool.getOptions((spec) => {
       if (!isPColumnSpec(spec)) return false;
-      if (spec.name === 'pl7.app/metadata') return true;
+      if (spec.name === "pl7.app/metadata") return true;
       return (
-        spec.name === 'pl7.app/label' &&
+        spec.name === "pl7.app/label" &&
         spec.axesSpec.length === 1 &&
-        spec.axesSpec[0].name === 'pl7.app/sampleId'
+        spec.axesSpec[0].name === "pl7.app/sampleId"
       );
-    })
+    }),
   )
 
   // selected all dataset options that have the same axis as selected metadata column
-  .retentiveOutput('datasetOptions', (ctx) => {
+  .retentiveOutput("datasetOptions", (ctx) => {
     if (ctx.args.donorColumn === undefined) return undefined;
 
     const donorColumn = ctx.args.donorColumn;
@@ -273,18 +285,18 @@ export const model = BlockModel.create()
         .entries.filter(isPColumnSpecResult)
         .filter(({ obj: spec }) => isEligibleClnsSpec(spec, sampleAxisId)),
       (v) => v.obj,
-      { addLabelAsSuffix: true, includeNativeLabel: true }
+      { addLabelAsSuffix: true, includeNativeLabel: true },
     ).map(
       ({ value: { ref, obj: spec }, label }) =>
         ({
           ref,
           label,
-          assemblingFeature: spec.annotations!['mixcr.com/assemblingFeature']!
-        } as DatasetOption)
+          assemblingFeature: spec.annotations!["mixcr.com/assemblingFeature"]!,
+        }) as DatasetOption,
     );
   })
 
-  .output('infoMessage', (ctx) => {
+  .output("infoMessage", (ctx) => {
     // NOTE: while the result pool is still propagating clns p-columns (e.g. an
     // upstream clonotyping block is still running), this output will briefly
     // evaluate to the empty-state message before clearing once eligible specs
@@ -305,8 +317,10 @@ export const model = BlockModel.create()
         return spec !== undefined && isPColumnSpec(spec) && isEligibleClnsSpec(spec, sampleAxisId);
       });
       if (anySelectedEligible) return undefined;
-      return 'Selected datasets are incompatible with this donor column. '
-        + 'Clear them or switch back to the previous donor.';
+      return (
+        "Selected datasets are incompatible with this donor column. " +
+        "Clear them or switch back to the previous donor."
+      );
     }
 
     // No datasets selected. Classify every clns spec in the pool so the message
@@ -315,31 +329,37 @@ export const model = BlockModel.create()
       .getSpecs()
       .entries.filter(isPColumnSpecResult)
       .map(({ obj: spec }) => spec)
-      .filter((spec) => spec.name === 'mixcr.com/clns');
+      .filter((spec) => spec.name === "mixcr.com/clns");
 
     if (clnsSpecs.length === 0) {
-      return 'No clonotype data yet. Add a clonotyping block upstream.';
+      return "No clonotype data yet. Add a clonotyping block upstream.";
     }
 
     const classifications = clnsSpecs.map((spec) => classifyClnsSpec(spec, sampleAxisId));
-    if (classifications.includes('eligible')) return undefined;
+    if (classifications.includes("eligible")) return undefined;
 
     const causes = new Set(classifications);
 
     if (causes.size === 1) {
       const [onlyCause] = [...causes];
       switch (onlyCause) {
-        case 'axes-mismatch':
-          return 'Available clonotype data uses a different sample axis than this donor column. '
-            + 'Pick a donor column from the same dataset as your clonotyping.';
-        case 'cdr3-only':
-          return 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). '
-            + 'The list refreshes after each clonotyping run.';
-        case 'missing-annotation':
-          return 'Available clonotype data lacks metadata SHM trees needs. '
-            + 'Re-run clonotyping with a current version.';
-        case 'eligible':
-        case 'not-clns':
+        case "axes-mismatch":
+          return (
+            "Available clonotype data uses a different sample axis than this donor column. " +
+            "Pick a donor column from the same dataset as your clonotyping."
+          );
+        case "cdr3-only":
+          return (
+            "SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion). " +
+            "The list refreshes after each clonotyping run."
+          );
+        case "missing-annotation":
+          return (
+            "Available clonotype data lacks metadata SHM trees needs. " +
+            "Re-run clonotyping with a current version."
+          );
+        case "eligible":
+        case "not-clns":
           // Defensively unreachable: 'eligible' was excluded above, and clnsSpecs
           // was already pre-filtered to spec.name === 'mixcr.com/clns'. If either
           // ever appears here, suppress the message rather than emit a misleading
@@ -356,33 +376,35 @@ export const model = BlockModel.create()
 
     // Mixed causes — pool has clns that fail for different reasons. Fall back
     // to a generic message that covers the dominant remediation paths.
-    return 'Available clonotype data is incompatible with this donor column. '
-      + 'SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion) '
-      + 'on a matching sample axis.';
+    return (
+      "Available clonotype data is incompatible with this donor column. " +
+      "SHM trees needs an assembling feature broader than CDR3 (e.g. VDJRegion) " +
+      "on a matching sample axis."
+    );
   })
 
-  .output('treeNodes', (ctx) => {
-    const treeNodes = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+  .output("treeNodes", (ctx) => {
+    const treeNodes = ctx.outputs?.resolve("treeNodes")?.getPColumns();
     if (treeNodes === undefined) return undefined;
     return treeNodes.map((col) => col.spec);
   })
-  .output('treeNodesWithClones', (ctx) => {
-    const treeNodesWithClones = ctx.outputs?.resolve('treeNodesWithClones')?.getPColumns();
+  .output("treeNodesWithClones", (ctx) => {
+    const treeNodesWithClones = ctx.outputs?.resolve("treeNodesWithClones")?.getPColumns();
     if (treeNodesWithClones === undefined) return undefined;
     return treeNodesWithClones.map((col) => col.spec);
   })
-  .output('treeNodesUniqueIsotype', (ctx) => {
-    const treeNodesUniqueIsotype = ctx.outputs?.resolve('treeNodesUniqueIsotype')?.getPColumns();
+  .output("treeNodesUniqueIsotype", (ctx) => {
+    const treeNodesUniqueIsotype = ctx.outputs?.resolve("treeNodesUniqueIsotype")?.getPColumns();
     if (treeNodesUniqueIsotype === undefined) return undefined;
     return treeNodesUniqueIsotype.map((col) => col.spec);
   })
 
-  .output('trees', (ctx) => {
-    const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
+  .output("trees", (ctx) => {
+    const pCols = ctx.outputs?.resolve("trees")?.getPColumns();
     if (pCols === undefined) return undefined;
 
     const soiResultColumns = (
-      ctx.outputs?.resolve('soiTreesResults')?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
+      ctx.outputs?.resolve("soiTreesResults")?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
     ).flatMap((a) => a);
 
     // wait until sheet filters are set
@@ -392,29 +414,29 @@ export const model = BlockModel.create()
     return ctx.createPTable({
       columns: [...pCols, ...soiResultColumns],
       filters: [...sheetFilters, ...(ctx.uiState?.filterModel?.filters ?? [])],
-      sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? []
+      sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? [],
     });
   })
 
-  .output('treeColumnSpec', (ctx) => {
-    const pCols = ctx.outputs?.resolve('trees')?.getPColumns();
+  .output("treeColumnSpec", (ctx) => {
+    const pCols = ctx.outputs?.resolve("trees")?.getPColumns();
     if (pCols === undefined || pCols.length === 0) return undefined;
     return pCols[0].spec;
   })
 
-  .output('treeNodesPFrame', (ctx) => {
+  .output("treeNodesPFrame", (ctx) => {
     const cols = treeNodesColumns(ctx);
     if (cols === undefined) return undefined;
     return createPFrameForGraphs(ctx, cols);
   })
 
-  .output('treeNodesUniqueIsotypePFrame', (ctx) => {
+  .output("treeNodesUniqueIsotypePFrame", (ctx) => {
     const cols = treeNodesColumns(ctx);
     if (cols === undefined) return undefined;
     return createPFrameForGraphs(ctx, cols);
   })
 
-  .output('treeNodesPerTree', (ctx) => {
+  .output("treeNodesPerTree", (ctx) => {
     const columns = treeNodesColumns(ctx);
     const bColumns = basketColumns(ctx);
     if (columns === undefined || bColumns === undefined) return undefined;
@@ -423,9 +445,9 @@ export const model = BlockModel.create()
 
     const coreColumnPredicate = (spec: PColumnSpec) =>
       spec.name !== InBasketPColumnName &&
-      spec.axesSpec.find((a) => a.name === 'pl7.app/vdj/cloneId') !== undefined;
-    
-    const coreColumn = columns.find(c => coreColumnPredicate(c.spec));
+      spec.axesSpec.find((a) => a.name === "pl7.app/vdj/cloneId") !== undefined;
+
+    const coreColumn = columns.find((c) => coreColumnPredicate(c.spec));
 
     for (const tree of ctx.uiState!.dendrograms) {
       const t = createPlDataTable(
@@ -434,12 +456,12 @@ export const model = BlockModel.create()
         tree.tableState.tableState,
         {
           coreColumnPredicate,
-          coreJoinType: 'inner',
+          coreJoinType: "inner",
           filters: [
             ...treeNodesFilter(coreColumn!.spec, { ...tree, subtreeId: undefined }),
-            ...(tree.tableState?.filterModel?.filters ?? [])
-          ]
-        }
+            ...(tree.tableState?.filterModel?.filters ?? []),
+          ],
+        },
       );
 
       if (t) result[tree.id] = t;
@@ -448,7 +470,7 @@ export const model = BlockModel.create()
     return result;
   })
 
-  .output('treeNodesPerBasket', (ctx) => {
+  .output("treeNodesPerBasket", (ctx) => {
     const columns = treeNodesColumns(ctx);
     const bColumns = basketColumns(ctx);
     if (columns === undefined || bColumns === undefined) return undefined;
@@ -462,9 +484,9 @@ export const model = BlockModel.create()
         basket.tableState.tableState,
         {
           coreColumnPredicate: (spec) => spec.name === InBasketPColumnName,
-          coreJoinType: 'inner',
-          filters: [...(basket.tableState?.filterModel?.filters ?? [])]
-        }
+          coreJoinType: "inner",
+          filters: [...(basket.tableState?.filterModel?.filters ?? [])],
+        },
       );
 
       if (t) result[basket.id] = t;
@@ -474,10 +496,10 @@ export const model = BlockModel.create()
   })
 
   /** Donor ids for which we have at least one dataset to analyze */
-  .output('targetDonorIds', (ctx) => {
+  .output("targetDonorIds", (ctx) => {
     const alleleReports = ctx.outputs?.resolve({
-      field: 'allelesReports',
-      assertFieldType: 'Input'
+      field: "allelesReports",
+      assertFieldType: "Input",
     });
     if (alleleReports === undefined) return undefined;
     const reports = parseResourceMap(alleleReports, (acc) => acc.getFileContentAsString(), true);
@@ -486,95 +508,95 @@ export const model = BlockModel.create()
     return [...resultSet];
   })
 
-  .output('allelesReports', (ctx) =>
+  .output("allelesReports", (ctx) =>
     parseResourceMap(
-      ctx.outputs?.resolve({ field: 'allelesReports', assertFieldType: 'Input' }),
+      ctx.outputs?.resolve({ field: "allelesReports", assertFieldType: "Input" }),
       (acc) => acc.getFileHandle(),
-      false
-    )
+      false,
+    ),
   )
 
-  .output('treesReports', (ctx) =>
+  .output("treesReports", (ctx) =>
     parseResourceMap(
-      ctx.outputs?.resolve({ field: 'treesReports', assertFieldType: 'Input' }),
+      ctx.outputs?.resolve({ field: "treesReports", assertFieldType: "Input" }),
       (acc) => acc.getFileHandle(),
-      false
-    )
+      false,
+    ),
   )
 
-  .output('allelesReportsJson', (ctx) =>
+  .output("allelesReportsJson", (ctx) =>
     parseResourceMap(
-      ctx.outputs?.resolve({ field: 'allelesReportsJson', assertFieldType: 'Input' }),
+      ctx.outputs?.resolve({ field: "allelesReportsJson", assertFieldType: "Input" }),
       (acc) => acc.getFileHandle(),
-      false
-    )
+      false,
+    ),
   )
 
-  .output('treesReportsJson', (ctx) =>
+  .output("treesReportsJson", (ctx) =>
     parseResourceMap(
-      ctx.outputs?.resolve({ field: 'treesReportsJson', assertFieldType: 'Input' }),
+      ctx.outputs?.resolve({ field: "treesReportsJson", assertFieldType: "Input" }),
       (acc) => acc.getFileHandle(),
-      false
-    )
+      false,
+    ),
   )
 
-  .output('allelesLogs', (ctx) => {
+  .output("allelesLogs", (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolve({ field: 'allelesLogs', assertFieldType: 'Input' }),
+          ctx.outputs?.resolve({ field: "allelesLogs", assertFieldType: "Input" }),
           (acc) => acc.getLogHandle(),
-          false
+          false,
         )
       : undefined;
   })
 
-  .output('treesLogs', (ctx) => {
+  .output("treesLogs", (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolve({ field: 'treesLogs', assertFieldType: 'Input' }),
+          ctx.outputs?.resolve({ field: "treesLogs", assertFieldType: "Input" }),
           (acc) => acc.getLogHandle(),
-          false
+          false,
         )
       : undefined;
   })
 
-  .output('allelesProgress', (ctx) => {
+  .output("allelesProgress", (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolve({ field: 'allelesLogs', assertFieldType: 'Input' }),
+          ctx.outputs?.resolve({ field: "allelesLogs", assertFieldType: "Input" }),
           (acc) => acc.getProgressLog(ProgressPrefix),
-          false
+          false,
         )
       : undefined;
   })
 
-  .output('treesProgress', (ctx) => {
+  .output("treesProgress", (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolve({ field: 'treesLogs', assertFieldType: 'Input' }),
+          ctx.outputs?.resolve({ field: "treesLogs", assertFieldType: "Input" }),
           (acc) => acc.getProgressLog(ProgressPrefix),
-          false
+          false,
         )
       : undefined;
   })
 
-  .output('vjColumns', (ctx) => {
-    const cols = ctx.outputs?.resolve('treeNodes')?.getPColumns();
+  .output("vjColumns", (ctx) => {
+    const cols = ctx.outputs?.resolve("treeNodes")?.getPColumns();
     if (cols === undefined) return undefined;
 
-    return cols.filter((col) => col.spec.name === 'pl7.app/vdj/geneHit').map((col) => col.id);
+    return cols.filter((col) => col.spec.name === "pl7.app/vdj/geneHit").map((col) => col.id);
   })
 
-  .output('soiReady', (ctx) => ctx.outputs?.resolve('soiNodesResults')?.getIsReadyOrError())
+  .output("soiReady", (ctx) => ctx.outputs?.resolve("soiNodesResults")?.getIsReadyOrError())
 
-  .output('started', (ctx) => ctx.outputs !== undefined)
+  .output("started", (ctx) => ctx.outputs !== undefined)
 
-  .output('done', (ctx) => {
+  .output("done", (ctx) => {
     return ctx.outputs !== undefined
       ? parseResourceMap(
-          ctx.outputs?.resolveInput('shmt', 'data'),
+          ctx.outputs?.resolveInput("shmt", "data"),
           (acc) => acc.getIsReadyOrError() === true,
-          false
+          false,
         )
           .data.filter((e) => e.value)
           .map((e) => e.key[0] as string)
@@ -583,27 +605,27 @@ export const model = BlockModel.create()
 
   .sections((ctx) => {
     const dendroSectionsRaw = (ctx.uiState?.dendrograms ?? []).map((gs) => ({
-      type: 'link' as const,
+      type: "link" as const,
       href: `/dendrogram?id=${gs.id}` as const,
-      label: gs.state.title
+      label: gs.state.title,
     }));
     const dendroSections =
-      dendroSectionsRaw.length === 0 ? [] : [{ type: 'delimiter' as const }, ...dendroSectionsRaw];
+      dendroSectionsRaw.length === 0 ? [] : [{ type: "delimiter" as const }, ...dendroSectionsRaw];
 
     const basketSectionsRaw = (ctx.uiState?.baskets ?? []).map((b) => ({
-      type: 'link' as const,
+      type: "link" as const,
       href: `/basket?id=${b.id as string}` as const,
-      label: b.name
+      label: b.name,
     }));
     const basketSections =
-      basketSectionsRaw.length === 0 ? [] : [{ type: 'delimiter' as const }, ...basketSectionsRaw];
+      basketSectionsRaw.length === 0 ? [] : [{ type: "delimiter" as const }, ...basketSectionsRaw];
 
     return [
-      { type: 'link', href: '/', label: 'Analysis Overview' },
-      { type: 'link', href: '/soi', label: 'Sequence Search' },
-      { type: 'link', href: '/trees', label: 'Trees Table' },
+      { type: "link", href: "/", label: "Analysis Overview" },
+      { type: "link", href: "/soi", label: "Sequence Search" },
+      { type: "link", href: "/trees", label: "Trees Table" },
       ...dendroSections,
-      ...basketSections
+      ...basketSections,
     ];
   })
 
@@ -612,15 +634,19 @@ export const model = BlockModel.create()
       ctx.args.donorColumn !== undefined &&
       ctx.args.datasetColumns.length > 0 &&
       (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
-      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0)
+      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0),
   )
 
-  .title((ctx) => (ctx.args.datasetsTitles ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join('-')}` : 'MiXCR SHM Trees'))
+  .title((ctx) =>
+    ctx.args.datasetsTitles
+      ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join("-")}`
+      : "MiXCR SHM Trees",
+  )
 
   .done();
 
 export type BlockOutputs = InferOutputsType<typeof model>;
 
-export * from './progress';
-export * from './soi';
-export * from './tree_filter';
+export * from "./progress";
+export * from "./soi";
+export * from "./tree_filter";

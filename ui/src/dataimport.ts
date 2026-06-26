@@ -1,8 +1,8 @@
 // To be moved to a separate library
 
-import * as XLSX from 'xlsx';
+import * as XLSX from "xlsx";
 
-export type DataType = 'Double' | 'Long' | 'String';
+export type DataType = "Double" | "Long" | "String";
 
 export type ImportDataColumn = {
   readonly type: DataType;
@@ -38,12 +38,12 @@ const TypeCodeString = 2;
 
 function validateAndCleanRow(row: unknown): ImportDataRow | undefined {
   if (!row || !Array.isArray(row)) return undefined;
-  if (row.findIndex((c) => c && typeof c !== 'string' && typeof c !== 'number') !== -1)
+  if (row.findIndex((c) => c && typeof c !== "string" && typeof c !== "number") !== -1)
     return undefined;
   const result: ImportDataRow = [];
   for (const c of row) {
-    if (typeof c === 'string') result.push(c.trim());
-    else if (typeof c === 'number') result.push(c);
+    if (typeof c === "string") result.push(c.trim());
+    else if (typeof c === "number") result.push(c);
     else if (!c) result.push(undefined);
     else {
       console.log(`Can't parse cell (see below). Type = ${typeof c}`);
@@ -84,16 +84,16 @@ export function readFileForImport(data: Uint8Array): ImportResult {
 
       // detecting type
       const c = row[colIdx];
-      if (c === '' || c === undefined) continue;
+      if (c === "" || c === undefined) continue;
 
       isEmpty = false;
 
       const type =
-        typeof c === 'string'
+        typeof c === "string"
           ? TypeCodeString
           : Number.isInteger(c)
-          ? TypeCodeLong
-          : TypeCodeDouble;
+            ? TypeCodeLong
+            : TypeCodeDouble;
       types[colIdx] = Math.max(types[colIdx], type);
     }
 
@@ -120,7 +120,7 @@ export function readFileForImport(data: Uint8Array): ImportResult {
     idxMapping.push(colIdx);
     columns.push({
       header,
-      type: type === TypeCodeLong ? 'Long' : type === TypeCodeDouble ? 'Double' : 'String'
+      type: type === TypeCodeLong ? "Long" : type === TypeCodeDouble ? "Double" : "String",
     });
   }
 
@@ -131,7 +131,7 @@ export function readFileForImport(data: Uint8Array): ImportResult {
       const colIdx = idxMapping[newColIdx];
       const c = rowTmp[colIdx];
       newRow.push(
-        c === undefined ? undefined : columns[newColIdx].type === 'String' ? String(c) : c
+        c === undefined ? undefined : columns[newColIdx].type === "String" ? String(c) : c,
       );
     }
     rows.push(newRow);
@@ -140,11 +140,11 @@ export function readFileForImport(data: Uint8Array): ImportResult {
   return {
     data: {
       columns,
-      rows
+      rows,
     },
     missingHeaders,
     emptyColumns,
     emptyRowsRemoved,
-    malformedRowsRemoved
+    malformedRowsRemoved,
   };
 }

@@ -1,13 +1,8 @@
-import {
-  AxesId,
-  AxesSpec,
-  AxisId,
-  AxisSpec
-} from '@platforma-sdk/model';
+import { AxesId, AxesSpec, AxisId, AxisSpec } from "@platforma-sdk/model";
 
 export function domainsEqual(
   domain1: Record<string, string> | undefined,
-  domain2: Record<string, string> | undefined
+  domain2: Record<string, string> | undefined,
 ): boolean {
   if (domain1 === domain2) return true;
   if (domain1 === undefined) domain1 = {};

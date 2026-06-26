@@ -1,17 +1,17 @@
 <script setup lang="ts" generic="T">
-import { PlBtnGroup, PlContainer } from '@platforma-sdk/ui-vue';
-import { reactive } from 'vue';
-import { ByStepIdRecord, StepId, StepIdSimpleOptions } from '../../types';
+import { PlBtnGroup, PlContainer } from "@platforma-sdk/ui-vue";
+import { reactive } from "vue";
+import { ByStepIdRecord, StepId, StepIdSimpleOptions } from "../../types";
 
 const props = defineProps<{
-  content: ByStepIdRecord<T>
-}>()
+  content: ByStepIdRecord<T>;
+}>();
 
 const data = reactive<{
-  selectedStep: StepId
+  selectedStep: StepId;
 }>({
-  selectedStep: 'alleles'
-})
+  selectedStep: "alleles",
+});
 </script>
 
 <template>

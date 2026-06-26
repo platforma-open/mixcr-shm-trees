@@ -1,15 +1,21 @@
 <script setup lang="ts">
-import type { PredefinedGraphOption } from '@milaboratories/graph-maker';
-import { GraphMaker } from '@milaboratories/graph-maker';
-import '@milaboratories/graph-maker/styles';
-import type { FullNodeId, FullTreeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import type { AxisSpec, PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
-import { getRawPlatformaInstance, pValueToStringOrNumber } from '@platforma-sdk/model';
-import { PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown } from '@platforma-sdk/ui-vue';
-import { computedAsync } from '@vueuse/core';
-import { computed, ref, watch } from 'vue';
-import { useApp } from '../app';
+import type { PredefinedGraphOption } from "@milaboratories/graph-maker";
+import { GraphMaker } from "@milaboratories/graph-maker";
+import "@milaboratories/graph-maker/styles";
+import type { FullNodeId, FullTreeId } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { treeNodesFilter } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import type { AxisSpec, PVectorDataLong, PVectorDataString } from "@platforma-sdk/model";
+import { getRawPlatformaInstance, pValueToStringOrNumber } from "@platforma-sdk/model";
+import {
+  PlBtnGhost,
+  PlBtnPrimary,
+  PlBtnSecondary,
+  PlDialogModal,
+  PlDropdown,
+} from "@platforma-sdk/ui-vue";
+import { computedAsync } from "@vueuse/core";
+import { computed, ref, watch } from "vue";
+import { useApp } from "../app";
 
 const emit = defineEmits<{
   toTable: [];
@@ -18,10 +24,12 @@ const emit = defineEmits<{
 
 const app = useApp<`/dendrogram?id=${string}`>();
 
-const dendroIdx = computed(() => app.model.ui.dendrograms.findIndex((it) => it.id === app.queryParams.id));
+const dendroIdx = computed(() =>
+  app.model.ui.dendrograms.findIndex((it) => it.id === app.queryParams.id),
+);
 const dendro = computed({
   get: () => app.model.ui.dendrograms[dendroIdx.value],
-  set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value,
+  set: (value) => (app.model.ui.dendrograms[dendroIdx.value] = value),
 });
 
 const fullId = computed(() => {
@@ -35,99 +43,103 @@ const fullId = computed(() => {
 });
 
 const subtreeAxis = computed<AxisSpec | undefined>(() =>
-  app.model.outputs.treeColumnSpec?.axesSpec[2].name === 'pl7.app/dendrogram/subtreeId'
+  app.model.outputs.treeColumnSpec?.axesSpec[2].name === "pl7.app/dendrogram/subtreeId"
     ? app.model.outputs.treeColumnSpec.axesSpec[2]
-    : undefined);
+    : undefined,
+);
 
-const defaultOptions = computed(() => [
-  {
-    inputName: 'value',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/dendrogram/topology',
-      valueType: 'Long',
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'height',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/dendrogram/distance',
-      valueType: 'Double',
-      annotations: {
-        'pl7.app/dendrogram/distance/from': 'parent',
+const defaultOptions = computed(
+  () =>
+    [
+      {
+        inputName: "value",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/dendrogram/topology",
+          valueType: "Long",
+          axesSpec: [],
+        },
       },
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/vdj/sequence',
-      valueType: 'String',
-      annotations: {
-        'pl7.app/label': 'CDR1 aa',
+      {
+        inputName: "height",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/dendrogram/distance",
+          valueType: "Double",
+          annotations: {
+            "pl7.app/dendrogram/distance/from": "parent",
+          },
+          axesSpec: [],
+        },
       },
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/vdj/sequence',
-      valueType: 'String',
-      annotations: {
-        'pl7.app/label': 'CDR2 aa',
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/vdj/sequence",
+          valueType: "String",
+          annotations: {
+            "pl7.app/label": "CDR1 aa",
+          },
+          axesSpec: [],
+        },
       },
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/vdj/sequence',
-      valueType: 'String',
-      annotations: {
-        'pl7.app/label': 'CDR3 aa',
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/vdj/sequence",
+          valueType: "String",
+          annotations: {
+            "pl7.app/label": "CDR2 aa",
+          },
+          axesSpec: [],
+        },
       },
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/vdj/sequence',
-      valueType: 'String',
-      annotations: {
-        'pl7.app/label': 'Clonal sequences',
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/vdj/sequence",
+          valueType: "String",
+          annotations: {
+            "pl7.app/label": "CDR3 aa",
+          },
+          axesSpec: [],
+        },
       },
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/dendrogram/isObserved',
-      valueType: 'String',
-      axesSpec: [],
-    },
-  },
-  {
-    inputName: 'tableContent',
-    selectedSource: {
-      kind: 'PColumn',
-      name: 'pl7.app/vdj/mutationsRate',
-      valueType: 'Double',
-      axesSpec: [],
-    },
-  },
-] as PredefinedGraphOption<'dendro'>[]);
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/vdj/sequence",
+          valueType: "String",
+          annotations: {
+            "pl7.app/label": "Clonal sequences",
+          },
+          axesSpec: [],
+        },
+      },
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/dendrogram/isObserved",
+          valueType: "String",
+          axesSpec: [],
+        },
+      },
+      {
+        inputName: "tableContent",
+        selectedSource: {
+          kind: "PColumn",
+          name: "pl7.app/vdj/mutationsRate",
+          valueType: "Double",
+          axesSpec: [],
+        },
+      },
+    ] as PredefinedGraphOption<"dendro">[],
+);
 
 const fixedOptions = computed(() => {
   const tcSpec = app.model.outputs.treeColumnSpec;
@@ -136,20 +148,20 @@ const fixedOptions = computed(() => {
 
   const fixedOps = [
     {
-      inputName: 'filters',
+      inputName: "filters",
       selectedSource: tcSpec.axesSpec[0],
       selectedFilterValue: fid.donorId,
     },
     {
-      inputName: 'filters',
+      inputName: "filters",
       selectedSource: tcSpec.axesSpec[1],
       selectedFilterValue: fid.treeId,
     },
-  ] as PredefinedGraphOption<'dendro'>[];
+  ] as PredefinedGraphOption<"dendro">[];
 
   if (fid.subtreeId !== undefined)
     fixedOps.push({
-      inputName: 'filters',
+      inputName: "filters",
       selectedSource: tcSpec.axesSpec[2],
       selectedFilterValue: fid.subtreeId,
     });
@@ -158,23 +170,30 @@ const fixedOptions = computed(() => {
 });
 
 const subtreeOptions = computedAsync(async () => {
-  if (!subtreeAxis.value || !app.model.outputs.treeNodesPFrame
-    || !app.model.outputs.vjColumns || !app.model.outputs.treeColumnSpec
-    || !dendro.value || !fullId.value) return undefined;
+  if (
+    !subtreeAxis.value ||
+    !app.model.outputs.treeNodesPFrame ||
+    !app.model.outputs.vjColumns ||
+    !app.model.outputs.treeColumnSpec ||
+    !dendro.value ||
+    !fullId.value
+  )
+    return undefined;
 
   const pl = getRawPlatformaInstance();
 
   try {
-    const data = await pl.pFrameDriver.calculateTableData(app.model.outputs.treeNodesPFrame,
-      {
-        src: {
-          type: 'inner',
-          entries: app.model.outputs.vjColumns?.map((column) => ({ type: 'column', column })),
-        },
-        filters: treeNodesFilter(app.model.outputs.treeColumnSpec, { ...fullId.value!, subtreeId: undefined }),
-        sorting: [],
+    const data = await pl.pFrameDriver.calculateTableData(app.model.outputs.treeNodesPFrame, {
+      src: {
+        type: "inner",
+        entries: app.model.outputs.vjColumns?.map((column) => ({ type: "column", column })),
       },
-    );
+      filters: treeNodesFilter(app.model.outputs.treeColumnSpec, {
+        ...fullId.value!,
+        subtreeId: undefined,
+      }),
+      sorting: [],
+    });
     const subtree = data[2].data.data as PVectorDataLong;
     const vGenes = data[4].data.data as PVectorDataString;
     const jGenes = data[5].data.data as PVectorDataString;
@@ -184,7 +203,7 @@ const subtreeOptions = computedAsync(async () => {
       const sb = subtree[i].toString();
       options.set(sb, {
         value: subtree[i].toString(),
-        label: vGenes[i]?.replace(/[-*].*$/, '') + ' / ' + jGenes[i]?.replace(/[-*].*$/, ''),
+        label: vGenes[i]?.replace(/[-*].*$/, "") + " / " + jGenes[i]?.replace(/[-*].*$/, ""),
       });
     }
 
@@ -195,9 +214,13 @@ const subtreeOptions = computedAsync(async () => {
   }
 });
 
-watch(subtreeOptions, () => {
-  console.log(subtreeOptions.value);
-}, { immediate: true });
+watch(
+  subtreeOptions,
+  () => {
+    console.log(subtreeOptions.value);
+  },
+  { immediate: true },
+);
 
 const removeConfirmationWindowOpen = ref(false);
 const removeSection = async () => {
@@ -205,39 +228,47 @@ const removeSection = async () => {
     ui.dendrograms = ui.dendrograms.filter((it) => it.id !== app.queryParams.id);
     return ui;
   });
-  const lastId = app.model.ui.dendrograms.length ? app.model.ui.dendrograms[app.model.ui.dendrograms.length - 1]['id'] : undefined;
+  const lastId = app.model.ui.dendrograms.length
+    ? app.model.ui.dendrograms[app.model.ui.dendrograms.length - 1]["id"]
+    : undefined;
   if (lastId) {
     app.navigateTo(`/dendrogram?id=${lastId}`);
   } else {
     // @ts-expect-error TODO: fix this
-    app.navigateTo('/');
+    app.navigateTo("/");
   }
 };
 
 const goToNode = (a: any) => {
-  if (fullId.value === undefined)
-    return;
-  if (typeof a === 'number')
-    emit('toNode', { ...fullId.value, nodeId: a });
-  else
-    console.error(`Unexpected key type: ${a} / ${typeof a}`);
+  if (fullId.value === undefined) return;
+  if (typeof a === "number") emit("toNode", { ...fullId.value, nodeId: a });
+  else console.error(`Unexpected key type: ${a} / ${typeof a}`);
 };
-
 </script>
 
 <template>
   <div v-if="dendro" class="container_graph_page">
     <GraphMaker
-      v-model="dendro.state" chart-type="dendro" :p-frame="app.model.outputs.treeNodesPFrame"
-      :fixed-options="fixedOptions" tooltip-button="Show in Table"
-      :default-options="defaultOptions" @delete-this-graph="removeConfirmationWindowOpen = true" @tooltip-btn-click="goToNode"
+      v-model="dendro.state"
+      chart-type="dendro"
+      :p-frame="app.model.outputs.treeNodesPFrame"
+      :fixed-options="fixedOptions"
+      tooltip-button="Show in Table"
+      :default-options="defaultOptions"
+      @delete-this-graph="removeConfirmationWindowOpen = true"
+      @tooltip-btn-click="goToNode"
     >
       <template #titleLineSlot>
         <PlDropdown
-          v-if="subtreeAxis" v-model="dendro.subtreeId" :options="subtreeOptions"
-          label="Select chain (subtree)" :style="{ width: '300px' }"
+          v-if="subtreeAxis"
+          v-model="dendro.subtreeId"
+          :options="subtreeOptions"
+          label="Select chain (subtree)"
+          :style="{ width: '300px' }"
         />
-        <PlBtnGhost :style="{ marginLeft: '12px' }" icon="table" @click="emit('toTable')">Go to Table</PlBtnGhost>
+        <PlBtnGhost :style="{ marginLeft: '12px' }" icon="table" @click="emit('toTable')"
+          >Go to Table</PlBtnGhost
+        >
       </template>
     </GraphMaker>
   </div>
@@ -246,7 +277,7 @@ const goToNode = (a: any) => {
     <template #title>Confirm delete graph</template>
     <template #actions>
       <PlBtnPrimary @click="() => removeSection()">Delete</PlBtnPrimary>
-      <PlBtnSecondary @click="() => removeConfirmationWindowOpen = false">Cancel</PlBtnSecondary>
+      <PlBtnSecondary @click="() => (removeConfirmationWindowOpen = false)">Cancel</PlBtnSecondary>
     </template>
   </PlDialogModal>
 </template>

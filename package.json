@@ -1,47 +1,32 @@
 {
-  "name": "@platforma-open/milaboratories.mixcr-shm-trees",
   "scripts": {
-    "pretty": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,vue}\"",
     "build": "turbo run build",
-    "build:dev": "PL_PKG_DEV=local turbo run build",
-    "test": "turbo run test --concurrency 1",
-    "test:dry-run": "turbo run test --dry-run=json",
+    "build:dev": "env PL_PKG_DEV=local turbo run build",
+    "test": "env PL_PKG_DEV=local turbo run test --concurrency 1",
+    "test:dry-run": "env PL_PKG_DEV=local turbo run test --dry-run=json",
     "mark-stable": "turbo run mark-stable",
     "watch": "turbo watch build",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "update-sdk": "pl-blocks-deps-updater"
+    "update-sdk": "block-tools structure refresh --update-deps-only",
+    "fmt": "turbo run fmt",
+    "check": "turbo run check",
+    "do-pack": "turbo run do-pack",
+    "upgrade-sdk": "block-tools structure refresh --update-deps-only && pnpm i && block-tools structure refresh && pnpm i && pnpm fmt"
   },
   "devDependencies": {
-    "typescript": "catalog:",
-    "turbo": "catalog:",
     "@changesets/cli": "catalog:",
-    "@platforma-sdk/blocks-deps-updater": "catalog:",
-    "shx": "catalog:"
+    "@milaboratories/ts-builder": "catalog:",
+    "@platforma-sdk/block-tools": "catalog:",
+    "shx": "catalog:",
+    "turbo": "catalog:",
+    "typescript": "catalog:"
+  },
+  "peerDependencies": {
+    "oxfmt": "*",
+    "oxlint": "*"
   },
   "packageManager": "pnpm@9.12.0",
-  "//pnpm": {
-    "overrides": {
-      "@milaboratories/pl-model-common": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/model/common/package.tgz",
-      "@platforma-sdk/model": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/model/package.tgz",
-      "@platforma-sdk/ui-vue": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/ui-vue/package.tgz",
-      "@platforma-sdk/workflow-tengo": "file:/Users/dbolotin/milab/core/platforma/sdk/workflow-tengo/package.tgz",
-      "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz"
-    }
-  },
-  "//": {
-    "pnpm": {
-      "overrides": {
-        "@platforma-open/milaboratories.software-ptransform": "file:/Users/dbolotin/milab/blocks/software-ptransform/package.tgz",
-        "@milaboratories/graph-maker": "/Users/poslavskysv/Projects/milab/platforma/graph-maker/milaboratories-graph-maker-1.1.0.tgz",
-        "@platforma-sdk/model": "file:/Users/dbolotin/milab/core/platforma/sdk/model/package.tgz",
-        "@platforma-sdk/workflow-tengo": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/sdk/workflow-tengo/package.tgz",
-        "@milaboratories/uikit": "file:/Users/poslavskysv/Projects/milab/platforma/platforma-sdk/lib/ui/uikit/package.tgz",
-        "@milaboratories/pl-model-common": "/Users/dbolotin/milab/core/platforma/lib/model/common/package.tgz",
-        "@platforma-sdk/ui-vue": "/Users/dbolotin/milab/core/platforma/sdk/ui-vue/package.tgz"
-      }
-    }
-  },
   "pnpm": {
     "overrides": {}
   }
