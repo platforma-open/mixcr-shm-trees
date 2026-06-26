@@ -23,10 +23,14 @@ const datasetOptionsMap = computed(() => {
 });
 
 // Keep datasetsTitles in sync with the resolved dataset options.
+// datasetsTitles is a workflow argument, so only assign when the value actually
+// changed — writing a fresh (deep-equal) array every run would churn the args
+// and re-trigger this effect via the recomputed datasetOptions output forever.
 watchEffect(() => {
   const map = datasetOptionsMap.value;
-  app.model.data.datasetsTitles =
-    map === undefined ? undefined : Array.from(map.values()).map((ds) => ds?.label);
+  const titles = map === undefined ? undefined : Array.from(map.values()).map((ds) => ds?.label);
+  if (JSON.stringify(titles) !== JSON.stringify(app.model.data.datasetsTitles))
+    app.model.data.datasetsTitles = titles;
 });
 
 function getDatasetValue(idx: number): RefString | undefined {
