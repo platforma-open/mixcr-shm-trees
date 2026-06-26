@@ -5,7 +5,6 @@ import {
   isLiveLog,
   PColumnResourceMapData,
 } from "@platforma-sdk/model";
-import { ReactiveFileContent } from "@platforma-sdk/ui-vue";
 import { computed } from "vue";
 import { useApp } from "./app";
 import { ByStepIdRecord, Steps } from "./types";
@@ -21,8 +20,6 @@ export type TreeResult = {
   soiReady: string;
 
   logHandle: ByStepIdRecord<AnyLogHandle | undefined>;
-
-  jsonReport: ByStepIdRecord<any | undefined>;
 
   txtReportHandle: ByStepIdRecord<BlobHandleAndSize | undefined>;
 };
@@ -64,7 +61,6 @@ export const TreeResultsMap = computed(() => {
         trees: "Queued",
       },
       soiReady: "Queued",
-      jsonReport: { alleles: undefined, trees: undefined },
       txtReportHandle: { alleles: undefined, trees: undefined },
       logHandle: { alleles: undefined, trees: undefined },
     };
@@ -73,19 +69,6 @@ export const TreeResultsMap = computed(() => {
 
   integrateData(resultMap, app.model.outputs.allelesLogs, (r, v) => (r.logHandle.alleles = v));
   integrateData(resultMap, app.model.outputs.treesLogs, (r, v) => (r.logHandle.trees = v));
-
-  integrateData(
-    resultMap,
-    app.model.outputs.allelesReportsJson,
-    (r, v) =>
-      (r.jsonReport.alleles = ReactiveFileContent.useGlobal().getContentJson(v.handle)?.value),
-  );
-  integrateData(
-    resultMap,
-    app.model.outputs.treesReportsJson,
-    (r, v) =>
-      (r.jsonReport.trees = ReactiveFileContent.useGlobal().getContentJson(v.handle)?.value),
-  );
 
   integrateData(
     resultMap,
