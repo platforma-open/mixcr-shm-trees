@@ -1,34 +1,36 @@
 import { GraphMakerState } from "@milaboratories/graph-maker";
 import {
+  ArrayColumnProvider,
   AxesSpec,
   AxisId,
-  BlockModel,
+  BlockModelV3,
+  ColumnCollectionBuilder,
+  DataModelBuilder,
   InferOutputsType,
-  NotNAPValue,
   PColumn,
+  PColumnDataUniversal,
   PColumnSpec,
   PColumnValues,
   PObjectId,
-  PTableHandle,
-  PlDataTableState,
+  PlDataTableModel,
+  PlDataTableStateV2,
   PlId,
   PlRef,
   RenderCtx,
   TreeNodeAccessor,
   createPlDataTable,
+  createPlDataTableStateV2,
   createPFrameForGraphs,
   deriveLabels,
   getAxisId,
   isPColumnSpec,
   isPColumnSpecResult,
-  pValueToStringOrNumber,
   parseResourceMap,
-  type PlTableFiltersModel,
 } from "@platforma-sdk/model";
 import { ProgressPrefix } from "./progress";
 import { matchAxesId } from "./util";
 import { SOIList } from "./soi";
-import { FullNodeId, FullTreeId, treeNodesFilter } from "./tree_filter";
+import { FullNodeId, FullTreeId, treeNodesFilterSpec } from "./tree_filter";
 
 export type DownsamplingByCount = {
   type: "CountReadsFixed" | "CountMoleculesFixed";
@@ -63,30 +65,12 @@ export type BlockArgs = {
   perProcessCPUs?: number;
 };
 
-export type FullTableState = {
-  tableState: PlDataTableState;
-  filterModel: PlTableFiltersModel;
-};
-
-export function InitialFullTableState(): FullTableState {
-  return {
-    tableState: {
-      gridState: {},
-      pTableParams: {
-        sorting: [],
-        filters: [],
-      },
-    },
-    filterModel: {},
-  };
-}
-
 export type TreePageTab = "Graph" | "Table";
 
 export type DendrogramState = FullTreeId & {
   id: string;
   state: GraphMakerState;
-  tableState: FullTableState;
+  tableState: PlDataTableStateV2;
   tab: TreePageTab;
 };
 
@@ -95,14 +79,24 @@ export type NodeBasket = {
   name: string;
   comment: string;
   nodes: FullNodeId[];
-  tableState: FullTableState;
+  tableState: PlDataTableStateV2;
 };
 
-export type UiState = {
-  treeTableState: PlDataTableState;
-  filterModel: PlTableFiltersModel;
+// Unified V3 block state: user-facing arguments plus UI-only state in one bag.
+export type BlockData = BlockArgs & {
+  treeTableState: PlDataTableStateV2;
   dendrograms: DendrogramState[];
   baskets: NodeBasket[];
+};
+
+// Pre-V3 persisted shape, used only to upgrade existing projects. The old
+// per-tree/basket table state was a { tableState, filterModel } wrapper; the
+// filter model is folded into the V2 table state now and dropped here.
+type LegacyTableState = { tableState: PlDataTableStateV2 };
+type LegacyUiState = {
+  treeTableState: PlDataTableStateV2;
+  dendrograms?: (Omit<DendrogramState, "tableState"> & { tableState: LegacyTableState })[];
+  baskets?: (Omit<NodeBasket, "tableState"> & { tableState: LegacyTableState })[];
 };
 
 export type DatasetOption = {
@@ -112,7 +106,7 @@ export type DatasetOption = {
 };
 
 function treeNodesColumns(
-  ctx: RenderCtx<BlockArgs, UiState>,
+  ctx: RenderCtx<BlockArgs, BlockData>,
 ): PColumn<TreeNodeAccessor>[] | undefined {
   const treeNodesColumns = ctx.outputs?.resolve("treeNodes")?.getPColumns();
   if (treeNodesColumns === undefined) return undefined;
@@ -173,7 +167,7 @@ type BasketColumns = {
   perBasket: Record<PlId, PColumn<PColumnValues>>;
 };
 
-function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | undefined {
+function basketColumns(ctx: RenderCtx<BlockArgs, BlockData>): BasketColumns | undefined {
   const treeNodesWithClonesColumns = ctx.outputs?.resolve("treeNodesWithClones")?.getPColumns();
   if (treeNodesWithClonesColumns === undefined) return undefined;
   const bigAxesSpec = treeNodesWithClonesColumns[0].spec.axesSpec;
@@ -190,13 +184,13 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
 
   const toKey = (id: FullNodeId): (number | string)[] =>
     hasSubtreeId
-      ? [pValueToStringOrNumber(id.donorId), id.treeId, Number(id.subtreeId!), id.nodeId]
-      : [pValueToStringOrNumber(id.donorId), id.treeId, id.nodeId];
+      ? [id.donorId, id.treeId, Number(id.subtreeId!), id.nodeId]
+      : [id.donorId, id.treeId, id.nodeId];
 
   const columns: PColumn<PColumnValues>[] = [];
   const columnPerBasket: Record<PlId, PColumn<PColumnValues>> = {};
 
-  for (const basket of ctx.uiState.baskets) {
+  for (const basket of ctx.data.baskets) {
     const inBasketSpec: PColumnSpec = {
       kind: "PColumn",
       name: InBasketPColumnName,
@@ -224,23 +218,66 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
   return { allColumns: columns, perBasket: columnPerBasket };
 }
 
-export const model = BlockModel.create()
+// createPlDataTable (v3) takes column *variants* built from ColumnSnapshots, not
+// raw PColumns. This block builds its tables from resolved accessor columns plus
+// synthetic in-basket columns, so wrap them through an ArrayColumnProvider /
+// ColumnCollectionBuilder to get snapshots (ArrayColumnProvider derives each
+// column's data status automatically), then tag core columns via `isPrimary`.
+function tableColumnVariants(
+  ctx: RenderCtx<BlockArgs, BlockData>,
+  pColumns: PColumn<PColumnDataUniversal>[],
+  isPrimary: (spec: PColumnSpec) => boolean,
+) {
+  const collection = new ColumnCollectionBuilder(ctx.getService("pframeSpec"))
+    .addSource(new ArrayColumnProvider(pColumns))
+    .build();
+  if (collection === undefined) return undefined;
+  const snapshots = collection.findColumns();
+  collection.dispose();
+  return snapshots.map((column) => ({ column, isPrimary: isPrimary(column.spec) }));
+}
 
-  .withArgs<BlockArgs>({
+const dataModel = new DataModelBuilder()
+  .from<BlockData>("v1")
+  .upgradeLegacy<BlockArgs, LegacyUiState>(({ args, uiState }) => ({
+    ...args,
+    treeTableState: uiState.treeTableState,
+    dendrograms: (uiState.dendrograms ?? []).map((d) => ({
+      ...d,
+      tableState: d.tableState.tableState,
+    })),
+    baskets: (uiState.baskets ?? []).map((b) => ({
+      ...b,
+      tableState: b.tableState.tableState,
+    })),
+  }))
+  .init(() => ({
     datasetColumns: [],
-  })
-
-  .withUiState<UiState>({
-    treeTableState: {
-      gridState: {},
-      pTableParams: {
-        sorting: [],
-        filters: [],
-      },
-    },
-    filterModel: {},
+    treeTableState: createPlDataTableStateV2(),
     dendrograms: [],
     baskets: [],
+  }));
+
+export const model = BlockModelV3.create(dataModel)
+
+  // Projects the workflow arguments out of the unified block data. Throwing here
+  // marks the block as not-runnable, the V3 replacement for the old argsValid:
+  // a run requires a donor column and datasets, and is locked once dendrograms
+  // or baskets exist (re-running would orphan those derived artifacts).
+  .args((data) => {
+    if (data.donorColumn === undefined) throw new Error("Donor column is required");
+    if (data.datasetColumns.length === 0) throw new Error("At least one dataset is required");
+    if ((data.dendrograms?.length ?? 0) > 0 || (data.baskets?.length ?? 0) > 0)
+      throw new Error("Block is locked: clear dendrograms and baskets before re-running");
+    return {
+      donorColumn: data.donorColumn,
+      datasetColumns: data.datasetColumns,
+      downsampling: data.downsampling,
+      sequencesOfInterest: data.sequencesOfInterest,
+      datasetsTitles: data.datasetsTitles,
+      perProcessMemGB: data.perProcessMemGB,
+      perProcessCPUs: data.perProcessCPUs,
+    };
   })
 
   // for debuginf: specs for all available columns
@@ -268,9 +305,9 @@ export const model = BlockModel.create()
 
   // selected all dataset options that have the same axis as selected metadata column
   .retentiveOutput("datasetOptions", (ctx) => {
-    if (ctx.args.donorColumn === undefined) return undefined;
+    if (ctx.data.donorColumn === undefined) return undefined;
 
-    const donorColumn = ctx.args.donorColumn;
+    const donorColumn = ctx.data.donorColumn;
     const donorColumnSpec = ctx.resultPool.getSpecByRef(donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
     // donorOptions accepts pl7.app/metadata without enforcing axesSpec.length;
@@ -301,9 +338,9 @@ export const model = BlockModel.create()
     // upstream clonotyping block is still running), this output will briefly
     // evaluate to the empty-state message before clearing once eligible specs
     // arrive. The user-facing message accounts for this — no extra UI gating needed.
-    if (ctx.args.donorColumn === undefined) return undefined;
+    if (ctx.data.donorColumn === undefined) return undefined;
 
-    const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.args.donorColumn);
+    const donorColumnSpec = ctx.resultPool.getSpecByRef(ctx.data.donorColumn);
     if (donorColumnSpec === undefined || !isPColumnSpec(donorColumnSpec)) return undefined;
     if (donorColumnSpec.axesSpec.length === 0) return undefined;
 
@@ -311,8 +348,8 @@ export const model = BlockModel.create()
 
     // Stale-selections case: dataset slots are filled, but none of the selected
     // refs is still eligible under the current donor (e.g. donor was switched).
-    if (ctx.args.datasetColumns.length > 0) {
-      const anySelectedEligible = ctx.args.datasetColumns.some((ref) => {
+    if (ctx.data.datasetColumns.length > 0) {
+      const anySelectedEligible = ctx.data.datasetColumns.some((ref) => {
         const spec = ctx.resultPool.getSpecByRef(ref);
         return spec !== undefined && isPColumnSpec(spec) && isEligibleClnsSpec(spec, sampleAxisId);
       });
@@ -399,7 +436,7 @@ export const model = BlockModel.create()
     return treeNodesUniqueIsotype.map((col) => col.spec);
   })
 
-  .output("trees", (ctx) => {
+  .outputWithStatus("trees", (ctx) => {
     const pCols = ctx.outputs?.resolve("trees")?.getPColumns();
     if (pCols === undefined) return undefined;
 
@@ -407,14 +444,12 @@ export const model = BlockModel.create()
       ctx.outputs?.resolve("soiTreesResults")?.mapFields((_, v) => v?.getPColumns() ?? []) ?? []
     ).flatMap((a) => a);
 
-    // wait until sheet filters are set
-    const sheetFilters = ctx.uiState?.treeTableState.pTableParams?.filters;
-    if (!sheetFilters) return undefined;
+    const columns = tableColumnVariants(ctx, [...pCols, ...soiResultColumns], () => true);
+    if (columns === undefined) return undefined;
 
-    return ctx.createPTable({
-      columns: [...pCols, ...soiResultColumns],
-      filters: [...sheetFilters, ...(ctx.uiState?.filterModel?.filters ?? [])],
-      sorting: ctx.uiState?.treeTableState?.pTableParams?.sorting ?? [],
+    return createPlDataTable(ctx, {
+      columns,
+      tableState: ctx.data.treeTableState,
     });
   })
 
@@ -424,13 +459,13 @@ export const model = BlockModel.create()
     return pCols[0].spec;
   })
 
-  .output("treeNodesPFrame", (ctx) => {
+  .outputWithStatus("treeNodesPFrame", (ctx) => {
     const cols = treeNodesColumns(ctx);
     if (cols === undefined) return undefined;
     return createPFrameForGraphs(ctx, cols);
   })
 
-  .output("treeNodesUniqueIsotypePFrame", (ctx) => {
+  .outputWithStatus("treeNodesUniqueIsotypePFrame", (ctx) => {
     const cols = treeNodesColumns(ctx);
     if (cols === undefined) return undefined;
     return createPFrameForGraphs(ctx, cols);
@@ -441,28 +476,28 @@ export const model = BlockModel.create()
     const bColumns = basketColumns(ctx);
     if (columns === undefined || bColumns === undefined) return undefined;
 
-    const result: Record<string, PTableHandle> = {};
+    const result: Record<string, PlDataTableModel> = {};
 
-    const coreColumnPredicate = (spec: PColumnSpec) =>
+    const isCoreSpec = (spec: PColumnSpec) =>
       spec.name !== InBasketPColumnName &&
       spec.axesSpec.find((a) => a.name === "pl7.app/vdj/cloneId") !== undefined;
 
-    const coreColumn = columns.find((c) => coreColumnPredicate(c.spec));
+    const coreColumn = columns.find((c) => isCoreSpec(c.spec));
 
-    for (const tree of ctx.uiState!.dendrograms) {
-      const t = createPlDataTable(
-        ctx,
-        [...columns, ...bColumns.allColumns],
-        tree.tableState.tableState,
-        {
-          coreColumnPredicate,
-          coreJoinType: "inner",
-          filters: [
-            ...treeNodesFilter(coreColumn!.spec, { ...tree, subtreeId: undefined }),
-            ...(tree.tableState?.filterModel?.filters ?? []),
-          ],
-        },
-      );
+    const columnVariants = tableColumnVariants(
+      ctx,
+      [...columns, ...bColumns.allColumns],
+      isCoreSpec,
+    );
+    if (columnVariants === undefined) return undefined;
+
+    for (const tree of ctx.data.dendrograms) {
+      const t = createPlDataTable(ctx, {
+        columns: columnVariants,
+        tableState: tree.tableState,
+        primaryJoinType: "inner",
+        filters: treeNodesFilterSpec(coreColumn!.spec, { ...tree, subtreeId: undefined }),
+      });
 
       if (t) result[tree.id] = t;
     }
@@ -475,19 +510,21 @@ export const model = BlockModel.create()
     const bColumns = basketColumns(ctx);
     if (columns === undefined || bColumns === undefined) return undefined;
 
-    const result: Record<string, PTableHandle> = {};
+    const result: Record<string, PlDataTableModel> = {};
 
-    for (const basket of ctx.uiState.baskets) {
-      const t = createPlDataTable(
+    for (const basket of ctx.data.baskets) {
+      const columnVariants = tableColumnVariants(
         ctx,
         [...columns, bColumns.perBasket[basket.id]!],
-        basket.tableState.tableState,
-        {
-          coreColumnPredicate: (spec) => spec.name === InBasketPColumnName,
-          coreJoinType: "inner",
-          filters: [...(basket.tableState?.filterModel?.filters ?? [])],
-        },
+        (spec) => spec.name === InBasketPColumnName,
       );
+      if (columnVariants === undefined) continue;
+
+      const t = createPlDataTable(ctx, {
+        columns: columnVariants,
+        tableState: basket.tableState,
+        primaryJoinType: "inner",
+      });
 
       if (t) result[basket.id] = t;
     }
@@ -504,7 +541,7 @@ export const model = BlockModel.create()
     if (alleleReports === undefined) return undefined;
     const reports = parseResourceMap(alleleReports, (acc) => acc.getFileContentAsString(), true);
 
-    const resultSet = new Set<NotNAPValue>(reports.data.map((r) => r.key[0] as string));
+    const resultSet = new Set<string>(reports.data.map((r) => r.key[0] as string));
     return [...resultSet];
   })
 
@@ -604,7 +641,7 @@ export const model = BlockModel.create()
   })
 
   .sections((ctx) => {
-    const dendroSectionsRaw = (ctx.uiState?.dendrograms ?? []).map((gs) => ({
+    const dendroSectionsRaw = (ctx.data?.dendrograms ?? []).map((gs) => ({
       type: "link" as const,
       href: `/dendrogram?id=${gs.id}` as const,
       label: gs.state.title,
@@ -612,7 +649,7 @@ export const model = BlockModel.create()
     const dendroSections =
       dendroSectionsRaw.length === 0 ? [] : [{ type: "delimiter" as const }, ...dendroSectionsRaw];
 
-    const basketSectionsRaw = (ctx.uiState?.baskets ?? []).map((b) => ({
+    const basketSectionsRaw = (ctx.data?.baskets ?? []).map((b) => ({
       type: "link" as const,
       href: `/basket?id=${b.id as string}` as const,
       label: b.name,
@@ -629,17 +666,9 @@ export const model = BlockModel.create()
     ];
   })
 
-  .argsValid(
-    (ctx) =>
-      ctx.args.donorColumn !== undefined &&
-      ctx.args.datasetColumns.length > 0 &&
-      (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
-      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0),
-  )
-
   .title((ctx) =>
-    ctx.args.datasetsTitles
-      ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join("-")}`
+    ctx.data.datasetsTitles
+      ? `MiXCR SHM Trees - ${ctx.data.datasetsTitles.join("-")}`
       : "MiXCR SHM Trees",
   )
 

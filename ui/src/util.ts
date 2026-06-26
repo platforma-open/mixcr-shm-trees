@@ -1,5 +1,5 @@
 import { Branded } from "@milaboratories/helpers";
-import { isPTableAbsent, PlRef, PTableValue } from "@platforma-sdk/model";
+import { PlRef, PTableValue } from "@platforma-sdk/model";
 
 export type RefString = Branded<string, "ModelRef">;
 
@@ -39,16 +39,14 @@ export function inferNewName(
 
 // @TODO transfer to SDK
 export function ensureSimpleValue(v: PTableValue): string | number {
-  if (isPTableAbsent(v) || v === null) throw new Error(`Unexpected value: ${v}`);
+  if (typeof v !== "number" && typeof v !== "string") throw new Error(`Unexpected value: ${v}`);
   return v;
 }
 export function ensureNumber(v: PTableValue): number {
-  if (isPTableAbsent(v) || v === null || typeof v === "string")
-    throw new Error(`Unexpected value type: ${typeof v}`);
+  if (typeof v !== "number") throw new Error(`Unexpected value type: ${typeof v}`);
   return v;
 }
 export function ensureString(v: PTableValue): string {
-  if (isPTableAbsent(v) || v === null || typeof v === "number")
-    throw new Error(`Unexpected value type: ${typeof v}`);
+  if (typeof v !== "string") throw new Error(`Unexpected value type: ${typeof v}`);
   return v;
 }

@@ -9,7 +9,7 @@ import {
   PlNumberField,
   PlSectionSeparator,
 } from "@platforma-sdk/ui-vue";
-import { computed } from "vue";
+import { computed, watchEffect } from "vue";
 import { useApp } from "../../app";
 import { fromRefString, RefString, toRefString } from "../../util";
 import DownsamplingSettings from "./DownsamplingSettings.vue";
@@ -18,28 +18,29 @@ const app = useApp();
 
 const datasetOptionsMap = computed(() => {
   const options = app.model.outputs.datasetOptions;
-  if (options === undefined) {
-    app.model.args.datasetsTitles = undefined;
-    return undefined;
-  } else {
-    const datasetMap = new Map(options.map((ds) => [toRefString(ds.ref), ds]));
-    app.model.args.datasetsTitles = Array.from(datasetMap.values()).map((ds) => ds?.label);
-    return datasetMap;
-  }
+  if (options === undefined) return undefined;
+  return new Map(options.map((ds) => [toRefString(ds.ref), ds]));
+});
+
+// Keep datasetsTitles in sync with the resolved dataset options.
+watchEffect(() => {
+  const map = datasetOptionsMap.value;
+  app.model.data.datasetsTitles =
+    map === undefined ? undefined : Array.from(map.values()).map((ds) => ds?.label);
 });
 
 function getDatasetValue(idx: number): RefString | undefined {
-  if (idx >= app.model.args.datasetColumns.length) return undefined;
-  else return toRefString(app.model.args.datasetColumns[idx]);
+  if (idx >= app.model.data.datasetColumns.length) return undefined;
+  else return toRefString(app.model.data.datasetColumns[idx]);
 }
 
 /** Returns lambda that set's corresponding dataset */
 function datasetValueSetter(idx: number, newValue: RefString | undefined) {
-  if (idx >= app.model.args.datasetColumns.length)
+  if (idx >= app.model.data.datasetColumns.length)
     // addition of a new dataset
-    app.model.args.datasetColumns.push(fromRefString(notEmpty(newValue)));
-  else if (newValue === undefined) app.model.args.datasetColumns.splice(idx, 1);
-  else app.model.args.datasetColumns[idx] = fromRefString(newValue);
+    app.model.data.datasetColumns.push(fromRefString(notEmpty(newValue)));
+  else if (newValue === undefined) app.model.data.datasetColumns.splice(idx, 1);
+  else app.model.data.datasetColumns[idx] = fromRefString(newValue);
 }
 
 function currentAssemblingFeature() {
@@ -56,7 +57,7 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
 
   const selection = getDatasetValue(idx);
 
-  const otherSelected = new Set(app.model.args.datasetColumns.map(toRefString));
+  const otherSelected = new Set(app.model.data.datasetColumns.map(toRefString));
   if (selection) otherSelected.delete(selection);
 
   const assemblingFeature = currentAssemblingFeature();
@@ -78,13 +79,13 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
 <template>
   <PlDropdownRef
     :options="app.model.outputs.donorOptions"
-    v-model="app.model.args.donorColumn"
+    v-model="app.model.data.donorColumn"
     label="Select donor column"
     clearable
   />
 
-  <template v-if="app.model.args.donorColumn !== undefined">
-    <template v-for="dsIdx in range(0, app.model.args.datasetColumns.length + 1)" :key="dsIdx">
+  <template v-if="app.model.data.donorColumn !== undefined">
+    <template v-for="dsIdx in range(0, app.model.data.datasetColumns.length + 1)" :key="dsIdx">
       <!-- Slot is rendered when:
            (a) it shows an existing selection (dsIdx is in range),
            (b) the user has no datasets selected yet (always offer "Add"),
@@ -92,14 +93,14 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
            (d) options are still loading (?? 1 keeps the slot visible during reactive transitions). -->
       <PlDropdown
         v-if="
-          dsIdx < app.model.args.datasetColumns.length ||
-          app.model.args.datasetColumns.length === 0 ||
+          dsIdx < app.model.data.datasetColumns.length ||
+          app.model.data.datasetColumns.length === 0 ||
           (getDatasetOptions(dsIdx)?.length ?? 1) !== 0
         "
         :options="getDatasetOptions(dsIdx) ?? []"
         :model-value="getDatasetValue(dsIdx)"
         @update:model-value="(v) => datasetValueSetter(dsIdx, v)"
-        :label="`${dsIdx === app.model.args.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`"
+        :label="`${dsIdx === app.model.data.datasetColumns.length ? 'Add' : 'Select'} dataset #${dsIdx + 1}`"
       />
     </template>
 
@@ -109,20 +110,20 @@ function getDatasetOptions(idx: number): ListOption<RefString | undefined>[] | u
   </template>
 
   <PlAccordionSection label="Downsampling (Bulk Datasets Only)">
-    <DownsamplingSettings v-model="app.model.args.downsampling" />
+    <DownsamplingSettings v-model="app.model.data.downsampling" />
   </PlAccordionSection>
 
   <PlAccordionSection label="Advanced Settings">
     <PlSectionSeparator>Resource allocation</PlSectionSeparator>
     <PlNumberField
-      v-model="app.model.args.perProcessMemGB"
+      v-model="app.model.data.perProcessMemGB"
       label="Set memory per every sample process (GB)"
       :minValue="1"
       :maxValue="999999"
     />
 
     <PlNumberField
-      v-model="app.model.args.perProcessCPUs"
+      v-model="app.model.data.perProcessCPUs"
       label="Set CPUs number per every sample process"
       :minValue="1"
       :maxValue="999999"

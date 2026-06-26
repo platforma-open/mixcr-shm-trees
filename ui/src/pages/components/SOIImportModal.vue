@@ -19,7 +19,7 @@ import {
   PlLogView,
 } from "@platforma-sdk/ui-vue";
 import { computedAsync } from "@vueuse/core";
-import { computed, reactive } from "vue";
+import { computed, reactive, watchEffect } from "vue";
 import { readFileForImport } from "../../dataimport";
 import { detectAlphabet, translate } from "../../alphabets";
 
@@ -80,17 +80,18 @@ const fileContent = computedAsync(async () => {
 // Table
 //
 
-const tableData = computed(() => {
+const tableParse = computed(() => {
   if (fileType.value === "table" && fileContent.value !== undefined) {
     try {
-      return readFileForImport(fileContent.value);
+      return { result: readFileForImport(fileContent.value) };
     } catch (e: any) {
       console.error(e);
-      data.errorMessage = { title: "Error reading table", message: e.msg };
-      return undefined;
+      return { error: { title: "Error reading table", message: e.msg } };
     }
-  } else return undefined;
+  }
+  return {};
 });
+const tableData = computed(() => tableParse.value.result);
 
 const columnOptions = computed<ListOption<number>[]>(() => {
   if (tableData.value) {
@@ -133,17 +134,24 @@ function parseFasta(content: string): FastaRecord[] {
   return records;
 }
 
-const fastaData = computed(() => {
+const fastaParse = computed(() => {
   if (fileType.value === "fasta" && fileContent.value !== undefined) {
     try {
       const content = new TextDecoder().decode(fileContent.value);
-      return parseFasta(content);
+      return { result: parseFasta(content) };
     } catch (e: any) {
       console.error(e);
-      data.errorMessage = { title: "Error reading fasta file", message: e.msg };
-      return undefined;
+      return { error: { title: "Error reading fasta file", message: e.msg } };
     }
-  } else return undefined;
+  }
+  return {};
+});
+const fastaData = computed(() => fastaParse.value.result);
+
+// Surface parse errors outside the computeds (no side effects in computed).
+watchEffect(() => {
+  const err = tableParse.value.error ?? fastaParse.value.error;
+  if (err) data.errorMessage = err;
 });
 
 const sequencesToImport = computed(() => {

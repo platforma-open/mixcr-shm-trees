@@ -1,55 +1,27 @@
 <script setup lang="ts">
-import { AxisId, isPValue, PTableColumnSpec, PTableRowKey } from "@platforma-sdk/model";
-import {
-  PlAgDataTable,
-  PlAgDataTableToolsPanel,
-  PlBlockPage,
-  PlTableFilters,
-  type PlAgDataTableController,
-  type PlDataTableSettings,
-} from "@platforma-sdk/ui-vue";
-import { computed, ref, watch } from "vue";
+import { AxisId, PTableKey } from "@platforma-sdk/model";
+import { PlAgDataTableV2, PlBlockPage, usePlDataTableSettingsV2 } from "@platforma-sdk/ui-vue";
 import { addDendrogram } from "../addDendrogram";
 import { useApp } from "../app";
 
 const app = useApp();
 
-/** UI state upgrader */ (() => {
-  if ("filtersOpen" in app.model.ui) delete app.model.ui.filtersOpen;
-  if (app.model.ui.filterModel === undefined) app.model.ui.filterModel = {};
-})();
+const tableSettings = usePlDataTableSettingsV2({
+  model: () => app.model.outputs.trees,
+});
 
-// TODO add default option to filter table by donor
-const tableSettings = computed<PlDataTableSettings | undefined>(() =>
-  app.model.outputs.treeColumnSpec
-    ? {
-        sourceType: "ptable",
-        pTable: app.model.outputs.trees,
-      }
-    : undefined,
-);
-const columns = ref<PTableColumnSpec[]>([]);
-
-// @TODO move to SDK
-function noNaOrNULL(key: PTableRowKey): key is (string | number)[] {
-  for (const k of key) {
-    const kType = typeof k;
-    if (kType !== "number" && kType !== "string") return false;
-  }
-  return true;
+// Keys reaching the row handler are concrete (no NA / null) axis values.
+function isConcreteKey(key: PTableKey): key is (string | number)[] {
+  return key.every((k) => typeof k === "number" || typeof k === "string");
 }
 
-const onRowDoubleClicked = (keys?: PTableRowKey) => {
-  console.dir(keys);
-  if (!keys || !noNaOrNULL(keys)) return;
-  if (!isPValue(keys[1], "Long")) throw new Error(`Unexpected key type ${typeof keys[1]}`);
+const onRowDoubleClicked = (keys?: PTableKey) => {
+  if (!keys || !isConcreteKey(keys)) return;
   const donorId = keys[0];
   const treeId = Number(keys[1]);
   const subtreeId = keys.length > 2 ? String(keys[2]) : undefined;
-  addDendrogram("Tree / " + String(keys[0]) + " / " + treeId, donorId, treeId, subtreeId, "X", "Y");
+  addDendrogram("Tree / " + String(keys[0]) + " / " + treeId, donorId, treeId, subtreeId);
 };
-
-const tableInstance = ref<PlAgDataTableController>();
 
 const treeIdAxis: AxisId = {
   type: "Long",
@@ -60,20 +32,12 @@ const treeIdAxis: AxisId = {
 <template>
   <PlBlockPage>
     <template #title>Trees Table</template>
-    <template #append>
-      <PlAgDataTableToolsPanel>
-        <PlTableFilters v-model="app.model.ui.filterModel" :columns="columns" />
-      </PlAgDataTableToolsPanel>
-    </template>
-    <PlAgDataTable
-      v-model="app.model.ui.treeTableState"
+    <PlAgDataTableV2
+      v-model="app.model.data.treeTableState"
       :settings="tableSettings"
       :show-cell-button-for-axis-id="treeIdAxis"
-      @cell-button-clicked="onRowDoubleClicked"
       show-export-button
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
-      ref="tableInstance"
+      @cell-button-clicked="onRowDoubleClicked"
     />
   </PlBlockPage>
 </template>

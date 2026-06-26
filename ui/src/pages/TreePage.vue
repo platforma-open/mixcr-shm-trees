@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import {
-  FullNodeId,
-  InitialFullTableState,
-} from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { FullNodeId } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { createPlDataTableStateV2 } from "@platforma-sdk/model";
 import { computed, reactive } from "vue";
 import { useApp } from "../app";
 import TreePageTable from "./TreePageTable.vue";
@@ -11,19 +9,19 @@ import TreePageGraph from "./TreePageGraph.vue";
 const app = useApp<`/dendrogram?id=${string}`>();
 
 const dendroIdx = computed(() =>
-  app.model.ui.dendrograms.findIndex((it) => it.id === app.queryParams.id),
+  app.model.data.dendrograms.findIndex((it) => it.id === app.queryParams.id),
 );
 const dendro = computed({
-  get: () => app.model.ui.dendrograms[dendroIdx.value],
-  set: (value) => (app.model.ui.dendrograms[dendroIdx.value] = value),
+  get: () => app.model.data.dendrograms[dendroIdx.value],
+  set: (value) => (app.model.data.dendrograms[dendroIdx.value] = value),
 });
 
 /** Migration */
 (() => {
   if (dendro.value.tableState === undefined)
-    dendro.value = { ...dendro.value, tableState: InitialFullTableState() };
+    dendro.value = { ...dendro.value, tableState: createPlDataTableStateV2() };
   if (dendro.value.tab === undefined) dendro.value = { ...dendro.value, tab: "Graph" };
-  if (app.model.ui.baskets === undefined) app.model.ui.baskets = [];
+  if (app.model.data.baskets === undefined) app.model.data.baskets = [];
 })();
 
 const data = reactive<{

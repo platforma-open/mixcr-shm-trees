@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { DownsamplingSettings } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
-import { ListOption, PlDropdown, PlTextField } from "@platforma-sdk/ui-vue";
+import { ListOption, PlDropdown, PlNumberField } from "@platforma-sdk/ui-vue";
 import { computed, ref, watch } from "vue";
 
 const model = defineModel<DownsamplingSettings | undefined>();
@@ -30,17 +30,17 @@ const currentValue = computed({
     const m = model.value;
     if (!m) return undefined;
     if (m.type !== currentType.value) return undefined;
-    else
-      switch (m.type) {
-        case "CountReadsFixed":
-        case "CountMoleculesFixed":
-        case "TopClonotypesByReads":
-        case "TopClonotypesByMolecules":
-          return m.number;
-        case "CumulativeTopClonotypesByReads":
-        case "CumulativeTopClonotypesByMolecules":
-          return m.percent;
-      }
+    switch (m.type) {
+      case "CountReadsFixed":
+      case "CountMoleculesFixed":
+      case "TopClonotypesByReads":
+      case "TopClonotypesByMolecules":
+        return m.number;
+      case "CumulativeTopClonotypesByReads":
+      case "CumulativeTopClonotypesByMolecules":
+        return m.percent;
+    }
+    return undefined;
   },
   set: (newValue) => {
     if (!newValue) return;
@@ -90,74 +90,37 @@ const DownsamplingOptions: ListOption<DType>[] = [
     label: "Top Clones Constituting % By Molecules",
   },
 ];
-
-function parseInteger(v: string): number {
-  const parsed = Number(v);
-
-  if (!Number.isFinite(parsed)) throw Error("Not a number");
-
-  if (!Number.isSafeInteger(parsed)) throw Error("Not an integer");
-
-  if (parsed <= 0) throw Error("Less than or equal to 0");
-
-  return parsed;
-}
-
-function parsePercent(v: string): number {
-  const parsed = Number(v);
-
-  if (!Number.isFinite(parsed)) throw Error("Not a number");
-
-  if (parsed > 100) throw Error("More than 100");
-
-  if (parsed <= 0) throw Error("Less than or equal to 0");
-
-  return parsed;
-}
 </script>
 
 <template>
   <PlDropdown :options="DownsamplingOptions" v-model="currentTypeValue" />
   <template v-if="currentType === 'CountReadsFixed'">
-    <PlTextField
-      v-model="currentValue"
-      :parse="parseInteger"
-      label="Number of Reads"
-      :clearable="() => undefined"
-    />
+    <PlNumberField v-model="currentValue" label="Number of Reads" :minValue="1" :step="1" />
   </template>
   <template v-else-if="currentType === 'CountMoleculesFixed'">
-    <PlTextField
-      v-model="currentValue"
-      :parse="parseInteger"
-      label="Number of Molecules"
-      :clearable="() => undefined"
-    />
+    <PlNumberField v-model="currentValue" label="Number of Molecules" :minValue="1" :step="1" />
   </template>
   <template
     v-else-if="currentType === 'TopClonotypesByReads' || currentType === 'TopClonotypesByMolecules'"
   >
-    <PlTextField
-      v-model="currentValue"
-      :parse="parseInteger"
-      label="Number of Clonotypes"
-      :clearable="() => undefined"
-    />
+    <PlNumberField v-model="currentValue" label="Number of Clonotypes" :minValue="1" :step="1" />
   </template>
   <template v-else-if="currentType === 'CumulativeTopClonotypesByReads'">
-    <PlTextField
+    <PlNumberField
       v-model="currentValue"
-      :parse="parsePercent"
       label="Percent of Reads"
-      :clearable="() => undefined"
+      :minValue="0"
+      :maxValue="100"
+      :step="1"
     />
   </template>
   <template v-else-if="currentType === 'CumulativeTopClonotypesByMolecules'">
-    <PlTextField
+    <PlNumberField
       v-model="currentValue"
-      :parse="parsePercent"
       label="Percent of Molecules"
-      :clearable="() => undefined"
+      :minValue="0"
+      :maxValue="100"
+      :step="1"
     />
   </template>
 </template>

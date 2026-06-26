@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import {
-  FullNodeId,
-  InitialFullTableState,
-  NodeBasket,
-} from "@platforma-open/milaboratories.mixcr-shm-trees.model";
-import { PlId, uniquePlId } from "@platforma-sdk/model";
+import { FullNodeId, NodeBasket } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
+import { createPlDataTableStateV2, PlId, uniquePlId } from "@platforma-sdk/model";
 import {
   ListOption,
   PlBtnGhost,
@@ -35,7 +31,7 @@ const data = reactive<{
 });
 
 watch(
-  () => app.model.ui.baskets.map((b) => b.name),
+  () => app.model.data.baskets.map((b) => b.name),
   (e) => {
     data.newBasketName = inferNewName(
       e,
@@ -47,7 +43,7 @@ watch(
 );
 
 const targetOptions = computed<ListOption<PlId | "">[]>(() => [
-  ...(app.model.ui.baskets ?? []).map((b) => ({ value: b.id, label: b.name })),
+  ...(app.model.data.baskets ?? []).map((b) => ({ value: b.id, label: b.name })),
   { value: "", label: "New basket..." },
 ]);
 
@@ -72,11 +68,11 @@ function runAdd() {
       comment: "",
       name: data.newBasketName,
       nodes: props.nodesToAdd,
-      tableState: InitialFullTableState(),
+      tableState: createPlDataTableStateV2(),
     };
-    app.model.ui.baskets.push(newBasket);
+    app.model.data.baskets.push(newBasket);
   } else {
-    const basket = app.model.ui.baskets.find((b) => b.id === data.targetBasket);
+    const basket = app.model.data.baskets.find((b) => b.id === data.targetBasket);
     if (basket) {
       basket.nodes = normalizeNodeSet([...basket.nodes, ...props.nodesToAdd]);
     }

@@ -1,19 +1,16 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from "vue";
+import { computed, ref } from "vue";
 import { useApp } from "../app";
-import { PTableColumnSpec, PTableRowKey } from "@platforma-sdk/model";
+import { PlSelectionModel, PTableKey } from "@platforma-sdk/model";
 import {
-  PlAgDataTable,
-  PlAgDataTableController,
-  PlAgDataTableToolsPanel,
+  PlAgDataTableV2,
   PlBlockPage,
   PlBtnGhost,
   PlBtnPrimary,
   PlBtnSecondary,
-  PlDataTableSettings,
   PlDialogModal,
   PlEditableTitle,
-  PlTableFilters,
+  type PlDataTableSettingsV2,
 } from "@platforma-sdk/ui-vue";
 import { ensureNumber, ensureSimpleValue } from "../util";
 import canonicalize from "canonicalize";
@@ -22,30 +19,24 @@ import { FullNodeId } from "@platforma-open/milaboratories.mixcr-shm-trees.model
 const app = useApp<"/" | `/basket?id=${string}`>();
 
 const basketIdx = computed(() =>
-  app.model.ui.baskets.findIndex((it) => it.id === app.queryParams.id),
+  app.model.data.baskets.findIndex((it) => it.id === app.queryParams.id),
 );
 const basket = computed({
-  get: () => app.model.ui.baskets[basketIdx.value],
-  set: (value) => (app.model.ui.baskets[basketIdx.value] = value),
+  get: () => app.model.data.baskets[basketIdx.value],
+  set: (value) => (app.model.data.baskets[basketIdx.value] = value),
 });
 
-const tableSettings = computed<PlDataTableSettings>(() => ({
-  sourceType: "ptable",
-  pTable: app.model.outputs.treeNodesPerBasket?.[basket.value.id],
-}));
-const columns = ref<PTableColumnSpec[]>([]);
-const tableInstance = ref<PlAgDataTableController>();
-
-const data = reactive<{
-  selectedRows: PTableRowKey[];
-  nodesToDelete?: FullNodeId[];
-  showDeleteBasketConfirmation: boolean;
-}>({
-  selectedRows: [],
-  showDeleteBasketConfirmation: false,
+const tableSettings = computed<PlDataTableSettingsV2>(() => {
+  const model = app.model.outputs.treeNodesPerBasket?.[basket.value.id];
+  if (!model) return { sourceId: null, pending: true, error: null };
+  return { sourceId: basket.value.id, sheets: [], model };
 });
 
-function keyToNodeId(key: PTableRowKey): FullNodeId {
+const selection = ref<PlSelectionModel>({ axesSpec: [], selectedKeys: [] });
+const nodesToDelete = ref<FullNodeId[] | undefined>();
+const showDeleteBasketConfirmation = ref(false);
+
+function keyToNodeId(key: PTableKey): FullNodeId {
   if (key.length === 6) {
     return {
       donorId: ensureSimpleValue(key[0]),
@@ -63,18 +54,18 @@ function keyToNodeId(key: PTableRowKey): FullNodeId {
 }
 
 function beginDeleteFromBasket() {
-  data.nodesToDelete = data.selectedRows.map((r) => keyToNodeId(r));
+  nodesToDelete.value = selection.value.selectedKeys.map((r) => keyToNodeId(r));
 }
 
 function deleteNodes() {
-  if (data.nodesToDelete === undefined) return;
-  const toDeletSet = new Set(data.nodesToDelete.map((n) => canonicalize(n)!));
-  basket.value.nodes = basket.value.nodes.filter((n) => !toDeletSet.has(canonicalize(n)!));
-  data.nodesToDelete = undefined;
+  if (nodesToDelete.value === undefined) return;
+  const toDeleteSet = new Set(nodesToDelete.value.map((n) => canonicalize(n)!));
+  basket.value.nodes = basket.value.nodes.filter((n) => !toDeleteSet.has(canonicalize(n)!));
+  nodesToDelete.value = undefined;
 }
 
 function deleteBasket() {
-  app.model.ui.baskets = app.model.ui.baskets.filter((it) => it.id !== app.queryParams.id);
+  app.model.data.baskets = app.model.data.baskets.filter((it) => it.id !== app.queryParams.id);
   app.navigateTo("/");
 }
 </script>
@@ -91,51 +82,44 @@ function deleteBasket() {
     </template>
     <template #append>
       <PlBtnGhost
-        v-if="data.selectedRows.length > 0"
+        v-if="selection.selectedKeys.length > 0"
         @click="beginDeleteFromBasket()"
         icon="delete-bin"
       >
         Delete Selected Nodes
       </PlBtnGhost>
-      <PlBtnGhost v-else @click="data.showDeleteBasketConfirmation = true" icon="delete-bin">
+      <PlBtnGhost v-else @click="showDeleteBasketConfirmation = true" icon="delete-bin">
         Delete This Basket
       </PlBtnGhost>
-      <PlAgDataTableToolsPanel>
-        <PlTableFilters v-model="basket.tableState.filterModel" :columns="columns" />
-      </PlAgDataTableToolsPanel>
     </template>
-    <PlAgDataTable
-      v-model="basket.tableState.tableState"
-      v-model:selected-rows="data.selectedRows"
+    <PlAgDataTableV2
+      v-model="basket.tableState"
+      v-model:selection="selection"
       :settings="tableSettings"
-      client-side-model
       show-export-button
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
-      ref="tableInstance"
     />
 
     <PlDialogModal
-      v-if="data.nodesToDelete !== undefined"
+      v-if="nodesToDelete !== undefined"
       :model-value="true"
       @update:model-value="
         (v) => {
-          if (!v) data.nodesToDelete = undefined;
+          if (!v) nodesToDelete = undefined;
         }
       "
     >
-      <template #title>Confirm delete of {{ data.nodesToDelete.length }} nodes</template>
+      <template #title>Confirm delete of {{ nodesToDelete.length }} nodes</template>
       <template #actions>
         <PlBtnPrimary @click="() => deleteNodes()">Delete</PlBtnPrimary>
-        <PlBtnSecondary @click="() => (data.nodesToDelete = undefined)">Cancel</PlBtnSecondary>
+        <PlBtnSecondary @click="() => (nodesToDelete = undefined)">Cancel</PlBtnSecondary>
       </template>
     </PlDialogModal>
 
-    <PlDialogModal v-model="data.showDeleteBasketConfirmation">
+    <PlDialogModal v-model="showDeleteBasketConfirmation">
       <template #title>Confirm delete of "{{ basket.name }}" basket</template>
       <template #actions>
         <PlBtnPrimary @click="() => deleteBasket()">Delete</PlBtnPrimary>
-        <PlBtnSecondary @click="() => (data.showDeleteBasketConfirmation = false)"
+        <PlBtnSecondary @click="() => (showDeleteBasketConfirmation = false)"
           >Cancel</PlBtnSecondary
         >
       </template>

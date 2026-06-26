@@ -1,18 +1,16 @@
 <script setup lang="ts">
 import {
   getRawPlatformaInstance,
-  PTableColumnSpec,
+  PlSelectionModel,
   pTableValue,
-  PTableRowKey,
+  PTableKey,
 } from "@platforma-sdk/model";
 import {
-  PlAgDataTable,
-  PlAgDataTableController,
-  PlAgDataTableToolsPanel,
+  PlAgDataTableV2,
+  PlAgDataTableV2Controller,
   PlBlockPage,
   PlBtnGhost,
-  PlDataTableSettings,
-  PlTableFilters,
+  type PlDataTableSettingsV2,
 } from "@platforma-sdk/ui-vue";
 import { computed, reactive, ref, watch } from "vue";
 import { useApp } from "../app";
@@ -28,54 +26,62 @@ const app = useApp<`/dendrogram?id=${string}`>();
 const props = defineProps<{ initialSelection?: FullNodeId }>();
 
 const dendroIdx = computed(() =>
-  app.model.ui.dendrograms.findIndex((it) => it.id === app.queryParams.id),
+  app.model.data.dendrograms.findIndex((it) => it.id === app.queryParams.id),
 );
 const dendro = computed({
-  get: () => app.model.ui.dendrograms[dendroIdx.value],
-  set: (value) => (app.model.ui.dendrograms[dendroIdx.value] = value),
+  get: () => app.model.data.dendrograms[dendroIdx.value],
+  set: (value) => (app.model.data.dendrograms[dendroIdx.value] = value),
 });
 
-const tableSettings = computed<PlDataTableSettings>(() => ({
-  sourceType: "ptable",
-  pTable: app.model.outputs.treeNodesPerTree?.[dendro.value.id],
-}));
-const columns = ref<PTableColumnSpec[]>([]);
-const tableInstance = ref<PlAgDataTableController>();
+const tableSettings = computed<PlDataTableSettingsV2>(() => {
+  const model = app.model.outputs.treeNodesPerTree?.[dendro.value.id];
+  if (!model) return { sourceId: null, pending: true, error: null };
+  return { sourceId: dendro.value.id, sheets: [], model };
+});
+
+const selection = ref<PlSelectionModel>({ axesSpec: [], selectedKeys: [] });
+const tableInstance = ref<PlAgDataTableV2Controller>();
 
 const data = reactive<{
-  selectedRows: PTableRowKey[];
   nodesToAdd: FullNodeId[];
 }>({
-  selectedRows: [],
   nodesToAdd: [],
 });
 
 watch(tableInstance, async (tiNew, tiOld) => {
-  const table = app.model.outputs.treeNodesPerTree?.[dendro.value.id];
+  const model = app.model.outputs.treeNodesPerTree?.[dendro.value.id];
+  const handle = model?.fullTableHandle;
   if (
     tiOld === undefined &&
     tiNew !== undefined &&
     props.initialSelection !== undefined &&
-    table !== undefined
+    handle !== undefined
   ) {
     const targetKeyStr = canonicalize(props.initialSelection);
     const platforma = getRawPlatformaInstance();
     const keyLength = props.initialSelection.subtreeId === undefined ? 5 : 6;
-    const keyColumns: number[] = [];
-    for (let k = 0; k < keyLength; ++k) keyColumns.push(k);
-    const tData = await platforma.pFrameDriver.getData(table, keyColumns);
-    const selection: PTableRowKey[] = [];
+    const keyColumns = Array.from({ length: keyLength }, (_, k) => k);
+    const spec = await platforma.pFrameDriver.getSpec(handle);
+    const axesSpec = keyColumns.map((k) => {
+      const s = spec[k];
+      if (s.type !== "axis") throw new Error(`Expected axis column at index ${k}`);
+      return s.id;
+    });
+    const tData = await platforma.pFrameDriver.getData(handle, keyColumns);
+    const selectedKeys: PTableKey[] = [];
     for (let i = 0; i < tData[0].data.length; ++i) {
-      const key: PTableRowKey = [];
+      const key: PTableKey = [];
       for (let k = 0; k < keyLength; ++k) key.push(pTableValue(tData[k], i));
-      if (canonicalize(keyToNodeId(key)) === targetKeyStr) selection.push(key);
+      if (canonicalize(keyToNodeId(key)) === targetKeyStr) selectedKeys.push(key);
     }
-    data.selectedRows = selection;
-    if (data.selectedRows.length > 0) tiNew.focusRow(data.selectedRows[0]);
+    if (selectedKeys.length > 0) {
+      await tiNew.updateSelection({ axesSpec, selectedKeys });
+      await tiNew.focusRow(selectedKeys[0]);
+    }
   }
 });
 
-function keyToNodeId(key: PTableRowKey): FullNodeId {
+function keyToNodeId(key: PTableKey): FullNodeId {
   if (key.length === 6) {
     return {
       donorId: ensureSimpleValue(key[0]),
@@ -93,7 +99,7 @@ function keyToNodeId(key: PTableRowKey): FullNodeId {
 }
 
 function addToBasket() {
-  data.nodesToAdd = data.selectedRows.map((r) => keyToNodeId(r));
+  data.nodesToAdd = selection.value.selectedKeys.map((r) => keyToNodeId(r));
 }
 </script>
 
@@ -101,22 +107,16 @@ function addToBasket() {
   <PlBlockPage>
     <template #title>{{ dendro.state.title }}</template>
     <template #append>
-      <PlBtnGhost v-if="data.selectedRows.length > 0" @click="addToBasket()" icon="table-add">
+      <PlBtnGhost v-if="selection.selectedKeys.length > 0" @click="addToBasket()" icon="table-add">
         Add Nodes to Basket
       </PlBtnGhost>
-      <PlAgDataTableToolsPanel>
-        <PlTableFilters v-model="dendro.tableState.filterModel" :columns="columns" />
-      </PlAgDataTableToolsPanel>
       <PlBtnGhost @click="emit('toGraph')" icon="graph">Go to Graph</PlBtnGhost>
     </template>
-    <PlAgDataTable
-      v-model="dendro.tableState.tableState"
-      v-model:selected-rows="data.selectedRows"
+    <PlAgDataTableV2
+      v-model="dendro.tableState"
+      v-model:selection="selection"
       :settings="tableSettings"
-      client-side-model
       show-export-button
-      show-columns-panel
-      @columns-changed="(newColumns) => (columns = newColumns)"
       ref="tableInstance"
     />
     <AddToBasketModal

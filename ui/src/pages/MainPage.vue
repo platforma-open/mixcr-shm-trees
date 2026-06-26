@@ -16,16 +16,15 @@ import { TreeResult, TreeResultsFull } from "../results";
 import ProgressCell from "./components/ProgressCell.vue";
 import RunReportPanel from "./components/RunReportPanel.vue";
 import MainSettingsPanel from "./components/MainSettingsPanel.vue";
-import { NotNAPValue } from "@platforma-sdk/model";
 
 const { model } = useApp();
 
 const data = reactive<{
   settingsOpen: boolean;
   donorReportOpen: boolean;
-  selectedDonor: NotNAPValue | undefined;
+  selectedDonor: string | number | undefined;
 }>({
-  settingsOpen: model.args.donorColumn === undefined || model.args.datasetColumns.length === 0,
+  settingsOpen: model.data.donorColumn === undefined || model.data.datasetColumns.length === 0,
   donorReportOpen: false,
   selectedDonor: undefined,
 });
@@ -78,7 +77,7 @@ const columnDefs: ColDef<TreeResult>[] = [
 ];
 
 const isArgsValid = computed(
-  () => model.args.donorColumn !== undefined && model.args.datasetColumns.length > 0,
+  () => model.data.donorColumn !== undefined && model.data.datasetColumns.length > 0,
 );
 
 const notReady = computed(() => !isArgsValid.value || !model.outputs.started);

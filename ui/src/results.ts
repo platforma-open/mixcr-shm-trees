@@ -3,8 +3,6 @@ import {
   AnyLogHandle,
   BlobHandleAndSize,
   isLiveLog,
-  isNotNAPValue,
-  NotNAPValue,
   PColumnResourceMapData,
 } from "@platforma-sdk/model";
 import { ReactiveFileContent } from "@platforma-sdk/ui-vue";
@@ -12,8 +10,11 @@ import { computed } from "vue";
 import { useApp } from "./app";
 import { ByStepIdRecord, Steps } from "./types";
 
+// Donor axis values are concrete (non-NA) string|number keys.
+type DonorId = string | number;
+
 export type TreeResult = {
-  donor: NotNAPValue;
+  donor: DonorId;
 
   progress: ByStepIdRecord<string>;
 
@@ -27,13 +28,13 @@ export type TreeResult = {
 };
 
 function integrateData<T>(
-  resultMap: Map<NotNAPValue, TreeResult>,
+  resultMap: Map<DonorId, TreeResult>,
   data: PColumnResourceMapData<T> | undefined,
   integrator: (result: TreeResult, data: NonNullable<T>) => void,
 ) {
   if (data)
     for (const d of data.data) {
-      if (d.key.length !== 1 || !isNotNAPValue(d.key[0]))
+      if (d.key.length !== 1 || (typeof d.key[0] !== "string" && typeof d.key[0] !== "number"))
         throw new Error(`assertion error, key = ${d.key[0]}}`); // @TODO (this kills ui)
       const donor = d.key[0];
       const result = resultMap.get(donor);
@@ -51,7 +52,7 @@ export const TreeResultsMap = computed(() => {
   let targetDonorIds = app.model.outputs.targetDonorIds;
   if (targetDonorIds === undefined) return undefined;
 
-  const resultMap = new Map<NotNAPValue, TreeResult>();
+  const resultMap = new Map<DonorId, TreeResult>();
 
   targetDonorIds = [...targetDonorIds];
   targetDonorIds.sort();
@@ -76,12 +77,14 @@ export const TreeResultsMap = computed(() => {
   integrateData(
     resultMap,
     app.model.outputs.allelesReportsJson,
-    (r, v) => (r.jsonReport.alleles = ReactiveFileContent.getContentJson(v.handle)?.value),
+    (r, v) =>
+      (r.jsonReport.alleles = ReactiveFileContent.useGlobal().getContentJson(v.handle)?.value),
   );
   integrateData(
     resultMap,
     app.model.outputs.treesReportsJson,
-    (r, v) => (r.jsonReport.trees = ReactiveFileContent.getContentJson(v.handle)?.value),
+    (r, v) =>
+      (r.jsonReport.trees = ReactiveFileContent.useGlobal().getContentJson(v.handle)?.value),
   );
 
   integrateData(
@@ -106,7 +109,6 @@ export const TreeResultsFull = computed<TreeResult[] | undefined>(() => {
 
   const doneRaw = app.model.outputs.done;
   if (doneRaw === undefined) return undefined;
-  const done = new Set(doneRaw);
 
   const rawMap = TreeResultsMap.value;
   if (rawMap === undefined) return undefined;

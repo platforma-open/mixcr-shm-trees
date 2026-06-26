@@ -36,8 +36,8 @@ const parsed = computed<Parsed>(() => {
 
   const match = raw.match(ProgressPattern);
 
-  if (match) {
-    const { stage, progress, eta } = match?.groups!;
+  if (match && match.groups) {
+    const { stage, progress, eta } = match.groups;
     res.stage = stage;
     res.percentage = progress;
     res.eta = eta;

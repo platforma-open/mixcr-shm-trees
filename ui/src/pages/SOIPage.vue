@@ -35,7 +35,7 @@ const app = useApp();
 const lists = computed(
   () =>
     [
-      ...(app.model.args.sequencesOfInterest?.map((l) => ({
+      ...(app.model.data.sequencesOfInterest?.map((l) => ({
         value: l.parameters.id,
         label: l.parameters.name,
       })) ?? []),
@@ -57,7 +57,7 @@ const data = reactive<{
 }>({ settingsOpen: false });
 
 watch(
-  () => app.model.args.sequencesOfInterest?.map((v) => v.parameters.id) ?? [],
+  () => app.model.data.sequencesOfInterest?.map((v) => v.parameters.id) ?? [],
   (ids) => {
     if (data.currentListId === undefined && ids.length > 0) data.currentListId = ids[0];
     else if (!ids.find((id) => id === data.currentListId)) {
@@ -75,10 +75,10 @@ function startAddingNewList() {
 function addNewList() {
   if (!data.newList) return;
   const id = uniquePlId();
-  let sois = app.model.args.sequencesOfInterest;
+  let sois = app.model.data.sequencesOfInterest;
   if (sois === undefined) {
     sois = [];
-    app.model.args.sequencesOfInterest = sois;
+    app.model.data.sequencesOfInterest = sois;
   }
   let prefix =
     data.newList.targetFeature + " " + (data.newList.type === "nucleotide" ? "Nt" : "AA");
@@ -106,7 +106,7 @@ function addNewList() {
 
 function getListIdx(id: PlId | undefined): number | undefined {
   if (id === undefined) return undefined;
-  const idx = app.model.args.sequencesOfInterest?.findIndex((l) => l.parameters.id === id);
+  const idx = app.model.data.sequencesOfInterest?.findIndex((l) => l.parameters.id === id);
   if (idx === undefined || idx === -1) return undefined;
   return idx;
 }
@@ -116,11 +116,11 @@ function deleteList(listToDelete: PlId) {
   if (idx === undefined) return;
   data.currentListId =
     idx > 0
-      ? app.model.args.sequencesOfInterest![idx - 1].parameters.id
-      : app.model.args.sequencesOfInterest!.length === 1
+      ? app.model.data.sequencesOfInterest![idx - 1].parameters.id
+      : app.model.data.sequencesOfInterest!.length === 1
         ? undefined
-        : app.model.args.sequencesOfInterest![1].parameters.id;
-  app.model.args.sequencesOfInterest!.splice(idx, 1);
+        : app.model.data.sequencesOfInterest![1].parameters.id;
+  app.model.data.sequencesOfInterest!.splice(idx, 1);
 }
 
 async function importFile() {
@@ -136,8 +136,8 @@ async function importFile() {
 function onImport(records: SequenceOfInterest[]) {
   const idx = getListIdx(data.currentListId);
   if (idx === undefined) return;
-  app.model.args.sequencesOfInterest![idx].sequences = [
-    ...app.model.args.sequencesOfInterest![idx].sequences,
+  app.model.data.sequencesOfInterest![idx].sequences = [
+    ...app.model.data.sequencesOfInterest![idx].sequences,
     ...records,
   ];
   data.importFile = undefined;
@@ -154,15 +154,15 @@ const currentListIdForList = computed<string>({
 const currentList = computed<SOIList | undefined>({
   get: () => {
     if (data.currentListId === undefined) return undefined;
-    return app.model.args.sequencesOfInterest?.find((l) => l.parameters.id === data.currentListId);
+    return app.model.data.sequencesOfInterest?.find((l) => l.parameters.id === data.currentListId);
   },
   set: (newValue) => {
     if (data.currentListId === undefined || newValue === undefined) return;
-    const idx = app.model.args.sequencesOfInterest?.findIndex(
+    const idx = app.model.data.sequencesOfInterest?.findIndex(
       (l) => l.parameters.id === data.currentListId,
     );
     if (idx === undefined || idx === -1) return;
-    app.model.args.sequencesOfInterest![idx] = newValue;
+    app.model.data.sequencesOfInterest![idx] = newValue;
   },
 });
 </script>

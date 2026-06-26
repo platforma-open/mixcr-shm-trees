@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import type { PredefinedGraphOption } from "@milaboratories/graph-maker";
 import { GraphMaker } from "@milaboratories/graph-maker";
-import "@milaboratories/graph-maker/styles";
 import type { FullNodeId, FullTreeId } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
 import { treeNodesFilter } from "@platforma-open/milaboratories.mixcr-shm-trees.model";
 import type { AxisSpec, PVectorDataLong, PVectorDataString } from "@platforma-sdk/model";
-import { getRawPlatformaInstance, pValueToStringOrNumber } from "@platforma-sdk/model";
+import { getRawPlatformaInstance } from "@platforma-sdk/model";
 import {
   PlBtnGhost,
   PlBtnPrimary,
@@ -25,11 +24,11 @@ const emit = defineEmits<{
 const app = useApp<`/dendrogram?id=${string}`>();
 
 const dendroIdx = computed(() =>
-  app.model.ui.dendrograms.findIndex((it) => it.id === app.queryParams.id),
+  app.model.data.dendrograms.findIndex((it) => it.id === app.queryParams.id),
 );
 const dendro = computed({
-  get: () => app.model.ui.dendrograms[dendroIdx.value],
-  set: (value) => (app.model.ui.dendrograms[dendroIdx.value] = value),
+  get: () => app.model.data.dendrograms[dendroIdx.value],
+  set: (value) => (app.model.data.dendrograms[dendroIdx.value] = value),
 });
 
 const fullId = computed(() => {
@@ -37,7 +36,7 @@ const fullId = computed(() => {
   if (!d) return undefined;
   return {
     treeId: d.treeId,
-    donorId: pValueToStringOrNumber(d.donorId),
+    donorId: d.donorId,
     subtreeId: d.subtreeId,
   } as FullTreeId;
 });
@@ -150,12 +149,12 @@ const fixedOptions = computed(() => {
     {
       inputName: "filters",
       selectedSource: tcSpec.axesSpec[0],
-      selectedFilterValue: fid.donorId,
+      selectedFilterValues: [String(fid.donorId)],
     },
     {
       inputName: "filters",
       selectedSource: tcSpec.axesSpec[1],
-      selectedFilterValue: fid.treeId,
+      selectedFilterValues: [String(fid.treeId)],
     },
   ] as PredefinedGraphOption<"dendro">[];
 
@@ -163,16 +162,18 @@ const fixedOptions = computed(() => {
     fixedOps.push({
       inputName: "filters",
       selectedSource: tcSpec.axesSpec[2],
-      selectedFilterValue: fid.subtreeId,
+      selectedFilterValues: [String(fid.subtreeId)],
     });
 
   return fixedOps;
 });
 
 const subtreeOptions = computedAsync(async () => {
+  const pFrame = app.model.outputs.treeNodesPFrame;
   if (
     !subtreeAxis.value ||
-    !app.model.outputs.treeNodesPFrame ||
+    !pFrame?.ok ||
+    !pFrame.value ||
     !app.model.outputs.vjColumns ||
     !app.model.outputs.treeColumnSpec ||
     !dendro.value ||
@@ -183,7 +184,7 @@ const subtreeOptions = computedAsync(async () => {
   const pl = getRawPlatformaInstance();
 
   try {
-    const data = await pl.pFrameDriver.calculateTableData(app.model.outputs.treeNodesPFrame, {
+    const data = await pl.pFrameDriver.calculateTableData(pFrame.value, {
       src: {
         type: "inner",
         entries: app.model.outputs.vjColumns?.map((column) => ({ type: "column", column })),
@@ -224,12 +225,12 @@ watch(
 
 const removeConfirmationWindowOpen = ref(false);
 const removeSection = async () => {
-  await app.updateUiState((ui) => {
-    ui.dendrograms = ui.dendrograms.filter((it) => it.id !== app.queryParams.id);
-    return ui;
+  await app.updateData((data) => {
+    data.dendrograms = data.dendrograms.filter((it) => it.id !== app.queryParams.id);
+    return data;
   });
-  const lastId = app.model.ui.dendrograms.length
-    ? app.model.ui.dendrograms[app.model.ui.dendrograms.length - 1]["id"]
+  const lastId = app.model.data.dendrograms.length
+    ? app.model.data.dendrograms[app.model.data.dendrograms.length - 1]["id"]
     : undefined;
   if (lastId) {
     app.navigateTo(`/dendrogram?id=${lastId}`);
