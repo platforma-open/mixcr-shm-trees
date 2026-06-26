@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.5.12
+
+### Patch Changes
+
+- 8ea8a1a: Bump build tooling (`@platforma-sdk/block-tools` 2.11.3, `@platforma-sdk/tengo-builder` 4.0.10) to satisfy the require-latest publication preflight.
+- Updated dependencies [be7d5ac]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@4.2.9
+
 ## 3.5.11
 
 ### Patch Changes

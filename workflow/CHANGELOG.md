@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.2.9
+
+### Patch Changes
+
+- be7d5ac: Fix broken block after workflow-tengo update
+
 ## 4.2.8
 
 ### Patch Changes
