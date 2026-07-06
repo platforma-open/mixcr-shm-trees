@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.3.0
+
+### Minor Changes
+
+- 7370922: Bump @platforma-sdk/workflow-tengo version
+
 ## 4.2.9
 
 ### Patch Changes
