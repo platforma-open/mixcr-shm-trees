@@ -46,8 +46,8 @@ catalogs:
       specifier: 1.31.11
       version: 1.31.11
     '@platforma-sdk/workflow-tengo':
-      specifier: ^5.26.0
-      version: 5.26.0
+      specifier: ^6.6.5
+      version: 6.6.5
     '@vitejs/plugin-vue':
       specifier: ^5.2.4
       version: 5.2.4
@@ -239,7 +239,7 @@ importers:
     dependencies:
       '@platforma-sdk/workflow-tengo':
         specifier: 'catalog:'
-        version: 5.26.0
+        version: 6.6.5
     devDependencies:
       '@platforma-open/milaboratories.software-mitool':
         specifier: 'catalog:'
@@ -1284,8 +1284,8 @@ packages:
     resolution: {integrity: sha512-qr5lnaJSnI7PmZMh+/PJXOURe3jKSFLWiqo1Ha1OSbY0JwHOmpU8n2aZOGjwscLLTk8AgF6Jfv5t/kPhGk348g==}
     hasBin: true
 
-  '@milaboratories/pframes-rs-wasip2@1.1.35':
-    resolution: {integrity: sha512-kcR9YLWAbKYSpksPOoJWkcrkSiUUAEKj/Wuyc9aFsd2bNbWcIb7mLGptFOuvhLn07bZHn0oNcVgupEqd/6Ftbw==}
+  '@milaboratories/pframes-rs-wasip2@1.1.52':
+    resolution: {integrity: sha512-0rb0We6Q/aqrHJ062dayvLb4RExODZdqfsVWdzeHq23alY5TjJRMWsO9aKQpPnOuUKjAimdjlp+Ldq9TVhbEtg==}
 
   '@milaboratories/pl-client@2.16.1':
     resolution: {integrity: sha512-XcFa5xBpQQ/jJwyEWXEwuX8yiqsUCmGSzaywvShcsJOOuSkX/u8gV5bIIgivV6X7nJt1yX+mukaugo4wjkZZoQ==}
@@ -1422,8 +1422,8 @@ packages:
   '@platforma-open/milaboratories.software-ptabler@1.13.3':
     resolution: {integrity: sha512-deswcfndJTUyHDgK7GofFn2n3XwtvuUfWS2fF6jZ0cwVkb2wht2FDaAKaIVu7bEDe3FopVC5PXa5D475FAKT7g==}
 
-  '@platforma-open/milaboratories.software-ptabler@1.16.1':
-    resolution: {integrity: sha512-m4tzKYlopjHLYpRLSjIqEtFr0QP7MuweaMCTEmr6a+gIVE+x9MKawdXwNwo1A/2QuatygIcGRvIcIz34WibZMA==}
+  '@platforma-open/milaboratories.software-ptabler@2.1.3':
+    resolution: {integrity: sha512-4cikdkdJ5WYc0Nw3IoZxzlFNKvG1qCAqSjypq5b18pIK6LBDayzhFcuw5TDd8O3bAFhoHP+3cVTmoO9XUTYMRg==}
 
   '@platforma-open/milaboratories.software-ptexter@1.2.0':
     resolution: {integrity: sha512-7dKhQyecDcxjRNOS9XRgLemZpOuJ3dKMryrBbbkYR6VLKj566tJkbKiC7p1wAWEtHKHEZUhCQYgTZfEtwHCkDA==}
@@ -1451,6 +1451,9 @@ packages:
 
   '@platforma-open/milaboratories.software-small-binaries.java-stub@1.0.4':
     resolution: {integrity: sha512-nr0H+TZDKUR7dpxY5Q5Gh1FOT9Jx4Sr0Uk6jO2I18jJaOPchEPY+gOxemPJO30SNkkkbQiIRBBJYF54tMFiesA==}
+
+  '@platforma-open/milaboratories.software-small-binaries.line-counter@1.1.1':
+    resolution: {integrity: sha512-3bqn2ZK/dV5IR0Zp678Ea9lGSHjLvfRv4lyRBYXZNO1mMWIlEhtT0bmn6FhNzBBj+MhTQfSRFnEsOejtfdN1Ew==}
 
   '@platforma-open/milaboratories.software-small-binaries.mnz-client@1.6.1':
     resolution: {integrity: sha512-4dJnBVFqxFgFznepUQAMJceWcJrGE2Ms5LH+2BMjG/qOFJpEAiWJlrjiobiapqf2jnJgxM1AcDVR9M67uGrySA==}
@@ -1485,8 +1488,8 @@ packages:
   '@platforma-open/milaboratories.software-small-binaries@1.15.23':
     resolution: {integrity: sha512-I1G2qEWALvNAJy9kOTXjryu0GvK+hvUCVPckNhGkFO/cGIsST7R7s9pm0exhG92PyuLFa5lwJFx/fgobqWUWNw==}
 
-  '@platforma-open/milaboratories.software-small-binaries@2.0.4':
-    resolution: {integrity: sha512-q8dAJ/RwAR35uKj74Bvzq4lpuBLxzuCNkuCH4suwb2ybDyEggL0XUB26aUuf15hX+6rFVulyBaQToXURKVKwzw==}
+  '@platforma-open/milaboratories.software-small-binaries@2.1.1':
+    resolution: {integrity: sha512-KN1PR7YgUUfx1dxh/TtcoWpSZbOXbRxXzQuJ505qHuXuE0spYwC7bXnvJsEYbEwRcPMa0foTrjBnPNORE4yr+Q==}
 
   '@platforma-sdk/block-tools@2.11.3':
     resolution: {integrity: sha512-YnFRtgRcXMLUv3T5v5C+80EMa5pdYlAFCfKCPCriVs3Mf/pYYnqWvqVhNOFR3DiV+NGYDZK4D92toPnbvzzsMA==}
@@ -1533,11 +1536,11 @@ packages:
   '@platforma-sdk/ui-vue@1.31.11':
     resolution: {integrity: sha512-G69XU6lLQ7D+J9pDmQHRKZb64WQMrI9m/bod32AuCgqrKZkFdiy5w6qkHDZH/pW0UBprUerZzH6GclRc1Q+Ohg==}
 
-  '@platforma-sdk/workflow-tengo@5.26.0':
-    resolution: {integrity: sha512-lXoFzD0LsQqEF9WUkA48avAY7LOK9WdP7sIc/Bymu1fOm4peXEWWZFW7fYckCPhHEAwcyzjqh7jdE8pVXrfzvw==}
-
   '@platforma-sdk/workflow-tengo@5.5.11':
     resolution: {integrity: sha512-qLzmBICKEsOOGg1Hh/yrTKw6OnKP7BPr/Ee4u5kYVSg0+4E4NZq9WFzs3wSgOL/7g3szbKrd7MKNPebqlSPYaA==}
+
+  '@platforma-sdk/workflow-tengo@6.6.5':
+    resolution: {integrity: sha512-BIY0DongPruQ7e2EMYy2b0UtO5ziGcLvr2RWgJ8ki17VKNzW3esm/RBszGHMrTYmXM0Yw7mCSasor4vH560g7A==}
 
   '@protobuf-ts/grpc-transport@2.11.1':
     resolution: {integrity: sha512-l6wrcFffY+tuNnuyrNCkRM8hDIsAZVLA8Mn7PKdVyYxITosYh60qW663p9kL6TWXYuDCL3oxH8ih3vLKTDyhtg==}
@@ -7089,7 +7092,7 @@ snapshots:
       commander: 14.0.1
       selfsigned: 3.0.1
 
-  '@milaboratories/pframes-rs-wasip2@1.1.35': {}
+  '@milaboratories/pframes-rs-wasip2@1.1.52': {}
 
   '@milaboratories/pl-client@2.16.1':
     dependencies:
@@ -7398,7 +7401,7 @@ snapshots:
 
   '@platforma-open/milaboratories.software-ptabler@1.13.3': {}
 
-  '@platforma-open/milaboratories.software-ptabler@1.16.1': {}
+  '@platforma-open/milaboratories.software-ptabler@2.1.3': {}
 
   '@platforma-open/milaboratories.software-ptexter@1.2.0': {}
 
@@ -7417,6 +7420,8 @@ snapshots:
   '@platforma-open/milaboratories.software-small-binaries.hello-world@1.1.7': {}
 
   '@platforma-open/milaboratories.software-small-binaries.java-stub@1.0.4': {}
+
+  '@platforma-open/milaboratories.software-small-binaries.line-counter@1.1.1': {}
 
   '@platforma-open/milaboratories.software-small-binaries.mnz-client@1.6.1': {}
 
@@ -7453,10 +7458,11 @@ snapshots:
       '@platforma-open/milaboratories.software-small-binaries.small-asset': 1.1.4
       '@platforma-open/milaboratories.software-small-binaries.table-converter': 1.3.1
 
-  '@platforma-open/milaboratories.software-small-binaries@2.0.4':
+  '@platforma-open/milaboratories.software-small-binaries@2.1.1':
     dependencies:
       '@platforma-open/milaboratories.software-small-binaries.hello-world': 1.1.7
       '@platforma-open/milaboratories.software-small-binaries.hello-world-py': 1.0.10
+      '@platforma-open/milaboratories.software-small-binaries.line-counter': 1.1.1
       '@platforma-open/milaboratories.software-small-binaries.mnz-client': 1.6.5
       '@platforma-open/milaboratories.software-small-binaries.table-converter': 1.3.5
 
@@ -7596,20 +7602,20 @@ snapshots:
       - supports-color
       - typescript
 
-  '@platforma-sdk/workflow-tengo@5.26.0':
-    dependencies:
-      '@milaboratories/pframes-rs-wasip2': 1.1.35
-      '@milaboratories/software-pframes-conv': 2.2.9
-      '@platforma-open/milaboratories.software-ptabler': 1.16.1
-      '@platforma-open/milaboratories.software-ptexter': 1.2.2
-      '@platforma-open/milaboratories.software-small-binaries': 2.0.4
-
   '@platforma-sdk/workflow-tengo@5.5.11':
     dependencies:
       '@milaboratories/software-pframes-conv': 2.2.9
       '@platforma-open/milaboratories.software-ptabler': 1.13.3
       '@platforma-open/milaboratories.software-ptexter': 1.2.0
       '@platforma-open/milaboratories.software-small-binaries': 1.15.23
+
+  '@platforma-sdk/workflow-tengo@6.6.5':
+    dependencies:
+      '@milaboratories/pframes-rs-wasip2': 1.1.52
+      '@milaboratories/software-pframes-conv': 2.2.9
+      '@platforma-open/milaboratories.software-ptabler': 2.1.3
+      '@platforma-open/milaboratories.software-ptexter': 1.2.2
+      '@platforma-open/milaboratories.software-small-binaries': 2.1.1
 
   '@protobuf-ts/grpc-transport@2.11.1(@grpc/grpc-js@1.13.4)':
     dependencies:
