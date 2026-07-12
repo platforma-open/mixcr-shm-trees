@@ -251,7 +251,7 @@ shmTree := func(dataDescription) {
         pfconvParams: {
             axes: axes,
             columns: columns,
-            storageFormat: "Binary",
+            storageFormat: "Parquet",
             partitionKeyLength: 0
         },
         cmdArgs: cmdArgs
@@ -669,7 +669,7 @@ shmTreeNodes := func(dataDescription) {
         pfconvParams: {
             axes: axes,
             columns: columns,
-            storageFormat: "Binary",
+            storageFormat: "Parquet",
             partitionKeyLength: 0
         },
         cmdArgs: cmdArgs
@@ -856,7 +856,7 @@ shmTreeNodesWithClones := func(dataDescription, donorColumn) {
         pfconvParams: {
             axes: axes,
             columns: columns,
-            storageFormat: "Binary",
+            storageFormat: "Parquet",
             partitionKeyLength: 0
         },
         cmdArgs: cmdArgs
@@ -925,7 +925,7 @@ shmTreeNodesUniqueIsotype := func(dataDescription) {
         pfconvParams: {
             axes: axes,
             columns: columns,
-            storageFormat: "Binary",
+            storageFormat: "Parquet",
             partitionKeyLength: 0
         }
     }

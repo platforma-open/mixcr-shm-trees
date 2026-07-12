@@ -150,14 +150,14 @@ self.body(func(inputs) {
 	resultConvParams := {
 		axes: importAxesSpec,
 		columns: resultColumns,
-		storageFormat: "Binary",
+		storageFormat: "Parquet",
 		partitionKeyLength: 0 // inferPartitionKeyLength(queryData)
 	}
 
 	aggregatedConvParams := {
 		axes: aggregationImportAxesSpec,
 		columns: resultColumns,
-		storageFormat: "Binary",
+		storageFormat: "Parquet",
 		partitionKeyLength: 0 // inferPartitionKeyLength(queryData)
 	}
 
