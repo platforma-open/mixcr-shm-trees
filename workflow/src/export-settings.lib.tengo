@@ -21,6 +21,18 @@ addTableAnnotations := func(order, defaultVisibility, label, specAnnotations) {
 	})
 }
 
+// These columns reach importFileParquet float-formatted ("192.0"); its strict
+// String->Long cast then nulls the whole column, and an all-null parentId makes
+// the tree viewer show "multiple roots". Strip the fractional part before the
+// cast to coerce them back to Long. Two independent causes converge here:
+//   - parentId: MiXCR emits a clean integer, but the Pandas-based ptransform
+//     aggregation (tables-aggregation.lib.tengo) promotes any NA-bearing integer
+//     column to float, and tree roots have an empty parent.
+//   - readCount / totalReadsCountInTree: MiXCR emits these as doubles itself.
+// This truncates; it is not mixcr-clonotyping's numeric round().cast (that needs
+// a pt step). Equivalent only because every value here is integer-valued (X.0).
+stripDecimal := [{ type: `regexpReplace`, pattern: `^(\d+)\.\d+$`, replacement: `$1` }]
+
 // export of threes whithout nodes
 shmTree := func(dataDescription) {
     axes := []
@@ -107,6 +119,7 @@ shmTree := func(dataDescription) {
         column: "totalReadsCountInTree",
         id: "total-reads-count-in-tree",
         allowNA: allowNA,
+        preProcess: stripDecimal,
         spec: {
             name: "pl7.app/vdj/totalReadsCountInTree",
             valueType: "Long",
@@ -318,6 +331,7 @@ shmTreeNodes := func(dataDescription) {
         column: "parentId",
         id: "parent-id",
         allowNA: true,
+        preProcess: stripDecimal,
         spec: {
             name: "pl7.app/dendrogram/topology",
             valueType: "Long",
@@ -783,6 +797,7 @@ shmTreeNodesWithClones := func(dataDescription, donorColumn) {
         column: "readCount",
         id: "read-count",
         allowNA: true,
+        preProcess: stripDecimal,
         spec: {
           name: "pl7.app/vdj/readCount",
           valueType: "Long",
@@ -901,6 +916,7 @@ shmTreeNodesUniqueIsotype := func(dataDescription) {
         column: "readCount",
         id: "read-count",
         allowNA: true,
+        preProcess: stripDecimal,
         spec: {
           name: "pl7.app/vdj/readCount",
           valueType: "Long",
