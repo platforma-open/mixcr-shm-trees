@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.6.2
+
+### Patch Changes
+
+- 867b475: Update prepublishOnly script to align with latest block-tools
+
 ## 3.6.1
 
 ### Patch Changes

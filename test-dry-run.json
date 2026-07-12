@@ -3,7 +3,7 @@
 > turbo run test --dry-run=json
 
 {
-  "id": "3GOzfoUVifLiAkxWBIlOCW6Ebuf",
+  "id": "3GP3kFJFeeXVjjGcvXUV2CDjWC9",
   "version": "1",
   "turboVersion": "2.5.3",
   "monorepo": true,
@@ -37,12 +37,12 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees",
-      "hash": "f275db7fcf22aea5",
+      "hash": "301d4efa4f1af8f6",
       "inputs": {
-        "CHANGELOG.md": "59fc748f755eaa2a3e54c192fe38c391f9669864",
+        "CHANGELOG.md": "18be7d27dbcf50276946b90588fbc3113dc2bd12",
         "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
         "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
-        "package.json": "c417d5b29298caa5d89a90db80dbb6366f5f649a"
+        "package.json": "c8a3ed64ab5796d145e9f159b5d23753fcb50630"
       },
       "hashOfExternalDependencies": "71592b4f5fe9118e",
       "cache": {
@@ -50,7 +50,7 @@
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 2507
+        "timeSaved": 2293
       },
       "command": "shx rm -rf ./block-pack && block-tools pack",
       "cliArguments": [],
@@ -107,12 +107,12 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees",
-      "hash": "8645efad514e88b0",
+      "hash": "43a311ef80ff07b3",
       "inputs": {
-        "CHANGELOG.md": "59fc748f755eaa2a3e54c192fe38c391f9669864",
+        "CHANGELOG.md": "18be7d27dbcf50276946b90588fbc3113dc2bd12",
         "index.d.ts": "1ba908d82f37b11a66fc326a88a79ee6ef965fc7",
         "index.js": "e7798d420641e13b2104408b1cf4df20f67c654e",
-        "package.json": "c417d5b29298caa5d89a90db80dbb6366f5f649a"
+        "package.json": "c8a3ed64ab5796d145e9f159b5d23753fcb50630"
       },
       "hashOfExternalDependencies": "71592b4f5fe9118e",
       "cache": {
@@ -197,7 +197,7 @@
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 5537
+        "timeSaved": 5102
       },
       "command": "tsup && vite build && block-tools build-model",
       "cliArguments": [],
@@ -328,7 +328,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#build",
       "task": "build",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
-      "hash": "6d587900f4bac334",
+      "hash": "83fa4d764da20683",
       "inputs": {
         "CHANGELOG.md": "f16f707f2e5350466ddf638d9c6787681d36b1ce",
         "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
@@ -396,7 +396,7 @@
       "taskId": "@platforma-open/milaboratories.mixcr-shm-trees.test#test",
       "task": "test",
       "package": "@platforma-open/milaboratories.mixcr-shm-trees.test",
-      "hash": "a4d25c9f07bc5246",
+      "hash": "ee41112fb6e83865",
       "inputs": {
         "CHANGELOG.md": "f16f707f2e5350466ddf638d9c6787681d36b1ce",
         "assets/.gitkeep": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
@@ -517,7 +517,7 @@
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 19589
+        "timeSaved": 18840
       },
       "command": "vue-tsc -b && vite build",
       "cliArguments": [],
@@ -704,7 +704,7 @@
         "remote": false,
         "status": "HIT",
         "source": "LOCAL",
-        "timeSaved": 6134
+        "timeSaved": 5511
       },
       "command": "shx rm -rf dist && pl-tengo check && pl-tengo build",
       "cliArguments": [],
@@ -842,7 +842,7 @@
   "user": "github-merge-queue[bot]",
   "scm": {
     "type": "git",
-    "sha": "9b6e2a9d03a4a9275d01c32c2de9eb07e6034ee2",
+    "sha": "1d8a82cdc6b159f8512f2a175531f6c46edfb764",
     "branch": "main"
   }
 }
