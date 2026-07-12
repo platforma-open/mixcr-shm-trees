@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.3.1
+
+### Patch Changes
+
+- bc9563a: Replace storageFormat with Parquet and upgrade workflow-tengo
+
 ## 4.3.0
 
 ### Minor Changes
