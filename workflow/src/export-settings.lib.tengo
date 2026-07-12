@@ -21,6 +21,43 @@ addTableAnnotations := func(order, defaultVisibility, label, specAnnotations) {
 	})
 }
 
+// importFileParquet reads every column as String and strict-casts to the declared
+// type, nulling any value that isn't clean for that type. Integer columns can
+// arrive float-formatted ("192.0") from two sources, so coerce EVERY Long/Int
+// column and axis back to integer by stripping a trailing decimal before the cast:
+//   - the Pandas-based ptransform aggregation (tables-aggregation.lib.tengo)
+//     promotes any NA-bearing integer column to float, and which columns it hits
+//     is data-dependent per partition (parentId always; cloneId / uniqueMoleculeCount
+//     in some samples but not others) — so a hand-picked column list is not enough;
+//   - MiXCR emits readCount / totalReadsCountInTree as doubles outright.
+// Truncates rather than round()-casting (mixcr-clonotyping's approach, which needs a
+// pt step) — equivalent here because these are whole-number ids/counts.
+stripDecimal := [{ type: `regexpReplace`, pattern: `^(-?\d+)\.\d+$`, replacement: `$1` }]
+
+// Append stripDecimal to every Long/Int column and axis. No-op on clean integers;
+// Doubles/Strings are left untouched; an existing preProcess (e.g. the fileName
+// extractor) is preserved. Call on each function's axes/columns before returning.
+stripDecimalOnIntColumns := func(axes, columns) {
+	for i, ax in axes {
+		if !is_undefined(ax.spec) && (ax.spec.type == "Long" || ax.spec.type == "Int") {
+			base := []
+			if !is_undefined(ax.preProcess) {
+				base = ax.preProcess
+			}
+			axes[i].preProcess = append(base, stripDecimal...)
+		}
+	}
+	for i, col in columns {
+		if !is_undefined(col.spec) && (col.spec.valueType == "Long" || col.spec.valueType == "Int") {
+			base := []
+			if !is_undefined(col.preProcess) {
+				base = col.preProcess
+			}
+			columns[i].preProcess = append(base, stripDecimal...)
+		}
+	}
+}
+
 // export of threes whithout nodes
 shmTree := func(dataDescription) {
     axes := []
@@ -247,6 +284,7 @@ shmTree := func(dataDescription) {
         }
     })
 
+	stripDecimalOnIntColumns(axes, columns)
 	return {
         pfconvParams: {
             axes: axes,
@@ -665,6 +703,7 @@ shmTreeNodes := func(dataDescription) {
         }
     })
 
+	stripDecimalOnIntColumns(axes, columns)
 	return {
         pfconvParams: {
             axes: axes,
@@ -852,6 +891,7 @@ shmTreeNodesWithClones := func(dataDescription, donorColumn) {
         }
     })
 
+	stripDecimalOnIntColumns(axes, columns)
 	return {
         pfconvParams: {
             axes: axes,
@@ -921,6 +961,7 @@ shmTreeNodesUniqueIsotype := func(dataDescription) {
         }
     })
 
+	stripDecimalOnIntColumns(axes, columns)
 	return {
         pfconvParams: {
             axes: axes,
