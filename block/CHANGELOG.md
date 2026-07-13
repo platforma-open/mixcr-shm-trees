@@ -1,5 +1,23 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.7.0
+
+### Minor Changes
+
+- 28054d9: Replace ptransform with ptabler for all table aggregation
+
+  The by-nodes deduplication and the sequence-of-interest per-tree
+  aggregation now run in-process via ptabler instead of shelling out to
+  the ptransform binary. Integer columns are coerced back to their
+  declared types after the TSV read, so they are no longer float-promoted
+  (e.g. `192` -> `192.0`) and nulled by the Parquet importer. The
+  software-ptransform dependency is removed.
+
+### Patch Changes
+
+- Updated dependencies [28054d9]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@4.4.0
+
 ## 3.6.2
 
 ### Patch Changes
