@@ -17,7 +17,6 @@
     "@platforma-sdk/tengo-builder": "catalog:",
     "@platforma-open/milaboratories.software-mixcr": "catalog:",
     "@platforma-open/milaboratories.software-mitool": "catalog:",
-    "@platforma-open/milaboratories.software-ptransform": "catalog:",
     "@platforma-sdk/test": "catalog:",
     "vitest": "catalog:",
     "typescript": "catalog:"

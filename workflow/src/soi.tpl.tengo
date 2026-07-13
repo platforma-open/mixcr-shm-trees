@@ -7,12 +7,12 @@ xsv := import("@platforma-sdk/workflow-tengo:pframes.xsv")
 json := import("json")
 pConstants := import("@platforma-sdk/workflow-tengo:pframes.constants")
 soiExport := import(":soi-export")
+tablesAgg := import(":tables-aggregation")
 
 self.defineOutputs("nodesResult", "treesResult")
 
 // import MiXCR as a software to use
 mitoolSw := assets.importSoftware("@platforma-open/milaboratories.software-mitool:main")
-paggregateSw := assets.importSoftware("@platforma-open/milaboratories.software-ptransform:main")
 
 inferPartitionKeyLength := func(data) {
 	rType := data.info().Type.Name
@@ -46,7 +46,6 @@ self.body(func(inputs) {
 	modifiedAxesSpecs := []
 	importAxesSpec := []
 
-	aggregationGroupByTargets := []
 	aggregationImportAxesSpec := []
 
 	for idx, spec in originalAxesSpecs {
@@ -62,7 +61,6 @@ self.body(func(inputs) {
 
 		// aggregating clonal and subtree axes away
 		if spec.name != "pl7.app/dendrogram/subtreeId" && spec.name != "pl7.app/dendrogram/nodeId" {
-			aggregationGroupByTargets = append(aggregationGroupByTargets, colName)
 			aggregationImportAxesSpec = append(aggregationImportAxesSpec, {
 				column: colName,
 				spec: spec
@@ -161,32 +159,14 @@ self.body(func(inputs) {
 		partitionKeyLength: 0 // inferPartitionKeyLength(queryData)
 	}
 
-	aggregations := []
-	for col in resultColumns {
-		aggregations = append(aggregations, {
-			type: "first",
-			src: col.column,
-			dst: col.column
-		})
-	}
-
-	aggregationWorkflow := { steps: [ {
-			type: "aggregate",
-			groupBy: aggregationGroupByTargets,
-			aggregations: aggregations
-		} ] }
-
-	aggregateCmd := exec.builder().
-        printErrStreamToStdout().
-        software(paggregateSw).
-        arg("--workflow").arg("wf.json").
-		writeFile("wf.json", json.encode(aggregationWorkflow)).
-		arg("input.tsv").addFile("input.tsv", resultCsv).
-		arg("output.tsv").saveFile("output.tsv").
-        env("CIDADHOC", "1234").
-		run()
-
-	aggregatedCsv := aggregateCmd.getFile("output.tsv")
+	// Collapse subtree/node rows to one row per tree (first per group), reusing the
+	// ptabler dedup helper so integer columns are coerced back from the all-String
+	// read instead of being float-promoted by ptransform.
+	aggregatedCsv := tablesAgg.ensureUniqueness(
+		resultCsv,
+		tablesAgg.ensureUniquenessParamsFromPconvParams(aggregatedConvParams),
+		"first"
+	)
 
 	nodesResult := xsv.importFile(
         resultCsv,
