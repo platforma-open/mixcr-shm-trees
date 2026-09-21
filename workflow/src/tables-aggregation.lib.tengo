@@ -52,7 +52,7 @@ ensureUniqueness := func(inputTsv, params, ...aggParams) {
         result = df.groupBy(keyNames...).agg(aggs...)
     } else {
         // first: dedup rows by key, keeping the first.
-        result = df.unique({ subset: keyNames, keep: "first", maintainOrder: true })
+        result = df.unique({ subset: keyNames, keep: "first" })
     }
 
     result.save("output.tsv")
