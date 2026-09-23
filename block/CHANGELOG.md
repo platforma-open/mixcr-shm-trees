@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.8.1
+
+### Patch Changes
+
+- 36b3d61: Bump mixcr version to 4.7.0-365-develop
+- Updated dependencies [36b3d61]
+  - @platforma-open/milaboratories.mixcr-shm-trees.workflow@4.5.1
+
 ## 3.8.0
 
 ### Minor Changes

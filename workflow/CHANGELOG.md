@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.5.1
+
+### Patch Changes
+
+- 36b3d61: Bump mixcr version to 4.7.0-365-develop
+
 ## 4.5.0
 
 ### Minor Changes
