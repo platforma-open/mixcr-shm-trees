@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { getRawPlatformaInstance, PTableColumnSpec, pTableValue, PTableRowKey } from '@platforma-sdk/model';
-import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
+import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlAlert, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
-import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, isCurrentRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import AddToBasketModal from './components/AddToBasketModal.vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
 import canonicalize from 'canonicalize';
@@ -18,6 +18,12 @@ const dendroIdx = computed(() => app.model.ui.dendrograms.findIndex(it => it.id 
 const dendro = computed({
   get: () => app.model.ui.dendrograms[dendroIdx.value],
   set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value
+});
+
+// Tree ids from another run may name other trees now.
+const outdated = computed(() => {
+  const runKey = app.model.outputs.runKey;
+  return dendro.value !== undefined && runKey !== undefined && !isCurrentRun(dendro.value, runKey);
 });
 
 const tableSettings = computed<PlDataTableSettings>(() => ({
@@ -95,6 +101,10 @@ function addToBasket() {
       </PlAgDataTableToolsPanel>
       <PlBtnGhost @click="emit('toGraph')" icon="graph">Go to Graph</PlBtnGhost>
     </template>
+    <PlAlert v-if="outdated" type="warn">
+      This tree was opened on an earlier run of the block. Tree ids can change between runs, so it may
+      show a different tree. Delete it and open the tree again from the Trees Table.
+    </PlAlert>
     <PlAgDataTable v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />

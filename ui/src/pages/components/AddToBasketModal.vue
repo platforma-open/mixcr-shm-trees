@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FullNodeId, InitialFullTableState, NodeBasket } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, InitialFullTableState, isCurrentRun, NodeBasket } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import { PlId, uniquePlId } from '@platforma-sdk/model';
 import { ListOption, PlBtnGhost, PlBtnPrimary, PlDialogModal, PlDropdown, PlTextField } from '@platforma-sdk/ui-vue';
 import { computed, reactive, watch } from 'vue';
@@ -27,12 +27,15 @@ watch(() => app.model.ui.baskets.map(b => b.name), (e) => {
   data.newBasketName = inferNewName(e, i => `Basket #${i}`, data.newBasketName === '' ? undefined : data.newBasketName)
 }, { immediate: true })
 
+// Baskets from an earlier run hold ids of other trees, so new nodes go only to current ones.
 const targetOptions = computed<ListOption<PlId | ''>[]>(() => [
-  ...(app.model.ui.baskets ?? []).map(b => ({ value: b.id, label: b.name })),
+  ...(app.model.ui.baskets ?? [])
+    .filter(b => isCurrentRun(b, app.model.outputs.runKey))
+    .map(b => ({ value: b.id, label: b.name })),
   { value: '', label: 'New basket...' }
 ])
 
-const canAdd = computed(() => data.targetBasket !== '' || data.newBasketName !== '')
+const canAdd = computed(() => app.model.outputs.runKey !== undefined && (data.targetBasket !== '' || data.newBasketName !== ''))
 
 function normalizeNodeSet(nodes: FullNodeId[]): FullNodeId[] {
   const normalized: FullNodeId[] = [];
@@ -47,18 +50,21 @@ function normalizeNodeSet(nodes: FullNodeId[]): FullNodeId[] {
 }
 
 function runAdd() {
+  const runKey = app.model.outputs.runKey;
+  if (runKey === undefined) return;
   if (data.targetBasket === '') {
     const newBasket: NodeBasket = {
       id: uniquePlId(),
       comment: '',
       name: data.newBasketName,
       nodes: props.nodesToAdd,
-      tableState: InitialFullTableState()
+      tableState: InitialFullTableState(),
+      runKey
     }
     app.model.ui.baskets.push(newBasket);
   } else {
     const basket = app.model.ui.baskets.find(b => b.id === data.targetBasket)
-    if (basket) {
+    if (basket && isCurrentRun(basket, runKey)) {
       basket.nodes = normalizeNodeSet([...basket.nodes, ...props.nodesToAdd])
     }
   }

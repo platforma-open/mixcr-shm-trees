@@ -3,10 +3,10 @@ import type { PredefinedGraphOption } from '@milaboratories/graph-maker';
 import { GraphMaker } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
 import type { FullNodeId, FullTreeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { isCurrentRun, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import type { AxisSpec, PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
 import { getRawPlatformaInstance, pValueToStringOrNumber } from '@platforma-sdk/model';
-import { PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown } from '@platforma-sdk/ui-vue';
+import { PlAlert, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown } from '@platforma-sdk/ui-vue';
 import { computedAsync } from '@vueuse/core';
 import { computed, ref, watch } from 'vue';
 import { useApp } from '../app';
@@ -22,6 +22,12 @@ const dendroIdx = computed(() => app.model.ui.dendrograms.findIndex((it) => it.i
 const dendro = computed({
   get: () => app.model.ui.dendrograms[dendroIdx.value],
   set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value,
+});
+
+// Tree ids from another run may name other trees now.
+const outdated = computed(() => {
+  const runKey = app.model.outputs.runKey;
+  return dendro.value !== undefined && runKey !== undefined && !isCurrentRun(dendro.value, runKey);
 });
 
 const fullId = computed(() => {
@@ -226,6 +232,10 @@ const goToNode = (a: any) => {
 </script>
 
 <template>
+  <PlAlert v-if="outdated" type="warn">
+    This tree was opened on an earlier run of the block. Tree ids can change between runs, so it may
+    show a different tree. Delete it and open the tree again from the Trees Table.
+  </PlAlert>
   <div v-if="dendro" class="container_graph_page">
     <GraphMaker
       v-model="dendro.state" chart-type="dendro" :p-frame="app.model.outputs.treeNodesPFrame"

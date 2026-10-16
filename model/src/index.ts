@@ -85,6 +85,8 @@ export type TreePageTab = 'Graph' | 'Table';
 
 export type DendrogramState = FullTreeId & {
   id: string;
+  /** Run the tree id points into, see `runKeyOf`. Absent on views from before runs were tracked. */
+  runKey?: string;
   state: GraphMakerState;
   tableState: FullTableState;
   tab: TreePageTab;
@@ -96,6 +98,8 @@ export type NodeBasket = {
   comment: string;
   nodes: FullNodeId[];
   tableState: FullTableState;
+  /** Run the node ids point into, see `runKeyOf`. Absent on baskets from before runs were tracked. */
+  runKey?: string;
 };
 
 export type UiState = {
@@ -131,6 +135,32 @@ function treeNodesColumns(
 
   return targetColumns;
 }
+
+/**
+ * Identifies the trees on show: a hash of every donor's findShmTrees report. Reports carry the run
+ * date, so a rerun that rebuilds the trees changes the key, while a cached rerun keeps it.
+ * Undefined until a run settles.
+ */
+function runKeyOf(ctx: RenderCtx<BlockArgs, UiState>): string | undefined {
+  const reports = parseResourceMap(
+    ctx.outputs?.resolve({ field: 'treesReportsJson', assertFieldType: 'Input' }),
+    (acc) => acc.getFileContentAsString(),
+    false
+  );
+  if (!reports.isComplete || reports.data.length === 0) return undefined;
+  const content = reports.data
+    .map((e) => `${JSON.stringify(e.key)}\n${e.value}`)
+    .sort()
+    .join('\n');
+  // FNV-1a
+  let hash = 0x811c9dc5;
+  for (let i = 0; i < content.length; i++) hash = Math.imul(hash ^ content.charCodeAt(i), 0x01000193);
+  return (hash >>> 0).toString(16);
+}
+
+/** Whether a saved view or basket points into the trees on show. Entries without a run key never match. */
+export const isCurrentRun = (entry: { runKey?: string }, runKey: string | undefined) =>
+  runKey !== undefined && entry.runKey === runKey;
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
@@ -240,6 +270,9 @@ export const model = BlockModel.create()
   // )
 
   .output('calculating', (ctx) => ctx.outputs?.getIsReadyOrError() === false)
+
+  /** See `runKeyOf`. */
+  .output('runKey', (ctx) => runKeyOf(ctx))
 
   // select metadata columns
   .retentiveOutput('donorOptions', (ctx) =>
@@ -610,9 +643,7 @@ export const model = BlockModel.create()
   .argsValid(
     (ctx) =>
       ctx.args.donorColumn !== undefined &&
-      ctx.args.datasetColumns.length > 0 &&
-      (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
-      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0)
+      ctx.args.datasetColumns.length > 0
   )
 
   .title((ctx) => (ctx.args.datasetsTitles ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join('-')}` : 'MiXCR SHM Trees'))
