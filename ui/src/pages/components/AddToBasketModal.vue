@@ -77,6 +77,7 @@ function runAdd() {
     <template #title>Add tree nodes to basket</template>
     <PlDropdown v-model="data.targetBasket" :options="targetOptions" label="Target Basket" />
     <PlTextField v-if="data.targetBasket === ''" v-model="data.newBasketName" label="New Basket Name" />
+    <div v-if="app.model.outputs.runKey === undefined">Wait for the current run to start.</div>
     <!-- <template v-if="fileType === 'table'">
       <PlDropdown :options="columnOptions" v-model="data.sequenceColumn" clearable label="Sequence Column" />
       <PlDropdown :options="columnOptions" v-model="data.nameColumn" clearable label="Name Column" />

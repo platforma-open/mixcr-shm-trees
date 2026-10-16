@@ -3,7 +3,7 @@ import type { PredefinedGraphOption } from '@milaboratories/graph-maker';
 import { GraphMaker } from '@milaboratories/graph-maker';
 import '@milaboratories/graph-maker/styles';
 import type { FullNodeId, FullTreeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
-import { isCurrentRun, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { isOutdatedRun, treeNodesFilter } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import type { AxisSpec, PVectorDataLong, PVectorDataString } from '@platforma-sdk/model';
 import { getRawPlatformaInstance, pValueToStringOrNumber } from '@platforma-sdk/model';
 import { PlAlert, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDialogModal, PlDropdown } from '@platforma-sdk/ui-vue';
@@ -24,11 +24,8 @@ const dendro = computed({
   set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value,
 });
 
-// Tree ids from another run may name other trees now.
-const outdated = computed(() => {
-  const runKey = app.model.outputs.runKey;
-  return dendro.value !== undefined && runKey !== undefined && !isCurrentRun(dendro.value, runKey);
-});
+// Tree ids from another run may name other trees now, so the tree is not shown.
+const outdated = computed(() => dendro.value !== undefined && isOutdatedRun(dendro.value, app.model.outputs.runKey));
 
 const fullId = computed(() => {
   const d = dendro.value;
@@ -233,10 +230,11 @@ const goToNode = (a: any) => {
 
 <template>
   <PlAlert v-if="outdated" type="warn">
-    This tree was opened on an earlier run of the block. Tree ids can change between runs, so it may
-    show a different tree. Delete it and open the tree again from the Trees Table.
+    This tree was opened on an earlier run of the block, and trees are renumbered on every run.
+    Delete it and open the tree again from the Trees Table.
   </PlAlert>
-  <div v-if="dendro" class="container_graph_page">
+  <PlBtnSecondary v-if="outdated" icon="delete-bin" @click="removeConfirmationWindowOpen = true">Delete This Tree</PlBtnSecondary>
+  <div v-if="dendro && !outdated" class="container_graph_page">
     <GraphMaker
       v-model="dendro.state" chart-type="dendro" :p-frame="app.model.outputs.treeNodesPFrame"
       :fixed-options="fixedOptions" tooltip-button="Show in Table"
@@ -251,7 +249,7 @@ const goToNode = (a: any) => {
       </template>
     </GraphMaker>
   </div>
-  <div v-else>Loading</div>
+  <div v-else-if="!dendro">Loading</div>
   <PlDialogModal v-model="removeConfirmationWindowOpen">
     <template #title>Confirm delete graph</template>
     <template #actions>

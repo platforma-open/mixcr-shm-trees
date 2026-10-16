@@ -5,7 +5,7 @@ import { PTableColumnSpec, PTableRowKey } from '@platforma-sdk/model';
 import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlAlert, PlBlockPage, PlBtnGhost, PlBtnPrimary, PlBtnSecondary, PlDataTableSettings, PlDialogModal, PlEditableTitle, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
 import canonicalize from 'canonicalize';
-import { FullNodeId, isCurrentRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, isOutdatedRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 
 const app = useApp<'/' | `/basket?id=${string}`>();
 
@@ -15,11 +15,8 @@ const basket = computed({
   set: (value) => app.model.ui.baskets[basketIdx.value] = value
 });
 
-// Node ids from another run may name other nodes now.
-const outdated = computed(() => {
-  const runKey = app.model.outputs.runKey;
-  return basket.value !== undefined && runKey !== undefined && !isCurrentRun(basket.value, runKey);
-});
+// Node ids from another run may name other nodes now, so the nodes are not shown.
+const outdated = computed(() => basket.value !== undefined && isOutdatedRun(basket.value, app.model.outputs.runKey));
 
 const tableSettings = computed<PlDataTableSettings>(() => ({
   sourceType: 'ptable',
@@ -89,10 +86,10 @@ function deleteBasket() {
       </PlAgDataTableToolsPanel>
     </template>
     <PlAlert v-if="outdated" type="warn">
-      This basket was filled on an earlier run of the block. Node ids can change between runs, so it
-      may list different nodes. Delete it and add the nodes again from a tree's table.
+      This basket was filled on an earlier run of the block, and trees are renumbered on every run.
+      Delete it and add the nodes again from a tree's table.
     </PlAlert>
-    <PlAgDataTable v-model="basket.tableState.tableState" v-model:selected-rows="data.selectedRows"
+    <PlAgDataTable v-if="!outdated" v-model="basket.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
 

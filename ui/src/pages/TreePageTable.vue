@@ -3,7 +3,7 @@ import { getRawPlatformaInstance, PTableColumnSpec, pTableValue, PTableRowKey } 
 import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlAlert, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
-import { FullNodeId, isCurrentRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, isOutdatedRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import AddToBasketModal from './components/AddToBasketModal.vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
 import canonicalize from 'canonicalize';
@@ -20,11 +20,8 @@ const dendro = computed({
   set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value
 });
 
-// Tree ids from another run may name other trees now.
-const outdated = computed(() => {
-  const runKey = app.model.outputs.runKey;
-  return dendro.value !== undefined && runKey !== undefined && !isCurrentRun(dendro.value, runKey);
-});
+// Tree ids from another run may name other trees now, so the tree is not shown.
+const outdated = computed(() => dendro.value !== undefined && isOutdatedRun(dendro.value, app.model.outputs.runKey));
 
 const tableSettings = computed<PlDataTableSettings>(() => ({
   sourceType: 'ptable',
@@ -102,10 +99,10 @@ function addToBasket() {
       <PlBtnGhost @click="emit('toGraph')" icon="graph">Go to Graph</PlBtnGhost>
     </template>
     <PlAlert v-if="outdated" type="warn">
-      This tree was opened on an earlier run of the block. Tree ids can change between runs, so it may
-      show a different tree. Delete it and open the tree again from the Trees Table.
+      This tree was opened on an earlier run of the block, and trees are renumbered on every run.
+      Delete it and open the tree again from the Trees Table.
     </PlAlert>
-    <PlAgDataTable v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
+    <PlAgDataTable v-if="!outdated" v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
     <AddToBasketModal v-if="data.nodesToAdd.length > 0" :nodes-to-add="data.nodesToAdd"

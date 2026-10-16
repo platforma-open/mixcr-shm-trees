@@ -137,30 +137,26 @@ function treeNodesColumns(
 }
 
 /**
- * Identifies the trees on show: a hash of every donor's findShmTrees report. Reports carry the run
- * date, so a rerun that rebuilds the trees changes the key, while a cached rerun keeps it.
- * Undefined until a run settles.
+ * Identifies the trees on show: the seed of the run that built them, new on every run.
+ * Runs from before run keys get '', which matches views saved then, as those carry no key and
+ * could not be rerun. Undefined until the run's outputs are set.
  */
-function runKeyOf(ctx: RenderCtx<BlockArgs, UiState>): string | undefined {
-  const reports = parseResourceMap(
-    ctx.outputs?.resolve({ field: 'treesReportsJson', assertFieldType: 'Input' }),
-    (acc) => acc.getFileContentAsString(),
-    false
-  );
-  if (!reports.isComplete || reports.data.length === 0) return undefined;
-  const content = reports.data
-    .map((e) => `${JSON.stringify(e.key)}\n${e.value}`)
-    .sort()
-    .join('\n');
-  // FNV-1a
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < content.length; i++) hash = Math.imul(hash ^ content.charCodeAt(i), 0x01000193);
-  return (hash >>> 0).toString(16);
+function runKeyOf(outputs: TreeNodeAccessor | undefined): string | undefined {
+  if (outputs === undefined) return undefined;
+  const key = outputs
+    .resolve({ field: 'runKey', assertFieldType: 'Input', allowPermanentAbsence: true })
+    ?.getDataAsJson<string>();
+  if (key !== undefined) return key;
+  return outputs.getInputsLocked() && !outputs.listInputFields().includes('runKey') ? '' : undefined;
 }
 
-/** Whether a saved view or basket points into the trees on show. Entries without a run key never match. */
+/** Whether a saved view or basket points into the trees on show. */
 export const isCurrentRun = (entry: { runKey?: string }, runKey: string | undefined) =>
-  runKey !== undefined && entry.runKey === runKey;
+  runKey !== undefined && (entry.runKey ?? '') === runKey;
+
+/** Whether a saved view or basket points into other trees than those on show. */
+export const isOutdatedRun = (entry: { runKey?: string }, runKey: string | undefined) =>
+  runKey !== undefined && (entry.runKey ?? '') !== runKey;
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
@@ -214,7 +210,10 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
   const columns: PColumn<PColumnValues>[] = [];
   const columnPerBasket: Record<PlId, PColumn<PColumnValues>> = {};
 
+  // Baskets from another run hold ids of other nodes.
+  const runKey = runKeyOf(ctx.outputs);
   for (const basket of ctx.uiState.baskets) {
+    if (!isCurrentRun(basket, runKey)) continue;
     const inBasketSpec: PColumnSpec = {
       kind: 'PColumn',
       name: InBasketPColumnName,
@@ -272,7 +271,7 @@ export const model = BlockModel.create()
   .output('calculating', (ctx) => ctx.outputs?.getIsReadyOrError() === false)
 
   /** See `runKeyOf`. */
-  .output('runKey', (ctx) => runKeyOf(ctx))
+  .output('runKey', (ctx) => runKeyOf(ctx.outputs))
 
   // select metadata columns
   .retentiveOutput('donorOptions', (ctx) =>
@@ -460,7 +459,9 @@ export const model = BlockModel.create()
     
     const coreColumn = columns.find(c => coreColumnPredicate(c.spec));
 
+    const runKey = runKeyOf(ctx.outputs);
     for (const tree of ctx.uiState!.dendrograms) {
+      if (!isCurrentRun(tree, runKey)) continue;
       const t = createPlDataTable(
         ctx,
         [...columns, ...bColumns.allColumns],
@@ -489,6 +490,8 @@ export const model = BlockModel.create()
     const result: Record<string, PTableHandle> = {};
 
     for (const basket of ctx.uiState.baskets) {
+      // basketColumns skips baskets from another run
+      if (bColumns.perBasket[basket.id] === undefined) continue;
       const t = createPlDataTable(
         ctx,
         [...columns, bColumns.perBasket[basket.id]!],
