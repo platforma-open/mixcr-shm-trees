@@ -105,7 +105,8 @@ function addToBasket() {
     <PlAgDataTable v-if="!outdated" v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
-    <AddToBasketModal v-if="data.nodesToAdd.length > 0" :nodes-to-add="data.nodesToAdd"
+    <!-- selected ids belong to the tree's run, so the dialog closes once that run is replaced -->
+    <AddToBasketModal v-if="data.nodesToAdd.length > 0 && !outdated" :nodes-to-add="data.nodesToAdd" :run-key="dendro.runKey"
       @on-close="data.nodesToAdd = []" />
   </PlBlockPage>
 </template>

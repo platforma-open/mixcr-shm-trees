@@ -9,7 +9,8 @@ import { BaseColsService } from 'ag-grid-enterprise';
 
 const app = useApp();
 
-const props = defineProps<{ nodesToAdd: FullNodeId[] }>()
+// runKey: run the nodes were selected on; nodes are added only while it is the run on show
+const props = defineProps<{ nodesToAdd: FullNodeId[], runKey: string | undefined }>()
 
 const emit = defineEmits<{
   onClose: [added: boolean]
@@ -35,7 +36,7 @@ const targetOptions = computed<ListOption<PlId | ''>[]>(() => [
   { value: '', label: 'New basket...' }
 ])
 
-const canAdd = computed(() => app.model.outputs.runKey !== undefined && (data.targetBasket !== '' || data.newBasketName !== ''))
+const canAdd = computed(() => isCurrentRun(props, app.model.outputs.runKey) && (data.targetBasket !== '' || data.newBasketName !== ''))
 
 function normalizeNodeSet(nodes: FullNodeId[]): FullNodeId[] {
   const normalized: FullNodeId[] = [];
@@ -51,7 +52,7 @@ function normalizeNodeSet(nodes: FullNodeId[]): FullNodeId[] {
 
 function runAdd() {
   const runKey = app.model.outputs.runKey;
-  if (runKey === undefined) return;
+  if (runKey === undefined || !isCurrentRun(props, runKey)) return;
   if (data.targetBasket === '') {
     const newBasket: NodeBasket = {
       id: uniquePlId(),
