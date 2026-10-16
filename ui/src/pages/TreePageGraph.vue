@@ -163,7 +163,7 @@ const fixedOptions = computed(() => {
 const subtreeOptions = computedAsync(async () => {
   if (!subtreeAxis.value || !app.model.outputs.treeNodesPFrame
     || !app.model.outputs.vjColumns || !app.model.outputs.treeColumnSpec
-    || !dendro.value || !fullId.value) return undefined;
+    || !dendro.value || !fullId.value || outdated.value) return undefined;
 
   const pl = getRawPlatformaInstance();
 
