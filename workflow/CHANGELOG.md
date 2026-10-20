@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.5.3
+
+### Patch Changes
+
+- 7a968c3: Release every package through npm trusted publishing (OIDC) so each package's trusted publisher is used before it expires.
+
 ## 4.5.2
 
 ### Patch Changes

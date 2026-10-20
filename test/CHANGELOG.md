@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.test
 
+## 1.4.1
+
+### Patch Changes
+
+- 7a968c3: Release every package through npm trusted publishing (OIDC) so each package's trusted publisher is used before it expires.
+
 ## 1.4.0
 
 ### Minor Changes

@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.8.3
+
+### Patch Changes
+
+- 7a968c3: Release every package through npm trusted publishing (OIDC) so each package's trusted publisher is used before it expires.
+- Updated dependencies [7a968c3]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.9.3
+
 ## 3.8.2
 
 ### Patch Changes
