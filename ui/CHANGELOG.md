@@ -1,5 +1,13 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.ui
 
+## 3.8.4
+
+### Patch Changes
+
+- 4f35f89: Allow rerunning after trees or baskets are added. Opened trees and baskets from an earlier run are marked as outdated instead of blocking the block and every block below it from running.
+- Updated dependencies [4f35f89]
+  - @platforma-open/milaboratories.mixcr-shm-trees.model@3.9.4
+
 ## 3.8.3
 
 ### Patch Changes
