@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { getRawPlatformaInstance, PTableColumnSpec, pTableValue, PTableRowKey } from '@platforma-sdk/model';
-import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
+import { PlAgDataTable, PlAgDataTableController, PlAgDataTableToolsPanel, PlAlert, PlBlockPage, PlBtnGhost, PlDataTableSettings, PlTableFilters } from '@platforma-sdk/ui-vue';
 import { computed, reactive, ref, watch } from 'vue';
 import { useApp } from '../app';
-import { FullNodeId } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
+import { FullNodeId, isOutdatedRun } from '@platforma-open/milaboratories.mixcr-shm-trees.model';
 import AddToBasketModal from './components/AddToBasketModal.vue';
 import { ensureNumber, ensureSimpleValue } from '../util';
 import canonicalize from 'canonicalize';
@@ -19,6 +19,9 @@ const dendro = computed({
   get: () => app.model.ui.dendrograms[dendroIdx.value],
   set: (value) => app.model.ui.dendrograms[dendroIdx.value] = value
 });
+
+// Tree ids from another run may name other trees now, so the tree is not shown.
+const outdated = computed(() => dendro.value !== undefined && isOutdatedRun(dendro.value, app.model.outputs.runKey));
 
 const tableSettings = computed<PlDataTableSettings>(() => ({
   sourceType: 'ptable',
@@ -95,10 +98,15 @@ function addToBasket() {
       </PlAgDataTableToolsPanel>
       <PlBtnGhost @click="emit('toGraph')" icon="graph">Go to Graph</PlBtnGhost>
     </template>
-    <PlAgDataTable v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
+    <PlAlert v-if="outdated" type="warn">
+      This tree was opened on an earlier run of the block, and trees are renumbered on every run.
+      Delete it and open the tree again from the Trees Table.
+    </PlAlert>
+    <PlAgDataTable v-if="!outdated" v-model="dendro.tableState.tableState" v-model:selected-rows="data.selectedRows"
       :settings="tableSettings" client-side-model show-export-button show-columns-panel
       @columns-changed="(newColumns) => (columns = newColumns)" ref="tableInstance" />
-    <AddToBasketModal v-if="data.nodesToAdd.length > 0" :nodes-to-add="data.nodesToAdd"
+    <!-- selected ids belong to the tree's run, so the dialog closes once that run is replaced -->
+    <AddToBasketModal v-if="data.nodesToAdd.length > 0 && !outdated" :nodes-to-add="data.nodesToAdd" :run-key="dendro.runKey"
       @on-close="data.nodesToAdd = []" />
   </PlBlockPage>
 </template>

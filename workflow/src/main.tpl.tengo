@@ -54,6 +54,8 @@ wf.body(func(args) {
 
 	return {
 		outputs: {
+			runKey: results.output("runKey"),
+
 			trees: pframes.exportFrame(results.output("trees")),
 			treeNodes: pframes.exportFrame(results.output("treeNodes")),
 			treeNodesWithClones: pframes.exportFrame(results.output("treeNodesWithClones")),

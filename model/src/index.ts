@@ -85,6 +85,8 @@ export type TreePageTab = 'Graph' | 'Table';
 
 export type DendrogramState = FullTreeId & {
   id: string;
+  /** Run the tree id points into, see `runKeyOf`. Absent on views from before runs were tracked. */
+  runKey?: string;
   state: GraphMakerState;
   tableState: FullTableState;
   tab: TreePageTab;
@@ -96,6 +98,8 @@ export type NodeBasket = {
   comment: string;
   nodes: FullNodeId[];
   tableState: FullTableState;
+  /** Run the node ids point into, see `runKeyOf`. Absent on baskets from before runs were tracked. */
+  runKey?: string;
 };
 
 export type UiState = {
@@ -131,6 +135,28 @@ function treeNodesColumns(
 
   return targetColumns;
 }
+
+/**
+ * Identifies the trees on show: the seed of the run that built them, new on every run.
+ * Runs from before run keys get '', which matches views saved then, as those carry no key and
+ * could not be rerun. Undefined until the run's outputs are set.
+ */
+function runKeyOf(outputs: TreeNodeAccessor | undefined): string | undefined {
+  if (outputs === undefined) return undefined;
+  const key = outputs
+    .resolve({ field: 'runKey', assertFieldType: 'Input', allowPermanentAbsence: true })
+    ?.getDataAsJson<string>();
+  if (key !== undefined) return key;
+  return outputs.getInputsLocked() && !outputs.listInputFields().includes('runKey') ? '' : undefined;
+}
+
+/** Whether a saved view or basket points into the trees on show. */
+export const isCurrentRun = (entry: { runKey?: string }, runKey: string | undefined) =>
+  runKey !== undefined && (entry.runKey ?? '') === runKey;
+
+/** Whether a saved view or basket points into other trees than those on show. */
+export const isOutdatedRun = (entry: { runKey?: string }, runKey: string | undefined) =>
+  runKey !== undefined && (entry.runKey ?? '') !== runKey;
 
 const InBasketPColumnName = 'pl7.app/dendrogram/inBasket';
 
@@ -184,7 +210,10 @@ function basketColumns(ctx: RenderCtx<BlockArgs, UiState>): BasketColumns | unde
   const columns: PColumn<PColumnValues>[] = [];
   const columnPerBasket: Record<PlId, PColumn<PColumnValues>> = {};
 
+  // Baskets from another run hold ids of other nodes.
+  const runKey = runKeyOf(ctx.outputs);
   for (const basket of ctx.uiState.baskets) {
+    if (!isCurrentRun(basket, runKey)) continue;
     const inBasketSpec: PColumnSpec = {
       kind: 'PColumn',
       name: InBasketPColumnName,
@@ -240,6 +269,9 @@ export const model = BlockModel.create()
   // )
 
   .output('calculating', (ctx) => ctx.outputs?.getIsReadyOrError() === false)
+
+  /** See `runKeyOf`. */
+  .output('runKey', (ctx) => runKeyOf(ctx.outputs))
 
   // select metadata columns
   .retentiveOutput('donorOptions', (ctx) =>
@@ -427,7 +459,9 @@ export const model = BlockModel.create()
     
     const coreColumn = columns.find(c => coreColumnPredicate(c.spec));
 
+    const runKey = runKeyOf(ctx.outputs);
     for (const tree of ctx.uiState!.dendrograms) {
+      if (!isCurrentRun(tree, runKey)) continue;
       const t = createPlDataTable(
         ctx,
         [...columns, ...bColumns.allColumns],
@@ -456,6 +490,8 @@ export const model = BlockModel.create()
     const result: Record<string, PTableHandle> = {};
 
     for (const basket of ctx.uiState.baskets) {
+      // basketColumns skips baskets from another run
+      if (bColumns.perBasket[basket.id] === undefined) continue;
       const t = createPlDataTable(
         ctx,
         [...columns, bColumns.perBasket[basket.id]!],
@@ -610,9 +646,7 @@ export const model = BlockModel.create()
   .argsValid(
     (ctx) =>
       ctx.args.donorColumn !== undefined &&
-      ctx.args.datasetColumns.length > 0 &&
-      (ctx.uiState.baskets === undefined || ctx.uiState.baskets.length == 0) &&
-      (ctx.uiState.dendrograms === undefined || ctx.uiState.dendrograms.length == 0)
+      ctx.args.datasetColumns.length > 0
   )
 
   .title((ctx) => (ctx.args.datasetsTitles ? `MiXCR SHM Trees - ${ctx.args.datasetsTitles.join('-')}` : 'MiXCR SHM Trees'))

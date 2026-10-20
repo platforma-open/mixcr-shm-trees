@@ -99,6 +99,9 @@ self.body(func(inputs) {
 	// there should be call join on pfFrames, but it's not implements, so we will do it by hand
 	dataGroupedByDonorId := prepareDonorColumn.groupDataByDonorId(inputs.donorColumn, inputs.datasets, firstDatasetSpec)
 
+	// new on every run, so trees are rebuilt and renumbered on every run; also identifies the run to the model
+	seed := times.time_string(times.now())
+
 	shmtResults := pframes.processColumn(
 		dataGroupedByDonorId,
 		mixcrShmTreesTpl,
@@ -181,7 +184,7 @@ self.body(func(inputs) {
 			extra: {
 				library: is_undefined(library) ? smart.createNullResource() : library.data,
 				globalParams: maps.merge(inputParams, {
-					seed: times.time_string(times.now()),
+					seed: seed,
 					datasetTypes: datasetTypes,
 					libraryFormat: libraryFormat
 				})
@@ -301,6 +304,8 @@ self.body(func(inputs) {
 	treeNodesUniqueIsotype := exportResults.xsvOutputFrame("treeNodesUniqueIsotype")
 
     return {
+		runKey: smart.createJsonResource(seed),
+
 		alleles: shmtResults.output("alleles"),
 		downsampled: shmtResults.output("downsampled"),
 		shmt: shmtResults.output("shmt"),

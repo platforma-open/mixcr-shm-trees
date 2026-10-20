@@ -23,7 +23,8 @@ export async function addDendrogram(
 ): Promise<DendrogramState | undefined> {
   const app = useApp();
 
-  if (!app.model.outputs.treeColumnSpec) {
+  const runKey = app.model.outputs.runKey;
+  if (!app.model.outputs.treeColumnSpec || runKey === undefined) {
     return undefined;
   }
 
@@ -37,7 +38,8 @@ export async function addDendrogram(
       template: 'dendro'
     },
     tableState: InitialFullTableState(),
-    tab: 'Graph'
+    tab: 'Graph',
+    runKey
   };
 
   await app.updateUiState((ui) => {
