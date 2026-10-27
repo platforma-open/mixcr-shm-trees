@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees.workflow
 
+## 4.5.5
+
+### Patch Changes
+
+- e913de2: Update MiXCR, MiTool to the versions with the rebuilt Docker images. The old images trust the compromised eMudhra intermediate CAs.
+
 ## 4.5.4
 
 ### Patch Changes
