@@ -20,8 +20,8 @@ catalog:
   '@platforma-sdk/workflow-tengo': 6.11.0
 
   '@platforma-open/milaboratories.software-small-binaries': ^1.15.19
-  '@platforma-open/milaboratories.software-mixcr': 4.7.0-403-develop
-  '@platforma-open/milaboratories.software-mitool': 2.3.1-24-main
+  '@platforma-open/milaboratories.software-mixcr': 4.7.0-415-develop
+  '@platforma-open/milaboratories.software-mitool': 2.3.1-174-main
 
   '@milaboratories/helpers': ^1.12.0
 
