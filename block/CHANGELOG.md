@@ -1,5 +1,11 @@
 # @platforma-open/milaboratories.mixcr-shm-trees
 
+## 3.8.6
+
+### Patch Changes
+
+- 6b85b27: Point the block's repository link to the current GitHub repository.
+
 ## 3.8.5
 
 ### Patch Changes
